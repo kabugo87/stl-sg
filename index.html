@@ -8,341 +8,167 @@
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 :root{
-  --ink:#0D0D0D;
-  --paper:#F7F5F0;
-  --cream:#EDE9E0;
-  --gold:#C9A84C;
-  --gold-light:#E8D5A3;
-  --gold-dark:#A07830;
-  --red:#8B1A1A;
-  --navy:#0F1E3C;
-  --mid:#6B6355;
-  --border:#D4CFBF;
-  --white:#FFFFFF;
-  --font-display:'Palatino Linotype',Palatino,Georgia,serif;
+  --navy:#1B2A6B;--red:#800020;--grey-bg:#f0f1f4;--grey-border:#d0d0d8;
+  --grey-mid:#888;--white:#ffffff;--text-dark:#1a1a2e;--text-mid:#555;
+  --text-light:#999;--green:#3B6D11;--amber:#854F0B;
+  --font-heading:'Palatino Linotype',Palatino,Georgia,serif;
   --font-ui:'Segoe UI',system-ui,sans-serif;
-  --sidebar-w:260px;
-  --topbar-h:60px;
+  --sidebar-w:240px;--topbar-h:56px;
 }
-body{font-family:var(--font-ui);background:#F2F2F2;color:var(--ink);font-size:13px;line-height:1.5}
+body{font-family:var(--font-ui);background:var(--grey-bg);color:var(--text-dark);font-size:13px;line-height:1.5}
 button{font-family:var(--font-ui);cursor:pointer}
 input,select,textarea{font-family:var(--font-ui)}
+h1,h2,h3,h4{font-family:var(--font-heading)}
 
-/* ── LOGIN ── */
-#login-screen{
-  position:fixed;inset:0;z-index:2000;
-  background:var(--paper);
-  display:flex;align-items:center;justify-content:center;
-  overflow:hidden;
-}
-.login-bg{
-  position:absolute;inset:0;
-  background:#F2F2F2;
-}
-.login-lines{position:absolute;inset:0;opacity:1;}
-.login-lines::before,.login-lines::after{ content:''; }
-.login-card{
-  position:relative;z-index:1;
-  width:420px;
-  background:var(--white);
-  border-radius:4px;
-  overflow:hidden;
-  box-shadow:0 8px 48px rgba(15,30,60,.12), 0 0 0 1px rgba(201,168,76,.25), 0 1px 3px rgba(0,0,0,.08);
-}
-.login-card-top{
-  background:#8B1A1A;
-  padding:32px 36px 28px;
-  text-align:center;
-  position:relative;
-}
-.login-card-top::after{
-  content:'';position:absolute;bottom:0;left:0;right:0;
-  height:3px;
-  background:linear-gradient(90deg,transparent,var(--red),transparent);
-}
-.sg-emblem{
-  width:56px;height:56px;
-  background:var(--red);
-  border-radius:50%;
-  display:flex;align-items:center;justify-content:center;
-  margin:0 auto 14px;
-  box-shadow:0 4px 16px rgba(139,26,26,.3);
-}
-.sg-emblem span{
-  font-family:var(--font-display);
-  font-size:20px;font-weight:700;color:var(--white);letter-spacing:.04em;
-}
-.login-title{
-  font-family:var(--font-display);
-  font-size:18px;font-weight:600;color:var(--white);
-  margin-bottom:4px;letter-spacing:.02em;
-}
-.login-sub{font-size:11px;color:rgba(255,255,255,.5);letter-spacing:.06em;text-transform:uppercase}
-.login-body{padding:28px 36px 32px}
-.login-error{
-  background:#fdf0f0;color:var(--red);
-  border:1px solid #f5c6c6;border-left:3px solid var(--red);
-  border-radius:3px;padding:9px 12px;font-size:12px;margin-bottom:16px;display:none;
-}
-.login-field{margin-bottom:16px}
-.login-field label{
-  display:block;font-size:10px;font-weight:600;
-  text-transform:uppercase;letter-spacing:.08em;
-  color:var(--mid);margin-bottom:6px;
-}
-.login-field input{
-  width:100%;padding:10px 12px;
-  background:var(--cream);
-  border:1px solid var(--border);border-radius:3px;
-  font-size:13px;color:var(--ink);
-  transition:border-color .15s,box-shadow .15s;
-}
-.login-field input:focus{
-  outline:none;border-color:var(--gold);
-  box-shadow:0 0 0 3px rgba(201,168,76,.15);
-}
-.login-btn{
-  width:100%;padding:11px;
-  background:var(--red);
-  color:var(--white);font-size:13px;font-weight:700;
-  border:none;border-radius:3px;
-  letter-spacing:.04em;text-transform:uppercase;
-  transition:opacity .15s,transform .1s;
-  box-shadow:0 4px 16px rgba(139,26,26,.25);
-  margin-top:4px;
-}
-.login-btn:hover{opacity:.9;transform:translateY(-1px)}
-.login-btn:active{transform:translateY(0)}
-.login-footer{
-  text-align:center;font-size:10px;color:var(--mid);
-  margin-top:20px;letter-spacing:.04em;
-  opacity:.7;
-}
-
-/* ── APP SHELL ── */
+/* LAYOUT */
+#login-screen{position:fixed;inset:0;z-index:2000;background:#F2F2F2;display:flex;align-items:center;justify-content:center}
 #app{display:flex;height:100vh;overflow:hidden;display:none}
-
-/* ── SIDEBAR ── */
-#sidebar{
-  width:var(--sidebar-w);min-width:var(--sidebar-w);
-  background:var(--navy);
-  display:flex;flex-direction:column;
-  overflow-y:auto;
-}
-.sb-header{
-  padding:20px 20px 16px;
-  border-bottom:1px solid rgba(255,255,255,.08);
-  border-left:3px solid var(--red);
-}
-.sb-logo-row{display:flex;align-items:center;gap:10px;margin-bottom:10px}
-.sb-emblem{display:none}
-.sb-org{font-family:var(--font-display);font-size:13px;font-weight:600;color:var(--white)}
-.sb-tagline{font-size:10px;color:rgba(255,255,255,.4);margin-top:1px}
-.sb-cycle{
-  display:inline-flex;align-items:center;gap:5px;
-  background:rgba(139,26,26,.15);border:1px solid rgba(139,26,26,.3);
-  border-radius:2px;padding:4px 9px;
-  font-size:10px;font-weight:600;color:#e8a0a0;
-  letter-spacing:.04em;text-transform:uppercase;
-}
-.sb-cycle-dot{width:5px;height:5px;border-radius:50%;background:#e8a0a0;animation:pulse 2s infinite}
-@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
-
-.sb-section{padding:14px 0 4px}
-.sb-section-label{
-  font-size:9px;font-weight:600;text-transform:uppercase;
-  letter-spacing:.1em;color:rgba(255,255,255,.25);
-  padding:0 18px 6px;
-}
-.sb-item{
-  display:flex;align-items:center;gap:10px;
-  padding:8px 18px;color:rgba(255,255,255,.55);
-  font-size:12px;cursor:pointer;
-  border-left:2px solid transparent;
-  transition:all .12s;user-select:none;
-}
-.sb-item:hover{background:rgba(255,255,255,.06);color:rgba(255,255,255,.85)}
-.sb-item.active{
-  background:rgba(139,26,26,.12);color:#e8a0a0;
-  border-left-color:var(--red);font-weight:600;
-}
-.sb-item svg{width:15px;height:15px;flex-shrink:0;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
-.sb-footer{
-  margin-top:auto;padding:14px 18px;
-  border-top:1px solid rgba(255,255,255,.08);
-}
-.sb-user{display:flex;align-items:center;gap:9px}
-.sb-avatar{
-  width:30px;height:30px;border-radius:50%;
-  background:var(--red);
-  display:flex;align-items:center;justify-content:center;flex-shrink:0;
-}
-.sb-avatar span{font-size:11px;font-weight:700;color:var(--navy)}
-.sb-uname{font-size:11px;font-weight:600;color:rgba(255,255,255,.85)}
-.sb-urole{font-size:10px;color:rgba(255,255,255,.35);margin-top:1px}
-.sb-logout{
-  margin-left:auto;background:none;border:none;
-  color:rgba(255,255,255,.3);font-size:16px;cursor:pointer;
-  padding:3px 5px;transition:color .12s;
-}
-.sb-logout:hover{color:var(--gold)}
-
-/* ── MAIN ── */
+#sidebar{width:var(--sidebar-w);min-width:var(--sidebar-w);background:var(--grey-bg);border-right:1px solid var(--grey-border);display:flex;flex-direction:column;overflow-y:auto}
 #main{flex:1;display:flex;flex-direction:column;overflow:hidden}
-#topbar{
-  height:var(--topbar-h);min-height:var(--topbar-h);
-  background:var(--white);
-  border-bottom:1px solid var(--border);
-  display:flex;align-items:center;justify-content:space-between;
-  padding:0 28px;
-}
-.tb-title{font-family:var(--font-display);font-size:16px;font-weight:600;color:var(--navy)}
-.tb-sub{font-size:11px;color:var(--mid);margin-top:2px}
+#topbar{height:var(--topbar-h);min-height:var(--topbar-h);background:var(--white);border-bottom:1px solid var(--grey-border);display:flex;align-items:center;justify-content:space-between;padding:0 24px}
+#content{flex:1;overflow-y:auto;padding:24px}
+
+/* LOGIN */
+.login-card{width:420px;background:var(--white);border-radius:8px;overflow:hidden;box-shadow:0 4px 24px rgba(0,0,0,.12)}
+.login-card-top{background:var(--red);padding:28px 32px 24px;text-align:center}
+.login-title{font-family:var(--font-heading);font-size:20px;font-weight:600;color:#fff;margin-bottom:4px}
+.login-sub{font-size:11px;color:rgba(255,255,255,.6);letter-spacing:.06em;text-transform:uppercase}
+.login-body{padding:24px 32px 28px}
+.login-error{background:#fdf0f0;color:var(--red);border:1px solid #f5c6c6;border-left:3px solid var(--red);border-radius:4px;padding:8px 12px;font-size:12px;margin-bottom:14px;display:none}
+.login-field{margin-bottom:14px}
+.login-field label{display:block;font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.07em;color:var(--text-mid);margin-bottom:5px}
+.login-field input{width:100%;padding:9px 11px;background:var(--grey-bg);border:1px solid var(--grey-border);border-radius:5px;font-size:13px;color:var(--text-dark)}
+.login-field input:focus{outline:none;border-color:var(--red)}
+.login-btn{width:100%;padding:10px;background:var(--red);color:#fff;font-size:13px;font-weight:600;border:none;border-radius:5px;letter-spacing:.02em;transition:opacity .15s;margin-top:4px}
+.login-btn:hover{opacity:.9}
+.login-footer{text-align:center;font-size:10px;color:var(--text-light);margin-top:16px}
+
+/* SIDEBAR */
+.sb-logo{padding:16px 16px 12px;border-bottom:1px solid var(--grey-border)}
+.sb-logo-row{display:flex;align-items:center;gap:8px;margin-bottom:4px}
+.sb-icon{width:30px;height:30px;background:var(--red);border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.sb-icon-text{color:#fff;font-size:10px;font-weight:700}
+.sb-title{font-family:var(--font-heading);font-size:13px;font-weight:600;color:var(--navy)}
+.sb-sub{font-size:10px;color:var(--grey-mid);margin-top:1px}
+.sb-badge{display:inline-block;background:var(--red);color:#fff;font-size:9px;font-weight:600;padding:2px 7px;border-radius:3px;margin-top:5px;letter-spacing:.04em;text-transform:uppercase}
+.sb-org-switch{padding:10px 12px 4px}
+.sb-org-switch label{font-size:9px;text-transform:uppercase;letter-spacing:.07em;color:var(--text-light);display:block;margin-bottom:4px}
+.sb-org-switch select{width:100%;background:var(--white);border:1px solid var(--grey-border);border-radius:5px;font-size:11px;padding:6px 8px;color:var(--navy);font-weight:500;cursor:pointer}
+.sb-section{padding:10px 0 2px}
+.sb-section-label{font-size:9px;text-transform:uppercase;letter-spacing:.08em;color:var(--text-light);padding:0 14px 5px}
+.sb-item{display:flex;align-items:center;gap:9px;padding:7px 14px;color:var(--text-mid);font-size:12px;cursor:pointer;border-left:3px solid transparent;transition:all .12s;user-select:none}
+.sb-item:hover{background:#e8e9ed;color:var(--navy)}
+.sb-item.active{background:var(--white);color:var(--navy);border-left-color:var(--red);font-weight:600;box-shadow:inset 0 0 0 .5px var(--grey-border)}
+.sb-item svg{width:16px;height:16px;flex-shrink:0;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.sb-footer{margin-top:auto;padding:12px 14px;border-top:1px solid var(--grey-border)}
+.sb-user{display:flex;align-items:center;gap:9px}
+.sb-avatar{width:28px;height:28px;border-radius:50%;background:var(--navy);display:flex;align-items:center;justify-content:center;color:#fff;font-size:10px;font-weight:600;flex-shrink:0}
+.sb-user-name{font-size:11px;font-weight:600;color:var(--text-dark)}
+.sb-user-role{font-size:10px;color:var(--text-light)}
+.sb-logout{margin-left:auto;background:none;border:none;color:var(--text-light);font-size:18px;cursor:pointer;padding:2px 6px;line-height:1}
+.sb-logout:hover{color:var(--red)}
+
+/* TOPBAR */
+.tb-left h1{font-family:var(--font-heading);font-size:15px;font-weight:600;color:var(--navy)}
+.tb-left p{font-size:11px;color:var(--grey-mid);margin-top:1px}
 .tb-right{display:flex;align-items:center;gap:10px}
-.cycle-pill{
-  background:var(--cream);border:1px solid var(--border);
-  border-radius:2px;padding:5px 12px;
-  font-size:11px;color:var(--navy);font-weight:500;
-}
-#content{flex:1;overflow-y:auto;padding:28px}
+.cycle-badge{background:var(--grey-bg);color:var(--navy);font-size:11px;font-weight:500;padding:5px 11px;border-radius:4px;border:1px solid var(--grey-border)}
 
-/* ── HOME PAGE ── */
-.welcome-strip{
-  background:#1C1C1C;border-radius:4px;
-  padding:20px 24px;margin-bottom:24px;
-  display:flex;align-items:center;justify-content:space-between;
-  position:relative;overflow:hidden;
-}
-.welcome-strip::before{
-  content:'';position:absolute;right:-40px;top:-40px;
-  width:200px;height:200px;border-radius:50%;
-  background:rgba(201,168,76,.08);
-}
-.welcome-strip::after{
-  content:'';position:absolute;right:60px;bottom:-60px;
-  width:150px;height:150px;border-radius:50%;
-  background:rgba(201,168,76,.05);
-}
-.welcome-text h2{
-  font-family:var(--font-display);font-size:17px;
-  font-weight:600;color:var(--white);margin-bottom:4px;
-}
-.welcome-text p{font-size:12px;color:rgba(255,255,255,.5);max-width:440px}
-.welcome-actions{display:flex;gap:8px;flex-shrink:0;position:relative;z-index:1}
-.btn{
-  display:inline-flex;align-items:center;gap:6px;
-  padding:7px 14px;border-radius:3px;
-  font-size:12px;font-weight:600;border:none;cursor:pointer;
-  transition:all .12s;letter-spacing:.02em;
-}
-.btn:hover{opacity:.88;transform:translateY(-1px)}
-.btn-red-solid{background:var(--red);color:var(--white)}
-.btn-outline{background:transparent;color:rgba(255,255,255,.8);border:1px solid rgba(255,255,255,.2)}
-.btn-outline:hover{background:rgba(255,255,255,.08)}
-.btn-primary{background:#1C1C1C;color:var(--white)}
-.btn-secondary{background:var(--cream);color:var(--navy);border:1px solid var(--border)}
+/* BUTTONS */
+.btn{display:inline-flex;align-items:center;gap:6px;padding:7px 14px;border-radius:5px;font-size:12px;font-weight:500;border:none;cursor:pointer;transition:opacity .15s}
+.btn:hover{opacity:.88}
+.btn-primary{background:var(--red);color:#fff}
+.btn-secondary{background:var(--white);color:var(--navy);border:1px solid var(--grey-border)}
 .btn-sm{padding:5px 10px;font-size:11px}
+.btn-danger{background:#fcebeb;color:#A32D2D;border:1px solid #f5c6c6}
 
-/* METRICS */
-.metrics-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:24px}
-.metric-card{
-  background:var(--white);border:1px solid var(--border);
-  border-radius:4px;padding:16px 18px;
-  position:relative;overflow:hidden;
-}
-.metric-card::before{
-  content:'';position:absolute;top:0;left:0;right:0;height:3px;
-  background:var(--red);
-}
-.metric-label{font-size:10px;text-transform:uppercase;letter-spacing:.07em;color:var(--mid);margin-bottom:8px}
-.metric-val{font-family:var(--font-display);font-size:28px;font-weight:600;color:var(--navy);line-height:1}
-.metric-sub{font-size:10px;color:var(--mid);margin-top:5px}
+/* CARDS */
+.card{background:var(--white);border:1px solid var(--grey-border);border-radius:8px;padding:16px}
+.card-title{font-family:var(--font-heading);font-size:13px;font-weight:600;color:var(--navy);padding-bottom:5px;border-bottom:2px solid var(--red);display:inline-block;margin-bottom:14px}
+.metric-card{background:var(--grey-bg);border-radius:8px;padding:14px 16px}
+.metric-label{font-size:10px;color:var(--text-light);text-transform:uppercase;letter-spacing:.06em}
+.metric-value{font-size:26px;font-weight:600;margin-top:4px;line-height:1;font-family:var(--font-heading);color:var(--navy)}
+.metric-sub{font-size:10px;color:var(--text-light);margin-top:4px}
+
+/* WELCOME BANNER */
+.welcome-banner{background:var(--white);border-left:4px solid var(--red);border-radius:8px;padding:18px 20px;margin-bottom:20px;display:flex;align-items:center;justify-content:space-between;border-top:1px solid var(--grey-border);border-right:1px solid var(--grey-border);border-bottom:1px solid var(--grey-border)}
+.welcome-banner h2{font-family:var(--font-heading);font-size:16px;font-weight:600;color:var(--navy)}
+.welcome-banner p{font-size:12px;color:var(--text-mid);margin-top:4px;max-width:460px}
+.welcome-actions{display:flex;gap:8px;flex-shrink:0}
+
+/* GRIDS */
+.grid-4{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:20px}
+.grid-3{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:20px}
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
 
 /* NAV CARDS */
-.nav-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:24px}
-.nav-card{
-  background:var(--white);border:1px solid var(--border);
-  border-radius:4px;padding:16px;cursor:pointer;
-  display:flex;align-items:center;gap:12px;
-  transition:all .15s;
-}
-.nav-card:hover{border-color:var(--red);box-shadow:0 4px 16px rgba(139,26,26,.1);transform:translateY(-1px)}
-.nav-icon{
-  width:40px;height:40px;border-radius:3px;
-  display:flex;align-items:center;justify-content:center;flex-shrink:0;
-}
-.nav-icon svg{width:20px;height:20px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
-.ni-gold{background:rgba(139,26,26,.08);color:var(--red)}
-.ni-navy{background:rgba(15,30,60,.08);color:var(--navy)}
-.ni-red{background:rgba(139,26,26,.08);color:var(--red)}
+.nav-card{display:flex;align-items:center;gap:12px;padding:14px;background:var(--white);border:1px solid var(--grey-border);border-radius:8px;cursor:pointer;transition:all .12s}
+.nav-card:hover{border-color:var(--navy);background:#f8f8fc}
+.nav-card-icon{width:38px;height:38px;border-radius:7px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.nav-card-icon svg{width:20px;height:20px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.nc-blue{background:#e6f1fb;color:var(--navy)}
+.nc-red{background:#fcebeb;color:#A32D2D}
+.nc-green{background:#eaf3de;color:var(--green)}
+.nc-amber{background:#faeeda;color:var(--amber)}
 .nav-card-title{font-size:12px;font-weight:600;color:var(--navy)}
-.nav-card-sub{font-size:10px;color:var(--mid);margin-top:2px}
-.nav-arrow{margin-left:auto;color:var(--border)}
-.nav-arrow svg{width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:2}
-
-/* BOTTOM GRID */
-.bottom-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
-.card{background:var(--white);border:1px solid var(--border);border-radius:4px;padding:18px}
-.card-title{
-  font-family:var(--font-display);font-size:13px;font-weight:600;color:var(--navy);
-  padding-bottom:5px;border-bottom:2px solid var(--red);
-  display:inline-block;margin-bottom:14px;
-}
-
-/* ACTIVITY */
-.act-row{display:flex;gap:10px;padding:8px 0;border-bottom:.5px solid var(--border)}
-.act-row:last-child{border-bottom:none}
-.act-dot{width:7px;height:7px;border-radius:50%;margin-top:4px;flex-shrink:0}
-.act-name{font-size:12px;font-weight:500;color:var(--ink)}
-.act-meta{font-size:10px;color:var(--mid);margin-top:2px}
-
-/* RATING DIST */
-.dist-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:4px}
-.dist-box{border-radius:3px;padding:10px 12px}
-.dist-num{font-family:var(--font-display);font-size:22px;font-weight:600}
-.dist-label{font-size:9px;text-transform:uppercase;letter-spacing:.05em;margin-top:2px;font-weight:600}
-
-/* MISC */
-.hidden{display:none!important}
-.page-view{display:none}
-.page-view.active{display:block}
-.text-gold{color:var(--gold-dark)}
-.text-navy{color:var(--navy)}
+.nav-card-sub{font-size:10px;color:var(--text-light);margin-top:2px}
+.nav-card-arrow{margin-left:auto;color:var(--grey-border)}
+.nav-card-arrow svg{width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:2}
 
 /* ORG PILLS */
-.pill-sg  { background:#e6f1fb;color:#185FA5;font-size:9px;font-weight:600;padding:2px 7px;border-radius:2px;display:inline-block }
-.pill-stl { background:rgba(139,26,26,.1);color:var(--red);font-size:9px;font-weight:600;padding:2px 7px;border-radius:2px;display:inline-block }
-.band { display:inline-block;font-size:10px;font-weight:600;padding:2px 8px;border-radius:2px }
-.band-exc     { background:#eaf3de;color:#3B6D11 }
-.band-exceeds { background:#e6f1fb;color:#185FA5 }
-.band-meets   { background:#f0f1f4;color:var(--navy) }
-.band-needs   { background:#faeeda;color:#854F0B }
-.band-unsat   { background:#fcebeb;color:#A32D2D }
-/* TOAST */
-#toast{
-  position:fixed;bottom:24px;right:24px;
-  background:var(--navy);color:var(--white);
-  border-left:3px solid var(--gold);
-  padding:10px 18px;border-radius:3px;
-  font-size:12px;z-index:3000;
-  opacity:0;transition:opacity .25s;pointer-events:none;
-  box-shadow:0 8px 24px rgba(0,0,0,.2);
-}
-#toast.show{opacity:1}
+.pill-sg{background:#e6f1fb;color:#185FA5;font-size:9px;font-weight:600;padding:2px 7px;border-radius:3px;display:inline-block}
+.pill-stl{background:#fcebeb;color:var(--red);font-size:9px;font-weight:600;padding:2px 7px;border-radius:3px;display:inline-block}
 
-/* PLACEHOLDER PAGES */
-.coming-soon{
-  display:flex;flex-direction:column;align-items:center;justify-content:center;
-  padding:80px 20px;text-align:center;
-}
-.coming-soon .cs-icon{
-  width:56px;height:56px;border-radius:50%;
-  background:var(--cream);display:flex;align-items:center;justify-content:center;
-  margin:0 auto 16px;
-}
-.coming-soon .cs-icon svg{width:24px;height:24px;stroke:var(--mid);fill:none;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round}
-.coming-soon h3{font-family:var(--font-display);font-size:15px;color:var(--navy);margin-bottom:6px}
-.coming-soon p{font-size:12px;color:var(--mid)}
+/* BAND */
+.band{display:inline-block;font-size:10px;font-weight:600;padding:2px 8px;border-radius:3px}
+.band-exc{background:#eaf3de;color:#3B6D11}
+.band-exceeds{background:#e6f1fb;color:#185FA5}
+.band-meets{background:var(--grey-bg);color:var(--navy)}
+.band-needs{background:#faeeda;color:var(--amber)}
+.band-unsat{background:#fcebeb;color:#A32D2D}
+
+/* ACTIVITY */
+.activity-row{display:flex;gap:10px;padding:7px 0;border-bottom:.5px solid #eee}
+.activity-row:last-child{border-bottom:none}
+.act-dot{width:8px;height:8px;border-radius:50%;margin-top:3px;flex-shrink:0}
+.act-text{font-size:11px;color:var(--text-mid);line-height:1.4}
+.act-time{font-size:10px;color:var(--text-light);margin-top:1px}
+
+/* RATING DIST */
+.rating-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:4px}
+.rating-box{border-radius:5px;padding:10px 12px}
+.rating-num{font-family:var(--font-heading);font-size:22px;font-weight:600}
+.rating-lbl{font-size:9px;text-transform:uppercase;letter-spacing:.05em;margin-top:2px;font-weight:600}
+
+/* PAGE VIEWS */
+.page-view{display:none}
+.page-view.active{display:block}
+.hidden{display:none!important}
+.coming-soon{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:80px 20px;text-align:center}
+.coming-soon h3{font-family:var(--font-heading);font-size:15px;color:var(--navy);margin-bottom:6px}
+.coming-soon p{font-size:12px;color:var(--text-light)}
+
+/* TABLE */
+table{width:100%;border-collapse:collapse;font-size:12px}
+th{padding:9px 14px;text-align:left;font-size:10px;text-transform:uppercase;letter-spacing:.05em;color:var(--text-light);font-weight:600;background:var(--grey-bg);border-bottom:1.5px solid var(--grey-border)}
+td{padding:9px 14px;border-bottom:.5px solid #eee;color:var(--text-dark)}
+tr:last-child td{border-bottom:none}
+tr:hover td{background:#fafafa}
+
+/* STATUS DOTS */
+.status-badge{display:inline-flex;align-items:center;gap:5px;font-size:11px}
+.status-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0}
+.dot-done{background:#3B6D11}
+.dot-prog{background:#854F0B}
+.dot-open{background:#d0d0d8}
+.table-actions{display:flex;gap:4px;flex-wrap:wrap}
+.btn-danger{background:#fcebeb;color:#A32D2D;border:1px solid #f5c6c6}
+.filter-row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.appr-tab{padding:5px 12px;border:none;background:transparent;font-size:11px;color:var(--text-mid);cursor:pointer;border-radius:4px;font-family:var(--font-ui)}
+.appr-tab.active{background:var(--white);color:var(--navy);font-weight:600;box-shadow:0 0 0 1px var(--grey-border)}
+/* TOAST */
+#toast{position:fixed;bottom:24px;right:24px;background:var(--navy);color:#fff;border-left:3px solid var(--red);padding:10px 18px;border-radius:5px;font-size:12px;z-index:3000;opacity:0;transition:opacity .25s;pointer-events:none;box-shadow:0 4px 16px rgba(0,0,0,.2)}
+#toast.show{opacity:1}
 </style>
 </head>
 <body>
@@ -367,7 +193,7 @@ input,select,textarea{font-family:var(--font-ui)}
         <input type="password" id="login-password" placeholder="&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;" />
       </div>
       <button class="login-btn" id="login-btn" onclick="doLogin()">Sign in</button>
-      <div class="login-footer">Simba Group &copy; 2026 &nbsp;&middot;&nbsp; <strong>R2</strong></div>
+      <div class="login-footer">Simba Group &copy; 2026 &nbsp;&middot;&nbsp; <strong>R3</strong></div>
     </div>
   </div>
 </div>
@@ -377,68 +203,59 @@ input,select,textarea{font-family:var(--font-ui)}
 
   <!-- SIDEBAR -->
   <div id="sidebar">
-    <div class="sb-header">
+    <div class="sb-logo">
       <div class="sb-logo-row">
+        <div class="sb-icon"><span class="sb-icon-text">SG</span></div>
         <div>
-          <div class="sb-org">Simba Group</div>
-          <div class="sb-tagline">Performance Management</div>
+          <div class="sb-title">Simba Group</div>
+          <div class="sb-sub">Performance Management</div>
         </div>
       </div>
-      <select id="org-switcher" onchange="switchOrg(this.value)" style="width:100%;margin-bottom:8px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.15);border-radius:3px;color:rgba(255,255,255,.75);padding:5px 8px;font-size:11px;cursor:pointer">
+      <div class="sb-badge" id="cycle-label">H1 2026 ACTIVE</div>
+    </div>
+    <div class="sb-org-switch">
+      <label>Viewing</label>
+      <select id="org-switcher" onchange="switchOrg(this.value)">
         <option value="both">Both organisations</option>
         <option value="sg">Simba Group HO</option>
         <option value="stl">Simba Telecom Uganda</option>
       </select>
-      <div class="sb-cycle">
-        <span class="sb-cycle-dot"></span>
-        <span id="cycle-label">H1 2026 Active</span>
-      </div>
     </div>
-
     <div class="sb-section">
       <div class="sb-section-label">Main</div>
       <div class="sb-item active" data-page="home" onclick="navigate('home')">
-        <svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
-        Home
+        <svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>Home
       </div>
       <div class="sb-item" data-page="appraisals" onclick="navigate('appraisals')">
-        <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
-        Appraisals
+        <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>Appraisals
       </div>
       <div class="sb-item" data-page="analytics" onclick="navigate('analytics')">
-        <svg viewBox="0 0 24 24"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
-        Analytics
+        <svg viewBox="0 0 24 24"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>Analytics
       </div>
       <div class="sb-item" data-page="reports" onclick="navigate('reports')">
-        <svg viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
-        Reports
+        <svg viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>Reports
       </div>
     </div>
-
     <div class="sb-section">
       <div class="sb-section-label">Setup</div>
       <div class="sb-item" data-page="staff" onclick="navigate('staff')">
-        <svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
-        Staff
+        <svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>Staff
       </div>
       <div class="sb-item" data-page="kpis" onclick="navigate('kpis')">
-        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>
-        KPI Templates
+        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>KPI Templates
       </div>
       <div class="sb-item" data-page="settings" onclick="navigate('settings')">
-        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
-        Settings
+        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>Settings
       </div>
     </div>
-
     <div class="sb-footer">
       <div class="sb-user">
         <div class="sb-avatar"><span id="sb-initials">KK</span></div>
         <div>
-          <div class="sb-uname" id="sb-name">Loading...</div>
-          <div class="sb-urole" id="sb-role"></div>
+          <div class="sb-user-name" id="sb-name">Kusain Kabugo</div>
+          <div class="sb-user-role" id="sb-role">Head of Human Resources</div>
         </div>
-        <button class="sb-logout" onclick="doLogout()" title="Sign out">&#8594;</button>
+        <button class="sb-logout" onclick="doLogout()" title="Sign out">&rarr;</button>
       </div>
     </div>
   </div>
@@ -446,105 +263,85 @@ input,select,textarea{font-family:var(--font-ui)}
   <!-- MAIN -->
   <div id="main">
     <div id="topbar">
-      <div>
-        <div class="tb-title" id="tb-title">Home</div>
-        <div class="tb-sub" id="tb-sub">Simba Group</div>
-      </div>
-      <div class="tb-right">
-        <div class="cycle-pill" id="tb-cycle">&#128197; H1 2026 &nbsp;&middot;&nbsp; Jan &ndash; Jun 2026</div>
-      </div>
+      <div class="tb-left"><h1 id="tb-title">Home</h1><p id="tb-sub">Simba Group</p></div>
+      <div class="tb-right"><div class="cycle-badge" id="tb-cycle">&#128197; H1 2026 &middot; Jan &ndash; Jun 2026</div></div>
     </div>
 
     <div id="content">
 
       <!-- HOME -->
       <div class="page-view active" id="page-home">
-
-        <div class="welcome-strip">
-          <div class="welcome-text">
+        <div class="welcome-banner">
+          <div>
             <h2 id="welcome-msg">Good morning</h2>
-            <p id="welcome-sub">H1 2026 appraisal cycle is active. Loading summary...</p>
+            <p id="welcome-sub">H1 2026 cycle active. Loading summary...</p>
           </div>
           <div class="welcome-actions">
-            <button class="btn btn-outline" onclick="navigate('appraisals')">View appraisals</button>
-            <button class="btn btn-red-solid" onclick="navigate('staff')">Staff</button>
+            <button class="btn btn-secondary" onclick="navigate('appraisals')">View appraisals</button>
+            <button class="btn btn-primary" onclick="navigate('staff')">Staff</button>
           </div>
         </div>
-
-        <div class="metrics-grid">
-          <div class="metric-card">
-            <div class="metric-label">Total staff</div>
-            <div class="metric-val text-navy" id="m-total">--</div>
-            <div class="metric-sub" id="m-total-sub">Simba Group</div>
-          </div>
-          <div class="metric-card">
-            <div class="metric-label">Appraisals submitted</div>
-            <div class="metric-val" style="color:var(--gold-dark)" id="m-submitted">--</div>
-            <div class="metric-sub" id="m-submitted-sub">This cycle</div>
-          </div>
-          <div class="metric-card">
-            <div class="metric-label">Pending review</div>
-            <div class="metric-val" style="color:var(--red)" id="m-pending">--</div>
-            <div class="metric-sub">Awaiting approval</div>
-          </div>
-          <div class="metric-card">
-            <div class="metric-label">Avg. score</div>
-            <div class="metric-val text-navy" id="m-avg">--</div>
-            <div class="metric-sub" id="m-avg-sub">No data yet</div>
-          </div>
+        <div class="grid-4">
+          <div class="metric-card"><div class="metric-label">Total staff</div><div class="metric-value" id="m-total">--</div><div class="metric-sub" id="m-org-sub">Simba Group</div></div>
+          <div class="metric-card"><div class="metric-label">Appraisals submitted</div><div class="metric-value" id="m-submitted" style="color:var(--red)">--</div><div class="metric-sub" id="m-comp-sub">This cycle</div></div>
+          <div class="metric-card"><div class="metric-label">Pending review</div><div class="metric-value" id="m-pending" style="color:var(--amber)">--</div><div class="metric-sub">Awaiting approval</div></div>
+          <div class="metric-card"><div class="metric-label">Avg. score</div><div class="metric-value" id="m-avg">--</div><div class="metric-sub" id="m-band">No data yet</div></div>
         </div>
-
-        <div class="nav-grid">
-          <div class="nav-card" onclick="navigate('appraisals')">
-            <div class="nav-icon ni-navy"><svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg></div>
-            <div style="flex:1"><div class="nav-card-title">Appraisals</div><div class="nav-card-sub">View, start, and track forms</div></div>
-            <div class="nav-arrow"><svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg></div>
-          </div>
-          <div class="nav-card" onclick="navigate('analytics')">
-            <div class="nav-icon ni-gold"><svg viewBox="0 0 24 24"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg></div>
-            <div style="flex:1"><div class="nav-card-title">Analytics</div><div class="nav-card-sub">Scores, trends, rating bands</div></div>
-            <div class="nav-arrow"><svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg></div>
-          </div>
-          <div class="nav-card" onclick="navigate('reports')">
-            <div class="nav-icon ni-red"><svg viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg></div>
-            <div style="flex:1"><div class="nav-card-title">Reports</div><div class="nav-card-sub">Individual and group reports</div></div>
-            <div class="nav-arrow"><svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg></div>
-          </div>
-          <div class="nav-card" onclick="navigate('staff')">
-            <div class="nav-icon ni-navy"><svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg></div>
-            <div style="flex:1"><div class="nav-card-title">Staff</div><div class="nav-card-sub">Manage staff and appraisers</div></div>
-            <div class="nav-arrow"><svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg></div>
-          </div>
-          <div class="nav-card" onclick="navigate('kpis')">
-            <div class="nav-icon ni-gold"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg></div>
-            <div style="flex:1"><div class="nav-card-title">KPI Templates</div><div class="nav-card-sub">Set KPIs and weights per role</div></div>
-            <div class="nav-arrow"><svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg></div>
-          </div>
-          <div class="nav-card" onclick="navigate('settings')">
-            <div class="nav-icon ni-red"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/></svg></div>
-            <div style="flex:1"><div class="nav-card-title">Settings</div><div class="nav-card-sub">Cycle, access, configuration</div></div>
-            <div class="nav-arrow"><svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg></div>
-          </div>
+        <div class="grid-3" style="margin-bottom:20px">
+          <div class="nav-card" onclick="navigate('appraisals')"><div class="nav-card-icon nc-blue"><svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg></div><div style="flex:1"><div class="nav-card-title">Appraisals</div><div class="nav-card-sub">View, start, and track forms</div></div><div class="nav-card-arrow"><svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg></div></div>
+          <div class="nav-card" onclick="navigate('analytics')"><div class="nav-card-icon nc-green"><svg viewBox="0 0 24 24"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg></div><div style="flex:1"><div class="nav-card-title">Analytics</div><div class="nav-card-sub">Scores, trends, rating bands</div></div><div class="nav-card-arrow"><svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg></div></div>
+          <div class="nav-card" onclick="navigate('reports')"><div class="nav-card-icon nc-red"><svg viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg></div><div style="flex:1"><div class="nav-card-title">Reports</div><div class="nav-card-sub">Individual and group reports</div></div><div class="nav-card-arrow"><svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg></div></div>
+          <div class="nav-card" onclick="navigate('staff')"><div class="nav-card-icon nc-amber"><svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg></div><div style="flex:1"><div class="nav-card-title">Staff</div><div class="nav-card-sub">Manage staff and appraisers</div></div><div class="nav-card-arrow"><svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg></div></div>
+          <div class="nav-card" onclick="navigate('kpis')"><div class="nav-card-icon nc-blue"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg></div><div style="flex:1"><div class="nav-card-title">KPI Templates</div><div class="nav-card-sub">Set KPIs and weights per role</div></div><div class="nav-card-arrow"><svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg></div></div>
+          <div class="nav-card" onclick="navigate('settings')"><div class="nav-card-icon nc-green"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/></svg></div><div style="flex:1"><div class="nav-card-title">Settings</div><div class="nav-card-sub">Cycle, access, configuration</div></div><div class="nav-card-arrow"><svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg></div></div>
         </div>
-
-        <div class="bottom-grid">
-          <div class="card">
-            <div class="card-title">Recent activity</div>
-            <div id="recent-activity"><div style="font-size:11px;color:var(--mid)">No activity yet.</div></div>
-          </div>
-          <div class="card">
-            <div class="card-title">Rating distribution</div>
-            <div class="dist-grid" id="rating-dist">
-              <div style="font-size:11px;color:var(--mid);grid-column:1/-1">No completed appraisals yet.</div>
-            </div>
-          </div>
+        <div class="grid-2">
+          <div class="card"><div class="card-title">Recent activity</div><div id="recent-activity"><div style="font-size:11px;color:var(--text-light)">No activity yet.</div></div></div>
+          <div class="card"><div class="card-title">Rating distribution</div><div class="rating-grid" id="rating-dist"><div style="font-size:11px;color:var(--text-light);grid-column:1/-1">No completed appraisals yet.</div></div></div>
         </div>
-
       </div>
 
       <!-- PLACEHOLDERS -->
       <div class="page-view" id="page-appraisals">
-        <div class="coming-soon"><div class="cs-icon"><svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg></div><h3>Appraisals</h3><p>Coming in R2</p></div>
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;flex-wrap:wrap;gap:10px">
+          <div style="display:flex;align-items:center;gap:12px">
+            <div>
+              <div style="font-family:var(--font-heading);font-size:15px;font-weight:600;color:var(--navy)">Appraisals</div>
+              <div style="font-size:11px;color:var(--text-light);margin-top:2px"><span id="appr-count">--</span> records</div>
+            </div>
+          </div>
+          <div class="filter-row">
+            <div style="background:var(--grey-bg);border-radius:6px;padding:3px;display:flex;gap:2px">
+              <button class="appr-tab active" data-tab="all">All</button>
+              <button class="appr-tab" data-tab="pending">Pending</button>
+              <button class="appr-tab" data-tab="done">Submitted</button>
+            </div>
+            <select id="filter-appr-org" onchange="filterAppraisalsTable()" style="padding:6px 10px;border:1px solid var(--grey-border);border-radius:5px;font-size:11px;background:var(--white)">
+              <option value="">Both orgs</option>
+              <option value="sg">Simba Group HO</option>
+              <option value="stl">Simba Telecom Uganda</option>
+            </select>
+            <button class="btn btn-primary btn-sm" id="btn-new-appraisal">+ New</button>
+          </div>
+        </div>
+        <div style="background:var(--white);border:1px solid var(--grey-border);border-radius:8px;overflow:hidden">
+          <table>
+            <thead>
+              <tr>
+                <th>Employee</th>
+                <th>Organisation</th>
+                <th>Department</th>
+                <th>Position</th>
+                <th>Self-appraisal</th>
+                <th>Appraiser review</th>
+                <th>Final score</th>
+                <th>Rating</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="appr-tbody"><tr><td colspan="9" style="text-align:center;padding:24px;color:var(--text-light);font-size:12px">Loading...</td></tr></tbody>
+          </table>
+        </div>
       </div>
       <div class="page-view" id="page-analytics">
         <div class="coming-soon"><div class="cs-icon"><svg viewBox="0 0 24 24"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg></div><h3>Analytics</h3><p>Coming in R3</p></div>
@@ -819,8 +616,9 @@ async function loadHomeData() {
     renderRatingDist(completed);
     renderRecentActivity(appraisals.filter(function(a){ return a.submitted_at; }).sort(function(a,b){ return new Date(b.submitted_at)-new Date(a.submitted_at); }).slice(0,5));
   } catch(e) {
-    document.getElementById('welcome-sub').textContent = 'Could not load summary.';
-    console.error('loadHomeData:', e);
+    var msg = e.message || JSON.stringify(e);
+    document.getElementById('welcome-sub').textContent = currentUser && currentUser.id === 'demo' ? 'Demo mode — connect Supabase to load live data.' : 'Could not load summary.';
+    if (currentUser && currentUser.id !== 'demo') console.error('loadHomeData:', e);
   }
 }
 
@@ -1011,6 +809,202 @@ async function saveStaff() {
     showToast(_editingStaffId ? name + ' updated.' : name + ' added.');
     loadStaffPage();
   } catch(e) { showToast('Error: ' + e.message); console.error('saveStaff:', e); }
+}
+
+
+// ── APPRAISALS PAGE ──────────────────────────────────────
+var _appraisalsCache = [];
+var _activeCycleId   = null;
+var _currentApprTab  = 'all';
+
+async function loadAppraisalsPage() {
+  var tbody   = document.getElementById('appr-tbody');
+  var counter = document.getElementById('appr-count');
+  if (!tbody) return;
+  tbody.innerHTML = '<tr><td colspan="9" style="text-align:center;padding:24px;color:var(--text-light);font-size:12px">Loading...</td></tr>';
+  try {
+    if (_staffCache.length === 0) await loadStaffPage();
+    var cl    = getClient();
+    var cr    = await cl.from('appraisal_cycles').select('id,label').eq('is_active',true).single();
+    if (cr.error) throw cr.error;
+    _activeCycleId = cr.data.id;
+    var staffIds = _staffCache.map(function(s){ return s.id; });
+    var q = cl.from('appraisals')
+      .select('id,status,self_kpi_score,appraiser_kpi_score,final_score,rating_band,staff_id,submitted_at,review_comments')
+      .eq('cycle_id', cr.data.id)
+      .order('submitted_at', { ascending:false, nullsFirst:false });
+    if (currentUser.role !== 'admin' || currentOrg !== 'both') {
+      q = q.in('staff_id', staffIds.length > 0 ? staffIds : ['00000000-0000-0000-0000-000000000000']);
+    }
+    var ar = await q;
+    if (ar.error) throw ar.error;
+    _appraisalsCache = ar.data || [];
+    if (counter) counter.textContent = _appraisalsCache.length + ' records';
+    renderAppraisalsTable(_appraisalsCache);
+  } catch(e) {
+    if (tbody) tbody.innerHTML = '<tr><td colspan="9" style="text-align:center;padding:24px;color:var(--red);font-size:12px">Error: ' + e.message + '</td></tr>';
+    console.error('loadAppraisalsPage:', e);
+  }
+}
+
+function renderAppraisalsTable(appraisals) {
+  var tbody = document.getElementById('appr-tbody');
+  if (!tbody) return;
+  if (!appraisals || appraisals.length === 0) {
+    tbody.innerHTML = '<tr><td colspan="9" style="text-align:center;padding:24px;color:var(--text-light);font-size:12px">No appraisals yet this cycle. Click “+ New” to start one.</td></tr>';
+    return;
+  }
+  tbody.innerHTML = appraisals.map(function(a) {
+    var s      = _staffCache.find(function(x){ return x.id === a.staff_id; }) || {};
+    var orgPill= s.organisation === 'sg' ? '<span class="pill-sg">SG</span>' : '<span class="pill-stl">STL</span>';
+    var score  = a.final_score != null ? '<strong>' + Math.round(a.final_score) + '%</strong>' : '—';
+    var bClass = a.final_score >= 90 ? 'band-exc' : a.final_score >= 75 ? 'band-exceeds' : a.final_score >= 60 ? 'band-meets' : a.final_score >= 40 ? 'band-needs' : 'band-unsat';
+    var band   = a.rating_band ? '<span class="band ' + bClass + '">' + a.rating_band + '</span>' : '<span style="color:var(--text-light);font-size:10px">Pending</span>';
+    var sName  = s.full_name || '';
+    var isDraft    = a.status === 'draft';
+    var isSubmitted= a.status === 'submitted';
+    var isApproved = a.status === 'approved';
+    var selfDot = isApproved || isSubmitted ? 'dot-done' : isDraft ? 'dot-prog' : 'dot-open';
+    var selfLbl = isApproved ? 'Approved' : isSubmitted ? 'Submitted' : isDraft ? 'Draft saved' : 'Not started';
+    var hodDot  = isApproved ? 'dot-done' : isSubmitted ? 'dot-prog' : 'dot-open';
+    var hodLbl  = isApproved ? 'Complete' : isSubmitted ? 'Pending approval' : isDraft ? 'Pending' : 'Awaiting';
+    var canApprv= currentUser && (currentUser.role === 'admin' || currentUser.role === 'approver');
+    var canDel  = currentUser && currentUser.role === 'admin';
+    var resetBtn = canApprv ? ' <button class="btn btn-secondary btn-sm" data-action="reset-appr" data-appr-id="' + a.id + '" data-staff-name="' + sName + '">Reset</button>' : '';
+    var delBtn   = canDel   ? ' <button class="btn btn-danger btn-sm" data-action="delete-appr" data-appr-id="' + a.id + '" data-staff-name="' + sName + '">Delete</button>' : '';
+    var actions;
+    if (isApproved) {
+      actions = '<button class="btn btn-secondary btn-sm" data-action="view-appr" data-appr-id="' + a.id + '">View</button>' + resetBtn + delBtn;
+    } else if (isSubmitted && canApprv) {
+      actions = '<button class="btn btn-primary btn-sm" data-action="view-appr" data-appr-id="' + a.id + '">View</button>'
+        + ' <button class="btn btn-secondary btn-sm" data-action="approve-appr" data-appr-id="' + a.id + '" data-staff-name="' + sName + '">Approve</button>'
+        + ' <button class="btn btn-danger btn-sm" data-action="reject-appr" data-appr-id="' + a.id + '" data-staff-name="' + sName + '">Return</button>'
+        + resetBtn + delBtn;
+    } else if (isSubmitted) {
+      actions = '<button class="btn btn-secondary btn-sm" data-action="view-appr" data-appr-id="' + a.id + '">View</button><span style="font-size:10px;color:var(--amber);margin-left:6px">Awaiting approval</span>';
+    } else if (isDraft) {
+      actions = (a.review_comments ? '<div style="font-size:10px;color:#A32D2D;margin-bottom:4px;padding:4px 8px;background:#fcebeb;border-radius:3px;border-left:3px solid #A32D2D">Returned: ' + a.review_comments + '</div>' : '')
+        + '<button class="btn btn-primary btn-sm" data-action="continue-appr" data-appr-id="' + a.id + '" data-staff-id="' + a.staff_id + '">Continue</button>'
+        + ' <button class="btn btn-danger btn-sm" data-action="discard-appr" data-appr-id="' + a.id + '" data-staff-name="' + sName + '">Discard</button>'
+        + delBtn;
+    } else {
+      actions = '<button class="btn btn-primary btn-sm" data-action="start-appr" data-staff-id="' + a.staff_id + '">Start</button>';
+    }
+    return '<tr data-appr-id="' + a.id + '" data-org="' + (s.organisation||'') + '" data-status="' + a.status + '">'
+      + '<td><strong>' + (s.full_name || '—') + '</strong></td>'
+      + '<td>' + orgPill + '</td>'
+      + '<td>' + (s.department || '—') + '</td>'
+      + '<td>' + (s.position   || '—') + '</td>'
+      + '<td><span class="status-badge"><span class="status-dot ' + selfDot + '"></span>' + selfLbl + '</span></td>'
+      + '<td><span class="status-badge"><span class="status-dot ' + hodDot + '"></span>' + hodLbl + '</span></td>'
+      + '<td>' + score + '</td>'
+      + '<td>' + band + '</td>'
+      + '<td><div class="table-actions">' + actions + '</div></td>'
+      + '</tr>';
+  }).join('');
+}
+
+function filterAppraisalsTable() {
+  var orgF   = (document.getElementById('filter-appr-org') || {value:''}).value;
+  var rows   = document.querySelectorAll('#appr-tbody tr[data-appr-id]');
+  var visible = 0;
+  rows.forEach(function(row) {
+    var rOrg    = row.dataset.org    || '';
+    var rStatus = row.dataset.status || '';
+    var show = true;
+    if (orgF && rOrg !== orgF) show = false;
+    if (_currentApprTab === 'pending' && rStatus !== 'submitted') show = false;
+    if (_currentApprTab === 'done'    && !['approved','complete'].includes(rStatus)) show = false;
+    row.style.display = show ? '' : 'none';
+    if (show) visible++;
+  });
+  var counter = document.getElementById('appr-count');
+  if (counter) counter.textContent = visible + ' records';
+}
+
+// ── APPRAISAL TABS ──
+document.addEventListener('click', function(e) {
+  var tab = e.target.closest('.appr-tab');
+  if (!tab) return;
+  _currentApprTab = tab.dataset.tab;
+  document.querySelectorAll('.appr-tab').forEach(function(b) { b.classList.remove('active'); });
+  tab.classList.add('active');
+  filterAppraisalsTable();
+});
+
+// ── APPRAISAL ACTIONS ──
+document.addEventListener('click', function(e) {
+  var btn = e.target.closest('button[data-action]');
+  if (!btn) return;
+  var action = btn.dataset.action;
+  if (action === 'start-appr')    { var s1 = _staffCache.find(function(x){ return x.id === btn.dataset.staffId; }); if(s1) showToast('Appraisal form coming in R3.'); }
+  if (action === 'continue-appr') { showToast('Continue draft coming in R3.'); }
+  if (action === 'discard-appr')  { if(confirm('Discard draft for ' + (btn.dataset.staffName||'staff') + '?')) discardAppraisal(btn.dataset.apprId); }
+  if (action === 'approve-appr')  { approveAppraisal(btn.dataset.apprId, btn.dataset.staffName); }
+  if (action === 'reject-appr')   { openReturnModal(btn.dataset.apprId, btn.dataset.staffName); }
+  if (action === 'reset-appr')    { resetToDraft(btn.dataset.apprId, btn.dataset.staffName); }
+  if (action === 'delete-appr')   { deleteAppraisal(btn.dataset.apprId, btn.dataset.staffName); }
+  if (e.target.id === 'btn-new-appraisal') openNewAppraisalPicker();
+});
+
+async function approveAppraisal(id, name) {
+  if (!confirm('Approve the appraisal for ' + (name||'this staff member') + '?')) return;
+  try {
+    var cl = getClient();
+    var res = await cl.from('appraisals').update({ status:'approved', reviewed_by:currentUser.id, reviewed_at:new Date().toISOString() }).eq('id',id);
+    if (res.error) throw res.error;
+    showToast('Appraisal approved.');
+    loadAppraisalsPage(); loadHomeData();
+  } catch(e) { showToast('Error: ' + e.message); }
+}
+
+async function discardAppraisal(id) {
+  try {
+    var cl = getClient();
+    var res = await cl.from('appraisals').delete().eq('id',id);
+    if (res.error) throw res.error;
+    showToast('Draft discarded.');
+    loadAppraisalsPage(); loadHomeData();
+  } catch(e) { showToast('Error: ' + e.message); }
+}
+
+async function resetToDraft(id, name) {
+  if (!confirm('Reset appraisal for ' + (name||'staff') + ' to draft?')) return;
+  try {
+    var cl = getClient();
+    var res = await cl.from('appraisals').update({ status:'draft', review_comments:'Reset by ' + currentUser.name }).eq('id',id);
+    if (res.error) throw res.error;
+    showToast('Appraisal reset to draft.');
+    loadAppraisalsPage(); loadHomeData();
+  } catch(e) { showToast('Error: ' + e.message); }
+}
+
+async function deleteAppraisal(id, name) {
+  if (!confirm('Permanently delete appraisal for ' + (name||'staff') + '? This cannot be undone.')) return;
+  if (!confirm('Are you sure? All data will be lost.')) return;
+  try {
+    var cl = getClient();
+    var res = await cl.from('appraisals').delete().eq('id',id);
+    if (res.error) throw res.error;
+    showToast('Appraisal deleted.');
+    loadAppraisalsPage(); loadHomeData();
+  } catch(e) { showToast('Error: ' + e.message); }
+}
+
+function openReturnModal(id, name) {
+  var reason = prompt('Reason for returning to ' + (name||'staff member') + ':');
+  if (!reason) return;
+  getClient().from('appraisals').update({ status:'draft', review_comments:reason, reviewed_by:currentUser.id, reviewed_at:new Date().toISOString() }).eq('id',id)
+    .then(function(res) {
+      if (res.error) { showToast('Error: ' + res.error.message); return; }
+      showToast('Appraisal returned with comments.');
+      loadAppraisalsPage();
+    });
+}
+
+function openNewAppraisalPicker() {
+  showToast('Select a staff member from the Staff page and click Appraise.');
+  navigate('staff');
 }
 
 document.addEventListener('DOMContentLoaded', function() {
