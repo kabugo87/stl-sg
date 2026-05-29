@@ -1010,15 +1010,7 @@ function openNewAppraisalPicker() {
 document.addEventListener('DOMContentLoaded', function() {
   document.getElementById('login-password').addEventListener('keydown', function(e) { if (e.key === 'Enter') doLogin(); });
   document.getElementById('login-email').addEventListener('keydown',    function(e) { if (e.key === 'Enter') doLogin(); });
-  // BYPASS LOGIN FOR SETUP
-  currentUser = { id:'demo', email:'kusain@thesimbagroup.com', name:'Kusain Kabugo', role:'admin', title:'Head of Human Resources', initials:'KK' };
-  document.getElementById('login-screen').style.display = 'none';
-  document.getElementById('app').style.display = 'flex';
-  document.getElementById('sb-initials').textContent = 'KK';
-  document.getElementById('sb-name').textContent = 'Kusain Kabugo';
-  document.getElementById('sb-role').textContent = 'Head of Human Resources';
-  setWelcome();
-  loadHomeData();
+  restoreSession();
 });
 </script>
 </body>
