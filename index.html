@@ -10,38 +10,23 @@
 :root{
   --navy:#1B2A6B;--red:#800020;--grey-bg:#f0f1f4;--grey-border:#d0d0d8;
   --grey-mid:#888;--white:#ffffff;--text-dark:#1a1a2e;--text-mid:#555;
-  --text-light:#999;--green:#3B6D11;--amber:#854F0B;
+  --text-light:#999;--green:#3B6D11;--amber:#854F0B;--blue-light:#e6f1fb;
   --font-heading:'Palatino Linotype',Palatino,Georgia,serif;
   --font-ui:'Segoe UI',system-ui,sans-serif;
-  --sidebar-w:240px;--topbar-h:56px;
+  --sidebar-w:230px;--topbar-h:56px;
 }
 body{font-family:var(--font-ui);background:var(--grey-bg);color:var(--text-dark);font-size:13px;line-height:1.5}
+a{text-decoration:none;color:inherit}
 button{font-family:var(--font-ui);cursor:pointer}
 input,select,textarea{font-family:var(--font-ui)}
 h1,h2,h3,h4{font-family:var(--font-heading)}
 
 /* LAYOUT */
-#login-screen{position:fixed;inset:0;z-index:2000;background:#F2F2F2;display:flex;align-items:center;justify-content:center}
-#app{display:flex;height:100vh;overflow:hidden;display:none}
+#app{display:flex;height:100vh;overflow:hidden}
 #sidebar{width:var(--sidebar-w);min-width:var(--sidebar-w);background:var(--grey-bg);border-right:1px solid var(--grey-border);display:flex;flex-direction:column;overflow-y:auto}
 #main{flex:1;display:flex;flex-direction:column;overflow:hidden}
 #topbar{height:var(--topbar-h);min-height:var(--topbar-h);background:var(--white);border-bottom:1px solid var(--grey-border);display:flex;align-items:center;justify-content:space-between;padding:0 24px}
 #content{flex:1;overflow-y:auto;padding:24px}
-
-/* LOGIN */
-.login-card{width:420px;background:var(--white);border-radius:8px;overflow:hidden;box-shadow:0 4px 24px rgba(0,0,0,.12)}
-.login-card-top{background:var(--red);padding:28px 32px 24px;text-align:center}
-.login-title{font-family:var(--font-heading);font-size:20px;font-weight:600;color:#fff;margin-bottom:4px}
-.login-sub{font-size:11px;color:rgba(255,255,255,.6);letter-spacing:.06em;text-transform:uppercase}
-.login-body{padding:24px 32px 28px}
-.login-error{background:#fdf0f0;color:var(--red);border:1px solid #f5c6c6;border-left:3px solid var(--red);border-radius:4px;padding:8px 12px;font-size:12px;margin-bottom:14px;display:none}
-.login-field{margin-bottom:14px}
-.login-field label{display:block;font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.07em;color:var(--text-mid);margin-bottom:5px}
-.login-field input{width:100%;padding:9px 11px;background:var(--grey-bg);border:1px solid var(--grey-border);border-radius:5px;font-size:13px;color:var(--text-dark)}
-.login-field input:focus{outline:none;border-color:var(--red)}
-.login-btn{width:100%;padding:10px;background:var(--red);color:#fff;font-size:13px;font-weight:600;border:none;border-radius:5px;letter-spacing:.02em;transition:opacity .15s;margin-top:4px}
-.login-btn:hover{opacity:.9}
-.login-footer{text-align:center;font-size:10px;color:var(--text-light);margin-top:16px}
 
 /* SIDEBAR */
 .sb-logo{padding:16px 16px 12px;border-bottom:1px solid var(--grey-border)}
@@ -51,9 +36,9 @@ h1,h2,h3,h4{font-family:var(--font-heading)}
 .sb-title{font-family:var(--font-heading);font-size:13px;font-weight:600;color:var(--navy)}
 .sb-sub{font-size:10px;color:var(--grey-mid);margin-top:1px}
 .sb-badge{display:inline-block;background:var(--red);color:#fff;font-size:9px;font-weight:600;padding:2px 7px;border-radius:3px;margin-top:5px;letter-spacing:.04em;text-transform:uppercase}
-.sb-org-switch{padding:10px 12px 4px}
-.sb-org-switch label{font-size:9px;text-transform:uppercase;letter-spacing:.07em;color:var(--text-light);display:block;margin-bottom:4px}
-.sb-org-switch select{width:100%;background:var(--white);border:1px solid var(--grey-border);border-radius:5px;font-size:11px;padding:6px 8px;color:var(--navy);font-weight:500;cursor:pointer}
+.sb-org{padding:10px 12px 4px}
+.sb-org-label{font-size:9px;text-transform:uppercase;letter-spacing:.07em;color:var(--text-light);margin-bottom:4px}
+.sb-org select{width:100%;background:var(--white);border:1px solid var(--grey-border);border-radius:5px;font-size:11px;padding:6px 8px;color:var(--navy);font-weight:500;cursor:pointer}
 .sb-section{padding:10px 0 2px}
 .sb-section-label{font-size:9px;text-transform:uppercase;letter-spacing:.08em;color:var(--text-light);padding:0 14px 5px}
 .sb-item{display:flex;align-items:center;gap:9px;padding:7px 14px;color:var(--text-mid);font-size:12px;cursor:pointer;border-left:3px solid transparent;transition:all .12s;user-select:none}
@@ -79,15 +64,15 @@ h1,h2,h3,h4{font-family:var(--font-heading)}
 .btn:hover{opacity:.88}
 .btn-primary{background:var(--red);color:#fff}
 .btn-secondary{background:var(--white);color:var(--navy);border:1px solid var(--grey-border)}
+.btn-danger{background:#fcebeb;color:#A32D2D;border:1px solid #f7c1c1}
 .btn-sm{padding:5px 10px;font-size:11px}
-.btn-danger{background:#fcebeb;color:#A32D2D;border:1px solid #f5c6c6}
 
 /* CARDS */
 .card{background:var(--white);border:1px solid var(--grey-border);border-radius:8px;padding:16px}
 .card-title{font-family:var(--font-heading);font-size:13px;font-weight:600;color:var(--navy);padding-bottom:5px;border-bottom:2px solid var(--red);display:inline-block;margin-bottom:14px}
 .metric-card{background:var(--grey-bg);border-radius:8px;padding:14px 16px}
 .metric-label{font-size:10px;color:var(--text-light);text-transform:uppercase;letter-spacing:.06em}
-.metric-value{font-size:26px;font-weight:600;margin-top:4px;line-height:1;font-family:var(--font-heading);color:var(--navy)}
+.metric-value{font-size:26px;font-weight:600;margin-top:4px;line-height:1;font-family:var(--font-heading)}
 .metric-sub{font-size:10px;color:var(--text-light);margin-top:4px}
 
 /* WELCOME BANNER */
@@ -99,33 +84,30 @@ h1,h2,h3,h4{font-family:var(--font-heading)}
 /* GRIDS */
 .grid-4{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:20px}
 .grid-3{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:20px}
-.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:20px}
 
 /* NAV CARDS */
 .nav-card{display:flex;align-items:center;gap:12px;padding:14px;background:var(--white);border:1px solid var(--grey-border);border-radius:8px;cursor:pointer;transition:all .12s}
 .nav-card:hover{border-color:var(--navy);background:#f8f8fc}
 .nav-card-icon{width:38px;height:38px;border-radius:7px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
 .nav-card-icon svg{width:20px;height:20px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
-.nc-blue{background:#e6f1fb;color:var(--navy)}
+.nc-blue{background:var(--blue-light);color:var(--navy)}
 .nc-red{background:#fcebeb;color:#A32D2D}
 .nc-green{background:#eaf3de;color:var(--green)}
 .nc-amber{background:#faeeda;color:var(--amber)}
+.nc-purple{background:#EEEDFE;color:#534AB7}
+.nc-teal{background:#E1F5EE;color:#0F6E56}
 .nav-card-title{font-size:12px;font-weight:600;color:var(--navy)}
 .nav-card-sub{font-size:10px;color:var(--text-light);margin-top:2px}
 .nav-card-arrow{margin-left:auto;color:var(--grey-border)}
 .nav-card-arrow svg{width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:2}
 
-/* ORG PILLS */
-.pill-sg{background:#e6f1fb;color:#185FA5;font-size:9px;font-weight:600;padding:2px 7px;border-radius:3px;display:inline-block}
-.pill-stl{background:#fcebeb;color:var(--red);font-size:9px;font-weight:600;padding:2px 7px;border-radius:3px;display:inline-block}
-
-/* BAND */
-.band{display:inline-block;font-size:10px;font-weight:600;padding:2px 8px;border-radius:3px}
-.band-exc{background:#eaf3de;color:#3B6D11}
-.band-exceeds{background:#e6f1fb;color:#185FA5}
-.band-meets{background:var(--grey-bg);color:var(--navy)}
-.band-needs{background:#faeeda;color:var(--amber)}
-.band-unsat{background:#fcebeb;color:#A32D2D}
+/* BAR CHART */
+.dept-bar-row{display:flex;align-items:center;gap:8px;margin-bottom:7px}
+.dept-name{font-size:10px;color:var(--text-mid);min-width:130px}
+.bar-track{flex:1;background:var(--grey-bg);border-radius:2px;height:8px}
+.bar-fill{height:8px;border-radius:2px;background:var(--navy);transition:width .4s}
+.bar-pct{font-size:10px;font-weight:600;color:var(--text-mid);min-width:34px;text-align:right}
 
 /* ACTIVITY */
 .activity-row{display:flex;gap:10px;padding:7px 0;border-bottom:.5px solid #eee}
@@ -136,70 +118,142 @@ h1,h2,h3,h4{font-family:var(--font-heading)}
 
 /* RATING DIST */
 .rating-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:4px}
-.rating-box{border-radius:5px;padding:10px 12px}
-.rating-num{font-family:var(--font-heading);font-size:22px;font-weight:600}
-.rating-lbl{font-size:9px;text-transform:uppercase;letter-spacing:.05em;margin-top:2px;font-weight:600}
+.rating-box{border-radius:5px;padding:9px 10px}
+.rating-num{font-size:20px;font-weight:600;font-family:var(--font-heading)}
+.rating-name{font-size:9px;text-transform:uppercase;letter-spacing:.05em;margin-top:1px}
 
-/* PAGE VIEWS */
+/* PILLS & BANDS */
+.pill{display:inline-block;font-size:9px;font-weight:600;padding:2px 7px;border-radius:3px;letter-spacing:.02em}
+.pill-sg{background:#e6f1fb;color:#185FA5}
+.pill-stl{background:#fcebeb;color:#800020}
+.band{display:inline-block;font-size:9px;font-weight:600;padding:2px 8px;border-radius:3px}
+.band-exc{background:#eaf3de;color:#3B6D11}
+.band-exceeds{background:#e6f1fb;color:#185FA5}
+.band-meets{background:var(--grey-bg);color:var(--navy)}
+.band-needs{background:#faeeda;color:#854F0B}
+.band-unsat{background:#fcebeb;color:#A32D2D}
+
+/* MISC */
+.text-red{color:var(--red)}
+.text-navy{color:var(--navy)}
+.text-green{color:var(--green)}
+.text-amber{color:var(--amber)}
+.hidden{display:none!important}
 .page-view{display:none}
 .page-view.active{display:block}
-.hidden{display:none!important}
-.coming-soon{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:80px 20px;text-align:center}
-.coming-soon h3{font-family:var(--font-heading);font-size:15px;color:var(--navy);margin-bottom:6px}
-.coming-soon p{font-size:12px;color:var(--text-light)}
 
-/* TABLE */
+/* LOGIN */
+#login-screen{position:fixed;inset:0;background:var(--grey-bg);display:flex;align-items:center;justify-content:center;z-index:2000}
+.login-card{background:var(--white);border:1px solid var(--grey-border);border-radius:10px;width:380px;padding:36px 32px;text-align:center;box-shadow:0 4px 24px rgba(0,0,0,.1)}
+.login-logo-wrap{display:flex;justify-content:center;margin-bottom:8px}
+.login-logo{width:48px;height:48px;background:var(--red);border-radius:50%;display:flex;align-items:center;justify-content:center}
+.login-logo span{color:#fff;font-size:16px;font-weight:700}
+.login-title{font-family:var(--font-heading);font-size:18px;font-weight:600;color:var(--navy);margin-bottom:2px}
+.login-sub{font-size:11px;color:var(--text-light);margin-bottom:24px}
+.login-error{background:#fcebeb;color:#A32D2D;border:1px solid #f7c1c1;border-radius:5px;padding:8px 12px;font-size:12px;margin-bottom:12px;display:none;text-align:left}
+.form-group{margin-bottom:16px;text-align:left}
+.form-group label{display:block;font-size:11px;font-weight:600;color:var(--navy);margin-bottom:5px;text-transform:uppercase;letter-spacing:.04em}
+.form-group input{width:100%;padding:8px 10px;border:1px solid var(--grey-border);border-radius:5px;font-size:12px;color:var(--text-dark);background:var(--white)}
+.form-group input:focus{outline:none;border-color:var(--navy)}
+.login-card .btn{width:100%;justify-content:center;margin-top:4px}
+
+/* SECTION HEADERS */
+.section-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}
+.section-title{font-family:var(--font-heading);font-size:14px;font-weight:600;color:var(--navy);border-bottom:2px solid var(--red);padding-bottom:4px;display:inline-block}
+.filter-row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.filter-select{font-size:11px;padding:5px 9px;border-radius:4px;border:1px solid var(--grey-border);background:var(--white);color:var(--text-dark);font-family:var(--font-ui)}
+.filter-select:focus{outline:none;border-color:var(--navy)}
+
+/* TABLES */
+.table-wrap{background:var(--white);border:1px solid var(--grey-border);border-radius:8px;overflow:hidden;margin-bottom:20px}
 table{width:100%;border-collapse:collapse;font-size:12px}
-th{padding:9px 14px;text-align:left;font-size:10px;text-transform:uppercase;letter-spacing:.05em;color:var(--text-light);font-weight:600;background:var(--grey-bg);border-bottom:1.5px solid var(--grey-border)}
-td{padding:9px 14px;border-bottom:.5px solid #eee;color:var(--text-dark)}
+th{background:var(--grey-bg);color:var(--text-dark);font-weight:600;padding:9px 12px;text-align:left;border-bottom:1.5px solid #000;font-size:10px;text-transform:uppercase;letter-spacing:.04em}
+td{padding:9px 12px;border-bottom:.5px solid #e8e8ec;color:var(--text-dark);vertical-align:middle}
 tr:last-child td{border-bottom:none}
 tr:hover td{background:#fafafa}
+.table-actions{display:flex;gap:5px}
 
-/* STATUS DOTS */
-.status-badge{display:inline-flex;align-items:center;gap:5px;font-size:11px}
-.status-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0}
-.dot-done{background:#3B6D11}
-.dot-prog{background:#854F0B}
-.dot-open{background:#d0d0d8}
-.table-actions{display:flex;gap:4px;flex-wrap:wrap}
-.btn-danger{background:#fcebeb;color:#A32D2D;border:1px solid #f5c6c6}
-.filter-row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
-.appr-tab{padding:5px 12px;border:none;background:transparent;font-size:11px;color:var(--text-mid);cursor:pointer;border-radius:4px;font-family:var(--font-ui)}
-.appr-tab.active{background:var(--white);color:var(--navy);font-weight:600;box-shadow:0 0 0 1px var(--grey-border)}
+/* STATUS */
+.status-badge{display:inline-flex;align-items:center;gap:4px;font-size:10px;font-weight:500}
+.status-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0}
+.dot-open{background:var(--grey-mid)}
+.dot-prog{background:var(--amber)}
+.dot-done{background:var(--green)}
+
+/* MODAL */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:1000;display:flex;align-items:center;justify-content:center}
+.modal{background:var(--white);border-radius:10px;width:620px;max-width:96vw;max-height:92vh;overflow-y:auto;box-shadow:0 4px 32px rgba(0,0,0,.18)}
+.modal-header{padding:16px 20px;border-bottom:1px solid var(--grey-border);display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;background:var(--white);z-index:2}
+.modal-header h3{font-family:var(--font-heading);font-size:14px;font-weight:600;color:var(--navy)}
+.modal-close{background:none;border:none;cursor:pointer;color:var(--text-light);font-size:20px;line-height:1;padding:0 4px}
+.modal-close:hover{color:var(--red)}
+.modal-body{padding:20px}
+.modal-footer{padding:12px 20px;border-top:1px solid var(--grey-border);display:flex;justify-content:flex-end;gap:8px;position:sticky;bottom:0;background:var(--white)}
+
+/* FORM */
+.form-group-m{margin-bottom:14px}
+.form-group-m label{display:block;font-size:11px;font-weight:600;color:var(--navy);margin-bottom:4px;text-transform:uppercase;letter-spacing:.04em}
+.form-group-m input,.form-group-m select,.form-group-m textarea{width:100%;padding:7px 10px;border:1px solid var(--grey-border);border-radius:5px;font-size:12px;color:var(--text-dark);background:var(--white)}
+.form-group-m input:focus,.form-group-m select:focus,.form-group-m textarea:focus{outline:none;border-color:var(--navy)}
+.form-group-m textarea{resize:vertical;min-height:70px}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.form-section-title{font-family:var(--font-heading);font-size:12px;font-weight:600;color:var(--navy);border-bottom:2px solid var(--red);padding-bottom:3px;margin-bottom:12px;display:inline-block}
+
+/* RATING BUTTONS */
+.rating-selector{display:flex;gap:4px}
+.r-btn{width:30px;height:30px;border-radius:4px;border:1px solid var(--grey-border);background:var(--white);font-size:11px;font-weight:600;cursor:pointer;color:var(--text-mid);transition:all .12s;display:flex;align-items:center;justify-content:center}
+.r-btn:hover{background:var(--grey-bg)}
+.r-btn.sel-1{background:#fcebeb;border-color:#f7c1c1;color:#A32D2D}
+.r-btn.sel-2{background:#faeeda;border-color:#FAC775;color:#854F0B}
+.r-btn.sel-3{background:var(--grey-bg);border-color:var(--grey-border);color:var(--navy)}
+.r-btn.sel-4{background:#e6f1fb;border-color:#B5D4F4;color:#185FA5}
+.r-btn.sel-5{background:#eaf3de;border-color:#C0DD97;color:var(--green)}
+
+/* COMING SOON */
+.coming-soon{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:80px 20px;text-align:center}
+.coming-soon h3{font-family:var(--font-heading);font-size:15px;color:var(--navy);margin-bottom:8px}
+.coming-soon p{font-size:12px;color:var(--text-light)}
+
 /* TOAST */
-#toast{position:fixed;bottom:24px;right:24px;background:var(--navy);color:#fff;border-left:3px solid var(--red);padding:10px 18px;border-radius:5px;font-size:12px;z-index:3000;opacity:0;transition:opacity .25s;pointer-events:none;box-shadow:0 4px 16px rgba(0,0,0,.2)}
+#toast{position:fixed;bottom:24px;right:24px;background:var(--navy);color:#fff;border-left:3px solid var(--red);padding:10px 18px;border-radius:6px;font-size:12px;z-index:3000;opacity:0;transition:opacity .25s;pointer-events:none;box-shadow:0 4px 16px rgba(0,0,0,.2)}
 #toast.show{opacity:1}
+
+@media print{
+  #sidebar,#topbar,.no-print,.filter-row,.section-header button,.modal-overlay,#toast{display:none!important}
+  #main{overflow:visible!important}
+  #content{overflow:visible!important;padding:0!important}
+  .page-view{display:block!important}
+  .page-view:not(.active){display:none!important}
+  body{font-size:11px}
+}
 </style>
 </head>
 <body>
 
 <!-- LOGIN -->
 <div id="login-screen">
-  <div class="login-bg"></div>
-  <div class="login-lines"></div>
   <div class="login-card">
-    <div class="login-card-top">
-      <div class="login-title">Performance Management</div>
-      <div class="login-sub">Simba Group &nbsp;&middot;&nbsp; Uganda</div>
+    <div class="login-logo-wrap">
+      <div class="login-logo"><span>SG</span></div>
     </div>
-    <div class="login-body">
-      <div class="login-error" id="login-error">Invalid email or password.</div>
-      <div class="login-field">
-        <label>Email address</label>
-        <input type="email" id="login-email" placeholder="yourname@simbatelecom.com" />
-      </div>
-      <div class="login-field">
-        <label>Password</label>
-        <input type="password" id="login-password" placeholder="&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;" />
-      </div>
-      <button class="login-btn" id="login-btn" onclick="doLogin()">Sign in</button>
-      <div class="login-footer">Simba Group &copy; 2026 &nbsp;&middot;&nbsp; <strong>R3</strong></div>
+    <div class="login-title">Performance Management</div>
+    <div class="login-sub">Simba Group &mdash; Uganda</div>
+    <div class="login-error" id="login-error">Invalid email or password.</div>
+    <div class="form-group">
+      <label>Email address</label>
+      <input type="email" id="login-email" placeholder="yourname@thesimbagroup.com" />
     </div>
+    <div class="form-group">
+      <label>Password</label>
+      <input type="password" id="login-password" placeholder="&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;" />
+    </div>
+    <button class="btn btn-primary" id="login-btn" onclick="doLogin()">Sign in &rarr;</button>
+    <p style="font-size:10px;color:var(--text-light);margin-top:16px">Simba Group &copy; 2026 &nbsp;&middot;&nbsp; <strong>R1</strong></p>
   </div>
 </div>
 
 <!-- APP -->
-<div id="app">
+<div id="app" style="display:none">
 
   <!-- SIDEBAR -->
   <div id="sidebar">
@@ -211,51 +265,62 @@ tr:hover td{background:#fafafa}
           <div class="sb-sub">Performance Management</div>
         </div>
       </div>
-      <div class="sb-badge" id="cycle-label">H1 2026 ACTIVE</div>
+      <div class="sb-badge" id="cycle-badge">H1 2026 Active</div>
     </div>
-    <div class="sb-org-switch">
-      <label>Viewing</label>
+
+    <div class="sb-org">
+      <div class="sb-org-label">Viewing</div>
       <select id="org-switcher" onchange="switchOrg(this.value)">
         <option value="both">Both organisations</option>
         <option value="sg">Simba Group HO</option>
         <option value="stl">Simba Telecom Uganda</option>
       </select>
     </div>
+
     <div class="sb-section">
       <div class="sb-section-label">Main</div>
       <div class="sb-item active" data-page="home" onclick="navigate('home')">
-        <svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>Home
+        <svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+        Home
       </div>
       <div class="sb-item" data-page="appraisals" onclick="navigate('appraisals')">
-        <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>Appraisals
+        <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+        Appraisals
       </div>
       <div class="sb-item" data-page="analytics" onclick="navigate('analytics')">
-        <svg viewBox="0 0 24 24"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>Analytics
+        <svg viewBox="0 0 24 24"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+        Analytics
       </div>
       <div class="sb-item" data-page="reports" onclick="navigate('reports')">
-        <svg viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>Reports
+        <svg viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+        Reports
       </div>
     </div>
+
     <div class="sb-section">
       <div class="sb-section-label">Setup</div>
       <div class="sb-item" data-page="staff" onclick="navigate('staff')">
-        <svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>Staff
+        <svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+        Staff
       </div>
       <div class="sb-item" data-page="kpis" onclick="navigate('kpis')">
-        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>KPI Templates
+        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>
+        KPI Templates
       </div>
       <div class="sb-item" data-page="settings" onclick="navigate('settings')">
-        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>Settings
+        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+        Settings
       </div>
     </div>
+
     <div class="sb-footer">
       <div class="sb-user">
-        <div class="sb-avatar"><span id="sb-initials">KK</span></div>
+        <div class="sb-avatar" id="sb-avatar">KK</div>
         <div>
-          <div class="sb-user-name" id="sb-name">Kusain Kabugo</div>
-          <div class="sb-user-role" id="sb-role">Head of Human Resources</div>
+          <div class="sb-user-name" id="sb-user-name">Loading...</div>
+          <div class="sb-user-role" id="sb-user-role"></div>
         </div>
-        <button class="sb-logout" onclick="doLogout()" title="Sign out">&rarr;</button>
+        <button class="sb-logout" onclick="doLogout()" title="Sign out">&#8594;</button>
       </div>
     </div>
   </div>
@@ -263,188 +328,311 @@ tr:hover td{background:#fafafa}
   <!-- MAIN -->
   <div id="main">
     <div id="topbar">
-      <div class="tb-left"><h1 id="tb-title">Home</h1><p id="tb-sub">Simba Group</p></div>
-      <div class="tb-right"><div class="cycle-badge" id="tb-cycle">&#128197; H1 2026 &middot; Jan &ndash; Jun 2026</div></div>
+      <div class="tb-left">
+        <h1 id="tb-title">Home</h1>
+        <p id="tb-sub">Simba Group</p>
+      </div>
+      <div class="tb-right">
+        <div class="cycle-badge" id="tb-cycle">&#128197;&nbsp; H1 2026 &nbsp;&middot;&nbsp; Jan &ndash; Jun 2026</div>
+      </div>
     </div>
 
     <div id="content">
 
-      <!-- HOME -->
+      <!-- HOME PAGE -->
       <div class="page-view active" id="page-home">
+
         <div class="welcome-banner">
           <div>
             <h2 id="welcome-msg">Good morning</h2>
-            <p id="welcome-sub">H1 2026 cycle active. Loading summary...</p>
+            <p id="welcome-sub">H1 2026 appraisal cycle is active. Loading summary...</p>
           </div>
           <div class="welcome-actions">
             <button class="btn btn-secondary" onclick="navigate('appraisals')">View appraisals</button>
             <button class="btn btn-primary" onclick="navigate('staff')">Staff</button>
           </div>
         </div>
-        <div class="grid-4">
-          <div class="metric-card"><div class="metric-label">Total staff</div><div class="metric-value" id="m-total">--</div><div class="metric-sub" id="m-org-sub">Simba Group</div></div>
-          <div class="metric-card"><div class="metric-label">Appraisals submitted</div><div class="metric-value" id="m-submitted" style="color:var(--red)">--</div><div class="metric-sub" id="m-comp-sub">This cycle</div></div>
-          <div class="metric-card"><div class="metric-label">Pending review</div><div class="metric-value" id="m-pending" style="color:var(--amber)">--</div><div class="metric-sub">Awaiting approval</div></div>
-          <div class="metric-card"><div class="metric-label">Avg. score</div><div class="metric-value" id="m-avg">--</div><div class="metric-sub" id="m-band">No data yet</div></div>
-        </div>
-        <div class="grid-3" style="margin-bottom:20px">
-          <div class="nav-card" onclick="navigate('appraisals')"><div class="nav-card-icon nc-blue"><svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg></div><div style="flex:1"><div class="nav-card-title">Appraisals</div><div class="nav-card-sub">View, start, and track forms</div></div><div class="nav-card-arrow"><svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg></div></div>
-          <div class="nav-card" onclick="navigate('analytics')"><div class="nav-card-icon nc-green"><svg viewBox="0 0 24 24"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg></div><div style="flex:1"><div class="nav-card-title">Analytics</div><div class="nav-card-sub">Scores, trends, rating bands</div></div><div class="nav-card-arrow"><svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg></div></div>
-          <div class="nav-card" onclick="navigate('reports')"><div class="nav-card-icon nc-red"><svg viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg></div><div style="flex:1"><div class="nav-card-title">Reports</div><div class="nav-card-sub">Individual and group reports</div></div><div class="nav-card-arrow"><svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg></div></div>
-          <div class="nav-card" onclick="navigate('staff')"><div class="nav-card-icon nc-amber"><svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg></div><div style="flex:1"><div class="nav-card-title">Staff</div><div class="nav-card-sub">Manage staff and appraisers</div></div><div class="nav-card-arrow"><svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg></div></div>
-          <div class="nav-card" onclick="navigate('kpis')"><div class="nav-card-icon nc-blue"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg></div><div style="flex:1"><div class="nav-card-title">KPI Templates</div><div class="nav-card-sub">Set KPIs and weights per role</div></div><div class="nav-card-arrow"><svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg></div></div>
-          <div class="nav-card" onclick="navigate('settings')"><div class="nav-card-icon nc-green"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/></svg></div><div style="flex:1"><div class="nav-card-title">Settings</div><div class="nav-card-sub">Cycle, access, configuration</div></div><div class="nav-card-arrow"><svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg></div></div>
-        </div>
-        <div class="grid-2">
-          <div class="card"><div class="card-title">Recent activity</div><div id="recent-activity"><div style="font-size:11px;color:var(--text-light)">No activity yet.</div></div></div>
-          <div class="card"><div class="card-title">Rating distribution</div><div class="rating-grid" id="rating-dist"><div style="font-size:11px;color:var(--text-light);grid-column:1/-1">No completed appraisals yet.</div></div></div>
-        </div>
-      </div>
 
-      <!-- PLACEHOLDERS -->
-      <div class="page-view" id="page-appraisals">
-        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;flex-wrap:wrap;gap:10px">
-          <div style="display:flex;align-items:center;gap:12px">
-            <div>
-              <div style="font-family:var(--font-heading);font-size:15px;font-weight:600;color:var(--navy)">Appraisals</div>
-              <div style="font-size:11px;color:var(--text-light);margin-top:2px"><span id="appr-count">--</span> records</div>
+        <div class="grid-4">
+          <div class="metric-card">
+            <div class="metric-label">Total staff</div>
+            <div class="metric-value text-navy" id="m-total">--</div>
+            <div class="metric-sub" id="m-total-sub">Both organisations</div>
+          </div>
+          <div class="metric-card">
+            <div class="metric-label">Appraisals submitted</div>
+            <div class="metric-value text-green" id="m-submitted">--</div>
+            <div class="metric-sub" id="m-submitted-sub">This cycle</div>
+          </div>
+          <div class="metric-card">
+            <div class="metric-label">Pending review</div>
+            <div class="metric-value text-amber" id="m-pending">--</div>
+            <div class="metric-sub" id="m-pending-sub">Awaiting approval</div>
+          </div>
+          <div class="metric-card">
+            <div class="metric-label">Avg. score (to date)</div>
+            <div class="metric-value text-navy" id="m-avg">--</div>
+            <div class="metric-sub" id="m-avg-sub">No data yet</div>
+          </div>
+        </div>
+
+        <div class="grid-3">
+          <div class="nav-card" onclick="navigate('appraisals')">
+            <div class="nav-card-icon nc-blue"><svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg></div>
+            <div style="flex:1"><div class="nav-card-title">Appraisals</div><div class="nav-card-sub">View, start, or track all forms</div></div>
+            <div class="nav-card-arrow"><svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg></div>
+          </div>
+          <div class="nav-card" onclick="navigate('analytics')">
+            <div class="nav-card-icon nc-purple"><svg viewBox="0 0 24 24"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg></div>
+            <div style="flex:1"><div class="nav-card-title">Analytics</div><div class="nav-card-sub">Scores, trends, rating bands</div></div>
+            <div class="nav-card-arrow"><svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg></div>
+          </div>
+          <div class="nav-card" onclick="navigate('reports')">
+            <div class="nav-card-icon nc-green"><svg viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg></div>
+            <div style="flex:1"><div class="nav-card-title">Reports</div><div class="nav-card-sub">Individual, department, organisation</div></div>
+            <div class="nav-card-arrow"><svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg></div>
+          </div>
+          <div class="nav-card" onclick="navigate('staff')">
+            <div class="nav-card-icon nc-red"><svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></div>
+            <div style="flex:1"><div class="nav-card-title">Staff</div><div class="nav-card-sub">Manage staff and appraisers</div></div>
+            <div class="nav-card-arrow"><svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg></div>
+          </div>
+          <div class="nav-card" onclick="navigate('kpis')">
+            <div class="nav-card-icon nc-amber"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg></div>
+            <div style="flex:1"><div class="nav-card-title">KPI Templates</div><div class="nav-card-sub">Set KPIs and weights per role</div></div>
+            <div class="nav-card-arrow"><svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg></div>
+          </div>
+          <div class="nav-card" onclick="navigate('settings')">
+            <div class="nav-card-icon nc-teal"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/></svg></div>
+            <div style="flex:1"><div class="nav-card-title">Settings</div><div class="nav-card-sub">Cycle, access, scoring weights</div></div>
+            <div class="nav-card-arrow"><svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg></div>
+          </div>
+        </div>
+
+        <div class="grid-2">
+          <div class="card">
+            <div class="card-title">Department scores</div>
+            <div id="dept-bars"><div style="font-size:11px;color:var(--text-light)">No appraisal data yet.</div></div>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:16px">
+            <div class="card" style="flex:1">
+              <div class="card-title">Recent activity</div>
+              <div id="recent-activity"><div style="font-size:11px;color:var(--text-light)">No recent activity.</div></div>
+            </div>
+            <div class="card">
+              <div class="card-title">Rating distribution</div>
+              <div class="rating-grid" id="rating-dist">
+                <div style="font-size:11px;color:var(--text-light);grid-column:1/-1">No completed appraisals yet.</div>
+              </div>
             </div>
           </div>
+        </div>
+
+      </div><!-- /page-home -->
+
+      <!-- PLACEHOLDER PAGES — built one at a time -->
+      <div class="page-view" id="page-appraisals">
+        <div class="section-header">
+          <div style="display:flex;align-items:center;gap:12px">
+            <div class="section-title">Appraisals</div>
+            <span id="appr-count" style="font-size:11px;color:var(--text-light)"></span>
+          </div>
           <div class="filter-row">
-            <div style="background:var(--grey-bg);border-radius:6px;padding:3px;display:flex;gap:2px">
-              <button class="appr-tab active" data-tab="all">All</button>
-              <button class="appr-tab" data-tab="pending">Pending</button>
-              <button class="appr-tab" data-tab="done">Submitted</button>
+            <div style="display:flex;gap:4px;background:#f0f1f4;padding:3px;border-radius:5px;border:1px solid var(--grey-border)">
+              <button class="btn btn-sm appr-tab" id="tab-all"     data-tab="all"     style="background:#fff;color:var(--navy);border:none;padding:4px 10px;border-radius:3px;font-size:11px;font-weight:500">All</button>
+              <button class="btn btn-sm appr-tab" id="tab-pending" data-tab="pending" style="background:transparent;color:var(--text-mid);border:none;padding:4px 10px;border-radius:3px;font-size:11px">Pending</button>
+              <button class="btn btn-sm appr-tab" id="tab-done"    data-tab="done"    style="background:transparent;color:var(--text-mid);border:none;padding:4px 10px;border-radius:3px;font-size:11px">Submitted</button>
             </div>
-            <select id="filter-appr-org" onchange="filterAppraisalsTable()" style="padding:6px 10px;border:1px solid var(--grey-border);border-radius:5px;font-size:11px;background:var(--white)">
-              <option value="">Both orgs</option>
+            <select class="filter-select" id="filter-appr-org">
+              <option value="">Both organisations</option>
               <option value="sg">Simba Group HO</option>
               <option value="stl">Simba Telecom Uganda</option>
             </select>
+            <select class="filter-select" id="filter-appr-dept"><option value="">All departments</option></select>
             <button class="btn btn-primary btn-sm" id="btn-new-appraisal">+ New</button>
           </div>
         </div>
-        <div style="background:var(--white);border:1px solid var(--grey-border);border-radius:8px;overflow:hidden">
+        <div class="table-wrap">
           <table>
-            <thead>
-              <tr>
-                <th>Employee</th>
-                <th>Organisation</th>
-                <th>Department</th>
-                <th>Position</th>
-                <th>Self-appraisal</th>
-                <th>Appraiser review</th>
-                <th>Final score</th>
-                <th>Rating</th>
-                <th>Actions</th>
-              </tr>
-            </thead>
-            <tbody id="appr-tbody"><tr><td colspan="9" style="text-align:center;padding:24px;color:var(--text-light);font-size:12px">Loading...</td></tr></tbody>
+            <thead><tr>
+              <th>Employee</th><th>Organisation</th><th>Department</th><th>Position</th>
+              <th>Self-appraisal</th><th>Appraiser review</th><th>Final score</th><th>Rating</th>
+              <th class="no-print">Actions</th>
+            </tr></thead>
+            <tbody id="appr-tbody">
+              <tr><td colspan="9" style="text-align:center;padding:24px;color:var(--text-light);font-size:12px">Loading appraisals...</td></tr>
+            </tbody>
           </table>
         </div>
-      </div>
-      <div class="page-view" id="page-analytics">
-        <div class="coming-soon"><div class="cs-icon"><svg viewBox="0 0 24 24"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg></div><h3>Analytics</h3><p>Coming in R3</p></div>
-      </div>
-      <div class="page-view" id="page-reports">
-        <div class="coming-soon"><div class="cs-icon"><svg viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg></div><h3>Reports</h3><p>Coming in R4</p></div>
-      </div>
-      <div class="page-view" id="page-staff">
-        <div class="section-header" style="display:flex;align-items:center;justify-content:space-between;margin-bottom:18px">
-          <div>
-            <div style="font-family:var(--font-display);font-size:16px;font-weight:600;color:var(--navy)" id="staff-page-title">Staff</div>
-            <div style="font-size:11px;color:var(--mid);margin-top:2px"><span id="staff-count">--</span> staff</div>
-          </div>
-          <div style="display:flex;gap:8px;align-items:center">
-            <input type="text" id="staff-search" placeholder="Search name..." oninput="renderStaffTable()" style="padding:6px 10px;border:1px solid var(--border);border-radius:3px;font-size:12px;width:180px;background:var(--white)" />
-            <select id="staff-dept-filter" onchange="renderStaffTable()" style="padding:6px 10px;border:1px solid var(--border);border-radius:3px;font-size:12px;background:var(--white)">
-              <option value="">All departments</option>
-              <option value="Marketing">Marketing</option>
-              <option value="Projects">Projects</option>
-              <option value="Audit">Audit</option>
-              <option value="Legal">Legal</option>
-              <option value="Human Resource">Human Resource</option>
-              <option value="Executive">Executive</option>
-              <option value="Apartments">Apartments</option>
-              <option value="Accounts/ Finance">Accounts / Finance</option>
-              <option value="Sales & Operations">Sales & Operations</option>
-              <option value="IT">IT</option>
-            </select>
-            <button class="btn btn-primary btn-sm" id="btn-add-staff" onclick="openAddStaff()" style="background:var(--red);color:#fff;padding:6px 12px;border:none;border-radius:3px;font-size:11px;font-weight:600;cursor:pointer">+ Add staff</button>
-          </div>
-        </div>
-        <div style="background:var(--white);border:1px solid var(--border);border-radius:4px;overflow:hidden">
-          <table style="width:100%;border-collapse:collapse;font-size:12px" id="staff-table">
-            <thead>
-              <tr style="background:#f7f5f0;border-bottom:1.5px solid var(--border)">
-                <th style="padding:9px 14px;text-align:left;font-size:10px;text-transform:uppercase;letter-spacing:.05em;color:var(--mid);font-weight:600">Name</th>
-                <th style="padding:9px 14px;text-align:left;font-size:10px;text-transform:uppercase;letter-spacing:.05em;color:var(--mid);font-weight:600">Organisation</th>
-                <th style="padding:9px 14px;text-align:left;font-size:10px;text-transform:uppercase;letter-spacing:.05em;color:var(--mid);font-weight:600">Department</th>
-                <th style="padding:9px 14px;text-align:left;font-size:10px;text-transform:uppercase;letter-spacing:.05em;color:var(--mid);font-weight:600">Position</th>
-                <th style="padding:9px 14px;text-align:left;font-size:10px;text-transform:uppercase;letter-spacing:.05em;color:var(--mid);font-weight:600">Appraiser</th>
-                <th style="padding:9px 14px;text-align:left;font-size:10px;text-transform:uppercase;letter-spacing:.05em;color:var(--mid);font-weight:600">Actions</th>
-              </tr>
-            </thead>
-            <tbody id="staff-tbody"><tr><td colspan="6" style="padding:30px;text-align:center;color:var(--mid);font-size:12px">Loading...</td></tr></tbody>
-          </table>
-        </div>
-      </div>
-      <div class="page-view" id="page-kpis">
-        <div class="coming-soon"><div class="cs-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/></svg></div><h3>KPI Templates</h3><p>Coming in R3</p></div>
-      </div>
-      <div class="page-view" id="page-settings">
-        <div class="coming-soon"><div class="cs-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/></svg></div><h3>Settings</h3><p>Coming soon</p></div>
       </div>
 
-    </div>
-  </div>
-</div>
+      <div class="page-view" id="page-analytics">
+        <div class="coming-soon"><h3>Analytics</h3><p>Coming in R2</p></div>
+      </div>
+      <div class="page-view" id="page-reports">
+        <div class="coming-soon"><h3>Reports</h3><p>Coming in R3</p></div>
+      </div>
+
+      <!-- STAFF PAGE -->
+      <div class="page-view" id="page-staff">
+        <div class="section-header">
+          <div style="display:flex;align-items:center;gap:12px">
+            <div class="section-title">Staff</div>
+            <span id="staff-count" style="font-size:11px;color:var(--text-light)"></span>
+          </div>
+          <div class="filter-row">
+            <input type="text" id="filter-staff-search" class="filter-select" placeholder="Search name..." style="width:160px" oninput="renderStaffTable()" />
+            <select class="filter-select" id="filter-staff-org" onchange="renderStaffTable()">
+              <option value="">Both organisations</option>
+              <option value="sg">Simba Group HO</option>
+              <option value="stl">Simba Telecom Uganda</option>
+            </select>
+            <select class="filter-select" id="filter-staff-dept" onchange="renderStaffTable()">
+              <option value="">All departments</option>
+              <option>Sales &amp; Operations</option>
+              <option>Accounts/ Finance</option>
+              <option>Audit</option>
+              <option>Human Resource</option>
+              <option>Marketing</option>
+              <option>Projects</option>
+              <option>Legal</option>
+              <option>Executive</option>
+              <option>Apartments</option>
+              <option>IT</option>
+            </select>
+            <button class="btn btn-primary btn-sm no-print" id="btn-add-staff">+ Add staff</button>
+          </div>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead><tr>
+              <th>Name</th><th>Organisation</th><th>Department</th><th>Position</th>
+              <th>Region</th><th>Date of joining</th><th class="no-print">Actions</th>
+            </tr></thead>
+            <tbody id="staff-tbody">
+              <tr><td colspan="7" style="text-align:center;padding:24px;color:var(--text-light);font-size:12px">Loading staff...</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="page-view" id="page-kpis">
+        <div class="coming-soon"><h3>KPI Templates</h3><p>Coming in R2</p></div>
+      </div>
+      <div class="page-view" id="page-settings">
+        <div class="coming-soon"><h3>Settings</h3><p>Coming soon</p></div>
+      </div>
+
+    </div><!-- /content -->
+  </div><!-- /main -->
+</div><!-- /app -->
 
 
 <!-- MODAL: Add / Edit Staff -->
-<div id="modal-staff" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:1000;align-items:center;justify-content:center">
-  <div style="background:var(--white);border-radius:4px;width:520px;max-height:90vh;overflow-y:auto;box-shadow:0 16px 48px rgba(0,0,0,.2)">
-    <div style="background:#f7f5f0;border-bottom:3px solid var(--red);padding:14px 20px;display:flex;align-items:center;justify-content:space-between">
-      <div style="font-family:var(--font-display);font-size:14px;font-weight:600;color:var(--navy)" id="staff-modal-title">Add staff member</div>
-      <button onclick="closeStaffModal()" style="background:none;border:none;font-size:18px;color:#888;cursor:pointer">&times;</button>
+<div class="modal-overlay hidden" id="modal-add-staff">
+  <div class="modal" style="width:560px">
+    <div class="modal-header" style="background:#f0f1f4;border-bottom:3px solid var(--red)">
+      <h3 id="add-staff-modal-title">Add new staff member</h3>
+      <button class="modal-close" onclick="closeModal('modal-add-staff')">&times;</button>
     </div>
-    <div style="padding:20px">
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px">
-        <div><label style="font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.06em;color:var(--mid);display:block;margin-bottom:5px">Full name *</label><input id="sf-name" type="text" style="width:100%;padding:8px 10px;border:1px solid var(--border);border-radius:3px;font-size:12px" /></div>
-        <div><label style="font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.06em;color:var(--mid);display:block;margin-bottom:5px">Staff No.</label><input id="sf-no" type="text" style="width:100%;padding:8px 10px;border:1px solid var(--border);border-radius:3px;font-size:12px" /></div>
+    <div class="modal-body">
+      <div class="form-row" style="margin-bottom:12px">
+        <div class="form-group-m"><label>Full name *</label><input type="text" id="asf-name" placeholder="As per NSSF card" /></div>
+        <div class="form-group-m"><label>Staff No.</label><input type="text" id="asf-staffno" placeholder="e.g. 2001" /></div>
       </div>
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px">
-        <div><label style="font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.06em;color:var(--mid);display:block;margin-bottom:5px">Organisation *</label>
-          <select id="sf-org" style="width:100%;padding:8px 10px;border:1px solid var(--border);border-radius:3px;font-size:12px">
+      <div class="form-row" style="margin-bottom:12px">
+        <div class="form-group-m"><label>Organisation *</label>
+          <select id="asf-org">
+            <option value="">Select organisation</option>
             <option value="sg">Simba Group HO</option>
             <option value="stl">Simba Telecom Uganda</option>
           </select>
         </div>
-        <div><label style="font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.06em;color:var(--mid);display:block;margin-bottom:5px">Department *</label><input id="sf-dept" type="text" style="width:100%;padding:8px 10px;border:1px solid var(--border);border-radius:3px;font-size:12px" placeholder="e.g. Marketing" /></div>
+        <div class="form-group-m"><label>Department *</label><input type="text" id="asf-dept" placeholder="e.g. Sales &amp; Operations" /></div>
       </div>
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px">
-        <div><label style="font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.06em;color:var(--mid);display:block;margin-bottom:5px">Position *</label><input id="sf-pos" type="text" style="width:100%;padding:8px 10px;border:1px solid var(--border);border-radius:3px;font-size:12px" /></div>
-        <div><label style="font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.06em;color:var(--mid);display:block;margin-bottom:5px">Region / Location</label><input id="sf-region" type="text" style="width:100%;padding:8px 10px;border:1px solid var(--border);border-radius:3px;font-size:12px" placeholder="e.g. Head Office" /></div>
+      <div class="form-row" style="margin-bottom:12px">
+        <div class="form-group-m"><label>Position *</label><input type="text" id="asf-pos" placeholder="e.g. Shop Manager" /></div>
+        <div class="form-group-m"><label>Region</label><input type="text" id="asf-region" placeholder="e.g. Western Region" /></div>
       </div>
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px">
-        <div><label style="font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.06em;color:var(--mid);display:block;margin-bottom:5px">Date of joining</label><input id="sf-doj" type="date" style="width:100%;padding:8px 10px;border:1px solid var(--border);border-radius:3px;font-size:12px" /></div>
-        <div><label style="font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.06em;color:var(--mid);display:block;margin-bottom:5px">Appraisal mode</label>
-          <select id="sf-mode" style="width:100%;padding:8px 10px;border:1px solid var(--border);border-radius:3px;font-size:12px">
-            <option value="assisted">Assisted (line manager appraises)</option>
+      <div class="form-row" style="margin-bottom:12px">
+        <div class="form-group-m"><label>Location</label><input type="text" id="asf-loc" placeholder="e.g. Mbarara Main" /></div>
+        <div class="form-group-m"><label>Date of joining</label><input type="date" id="asf-doj" /></div>
+      </div>
+      <div class="form-row">
+        <div class="form-group-m"><label>Appraisal mode</label>
+          <select id="asf-mode">
+            <option value="assisted">Assisted (appraiser rates)</option>
             <option value="self">Self-service</option>
           </select>
         </div>
-      </div>
-      <div style="margin-bottom:4px"><label style="font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.06em;color:var(--mid);display:block;margin-bottom:5px">Appraiser (line manager)</label>
-        <select id="sf-appraiser" style="width:100%;padding:8px 10px;border:1px solid var(--border);border-radius:3px;font-size:12px">
-          <option value="">Assign later</option>
-        </select>
-        <div style="font-size:10px;color:var(--mid);margin-top:4px">Appraiser must have a system account. You can assign later.</div>
+        <div class="form-group-m"><label>Appraiser</label>
+          <select id="asf-appraiser"><option value="">Assign later</option></select>
+        </div>
       </div>
     </div>
-    <div style="padding:14px 20px;border-top:1px solid var(--border);display:flex;justify-content:flex-end;gap:8px;background:#f7f5f0">
-      <button onclick="closeStaffModal()" style="padding:7px 14px;background:var(--cream);border:1px solid var(--border);border-radius:3px;font-size:12px;font-weight:600;cursor:pointer">Cancel</button>
-      <button onclick="saveStaff()" style="padding:7px 14px;background:var(--red);color:#fff;border:none;border-radius:3px;font-size:12px;font-weight:600;cursor:pointer">Save staff member</button>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" onclick="closeModal('modal-add-staff')">Cancel</button>
+      <button class="btn btn-primary" onclick="saveStaff()">Save staff member</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: Staff search for new appraisal -->
+<div class="modal-overlay hidden" id="modal-staff-search">
+  <div class="modal" style="width:480px">
+    <div class="modal-header">
+      <h3 id="staff-search-title">Select staff member to appraise</h3>
+      <button class="modal-close" onclick="closeModal('modal-staff-search')">&times;</button>
+    </div>
+    <div class="modal-body" style="padding-bottom:8px">
+      <div class="form-group-m">
+        <label>Search by name, position or department</label>
+        <input type="text" id="staff-search-input" placeholder="e.g. Sarah, Shop Manager, Audit..." />
+      </div>
+      <div id="staff-search-results" style="border:1px solid var(--grey-border);border-radius:6px;max-height:300px;overflow-y:auto;font-size:12px">
+        <div style="padding:16px;text-align:center;font-size:11px;color:var(--text-light)">Start typing to search...</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: Appraisal form -->
+<div class="modal-overlay hidden" id="modal-appraisal">
+  <div class="modal" style="width:700px">
+    <div class="modal-header" style="background:#f0f1f4;border-bottom:3px solid var(--red)">
+      <h3 id="appr-modal-title">Appraisal Form</h3>
+      <button class="modal-close" onclick="closeModal('modal-appraisal')">&times;</button>
+    </div>
+    <div class="modal-body" id="appr-modal-body"></div>
+    <div class="modal-footer">
+      <div id="appr-score-display" style="margin-right:auto;font-size:12px;color:var(--text-mid)">Score: pending</div>
+      <button class="btn btn-secondary" id="btn-save-draft">Save draft</button>
+      <button class="btn btn-primary" id="btn-submit-appraisal">Submit appraisal</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: New Cycle -->
+<div class="modal-overlay hidden" id="modal-new-cycle">
+  <div class="modal" style="width:460px">
+    <div class="modal-header" style="background:#f0f1f4;border-bottom:3px solid var(--red)">
+      <h3>Start new appraisal cycle</h3>
+      <button class="modal-close" onclick="closeModal('modal-new-cycle')">&times;</button>
+    </div>
+    <div class="modal-body">
+      <div style="font-size:12px;color:#555;margin-bottom:14px;line-height:1.6">This will close the current active cycle and start a new one. All existing appraisals are preserved.</div>
+      <div class="form-row">
+        <div class="form-group-m"><label>Cycle label *</label><input type="text" id="nc-label" placeholder="e.g. H2 2026" /></div>
+        <div class="form-group-m"><label>Self weight %</label><input type="number" id="nc-self" value="40" min="0" max="100" /></div>
+      </div>
+      <div class="form-row">
+        <div class="form-group-m"><label>Start date *</label><input type="date" id="nc-start" /></div>
+        <div class="form-group-m"><label>End date *</label><input type="date" id="nc-end" /></div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" onclick="closeModal('modal-new-cycle')">Cancel</button>
+      <button class="btn btn-primary" onclick="createNewCycle()">Create cycle</button>
     </div>
   </div>
 </div>
@@ -452,11 +640,8 @@ tr:hover td{background:#fafafa}
 <div id="toast"></div>
 
 <script>
-let currentOrg = 'both'; // 'both', 'sg', 'stl'
-let _staffCache = [];
-let _editingStaffId = null;
-let _userProfiles = [];
 
+// ── CONFIG ──────────────────────────────────────────────────
 const SUPABASE_URL = 'https://fgjszajyfokykudfabqt.supabase.co';
 const SUPABASE_KEY = 'sb_publishable_DN8QT1FyZO8WUC-Gjb9k_Q_4fy85ogK';
 
@@ -467,34 +652,56 @@ function getClient() {
 }
 
 let currentUser = null;
+let currentOrg  = 'both';    // 'both' | 'sg' | 'stl'
+let _staffCache = [];
+let _userProfiles = [];
+let _currentAppraisalTab = 'all';
+let _editingStaffId = null;
 
+// ── HELPERS ─────────────────────────────────────────────────
 function showToast(msg) {
   var t = document.getElementById('toast');
   t.textContent = msg;
   t.classList.add('show');
   setTimeout(function() { t.classList.remove('show'); }, 3200);
 }
-
+function orgLabel(o) {
+  if (o === 'sg')  return 'Simba Group HO';
+  if (o === 'stl') return 'Simba Telecom Uganda';
+  return 'Both organisations';
+}
 function roleLabel(r) {
   if (r === 'admin')    return 'System Admin';
   if (r === 'approver') return 'Approver';
   if (r === 'staff')    return 'Staff';
-  return r;
+  return r || '';
 }
-
-function bandLabel(s) {
-  if (s >= 90) return 'Exceptional';
-  if (s >= 75) return 'Exceeds expectations';
-  if (s >= 60) return 'Meets expectations';
-  if (s >= 40) return 'Needs improvement';
+function bandClass(score) {
+  if (score >= 90) return 'band-exc';
+  if (score >= 75) return 'band-exceeds';
+  if (score >= 60) return 'band-meets';
+  if (score >= 40) return 'band-needs';
+  return 'band-unsat';
+}
+function bandLabel(score) {
+  if (score >= 90) return 'Exceptional';
+  if (score >= 75) return 'Exceeds expectations';
+  if (score >= 60) return 'Meets expectations';
+  if (score >= 40) return 'Needs improvement';
   return 'Unsatisfactory';
 }
-
+function closeModal(id) {
+  var el = document.getElementById(id);
+  if (el) el.classList.add('hidden');
+}
 function dateStr() {
   return new Date().toLocaleDateString('en-GB', { weekday:'long', day:'numeric', month:'long', year:'numeric' });
 }
+function canApprove() {
+  return currentUser && (currentUser.role === 'admin' || currentUser.role === 'approver');
+}
 
-// ── AUTH ──
+// ── AUTH ────────────────────────────────────────────────────
 async function doLogin() {
   var email = document.getElementById('login-email').value.trim().toLowerCase();
   var pwd   = document.getElementById('login-password').value;
@@ -507,15 +714,22 @@ async function doLogin() {
     var client = getClient();
     var authRes = await client.auth.signInWithPassword({ email: email, password: pwd });
     if (authRes.error) throw authRes.error;
-    var profRes = await client.from('user_profiles').select('name,role,title,initials').eq('id', authRes.data.user.id).single();
-    if (profRes.error || !profRes.data) throw new Error('Profile not found. Contact your administrator.');
+    var profRes = await client.from('user_profiles').select('name,role,title,initials,organisation').eq('id', authRes.data.user.id).single();
+    if (profRes.error || !profRes.data) throw new Error('User profile not found. Contact HR Admin.');
     var p = profRes.data;
-    currentUser = { id: authRes.data.user.id, email: email, name: p.name, role: p.role, title: p.title, initials: p.initials };
+    currentUser = { id: authRes.data.user.id, email: email, name: p.name, role: p.role, title: p.title, initials: p.initials, organisation: p.organisation };
     document.getElementById('login-screen').style.display = 'none';
     document.getElementById('app').style.display = 'flex';
-    document.getElementById('sb-initials').textContent = p.initials || email[0].toUpperCase();
-    document.getElementById('sb-name').textContent = p.name;
-    document.getElementById('sb-role').textContent = p.title || roleLabel(p.role);
+    document.getElementById('sb-avatar').textContent    = p.initials || email[0].toUpperCase();
+    document.getElementById('sb-user-name').textContent = p.name;
+    document.getElementById('sb-user-role').textContent = p.title || roleLabel(p.role);
+    // Lock org switcher if user is org-specific (not admin)
+    if (p.role !== 'admin' && p.organisation && p.organisation !== 'both') {
+      currentOrg = p.organisation;
+      var sw = document.getElementById('org-switcher');
+      sw.value = p.organisation;
+      sw.disabled = true;
+    }
     setWelcome();
     loadHomeData();
   } catch(e) {
@@ -523,43 +737,48 @@ async function doLogin() {
     err.style.display = 'block';
   } finally {
     btn.disabled = false;
-    btn.textContent = 'Sign in';
+    btn.textContent = 'Sign in \u2192';
   }
 }
 
 async function doLogout() {
   await getClient().auth.signOut();
-  currentUser = null;
+  currentUser = null; currentOrg = 'both'; _staffCache = [];
   document.getElementById('login-email').value = '';
   document.getElementById('login-password').value = '';
   document.getElementById('app').style.display = 'none';
   document.getElementById('login-screen').style.display = 'flex';
+  var sw = document.getElementById('org-switcher');
+  sw.value = 'both'; sw.disabled = false;
 }
 
-// ── SESSION RESTORE ──
 async function restoreSession() {
   try {
     var client = getClient();
     var sessionRes = await client.auth.getSession();
     if (!sessionRes.data || !sessionRes.data.session) return;
     var user = sessionRes.data.session.user;
-    var profRes = await client.from('user_profiles').select('name,role,title,initials').eq('id', user.id).single();
+    var profRes = await client.from('user_profiles').select('name,role,title,initials,organisation').eq('id', user.id).single();
     if (profRes.error || !profRes.data) return;
     var p = profRes.data;
-    currentUser = { id: user.id, email: user.email, name: p.name, role: p.role, title: p.title, initials: p.initials };
+    currentUser = { id: user.id, email: user.email, name: p.name, role: p.role, title: p.title, initials: p.initials, organisation: p.organisation };
     document.getElementById('login-screen').style.display = 'none';
     document.getElementById('app').style.display = 'flex';
-    document.getElementById('sb-initials').textContent = p.initials || user.email[0].toUpperCase();
-    document.getElementById('sb-name').textContent = p.name;
-    document.getElementById('sb-role').textContent = p.title || roleLabel(p.role);
+    document.getElementById('sb-avatar').textContent    = p.initials || user.email[0].toUpperCase();
+    document.getElementById('sb-user-name').textContent = p.name;
+    document.getElementById('sb-user-role').textContent = p.title || roleLabel(p.role);
+    if (p.role !== 'admin' && p.organisation && p.organisation !== 'both') {
+      currentOrg = p.organisation;
+      var sw = document.getElementById('org-switcher');
+      sw.value = p.organisation;
+      sw.disabled = true;
+    }
     setWelcome();
     loadHomeData();
-  } catch(e) {
-    console.warn('restoreSession:', e.message);
-  }
+  } catch(e) { console.warn('restoreSession:', e.message); }
 }
 
-// ── NAVIGATION ──
+// ── NAVIGATION ──────────────────────────────────────────────
 function navigate(page) {
   document.querySelectorAll('.page-view').forEach(function(v) { v.classList.remove('active'); });
   document.querySelectorAll('.sb-item').forEach(function(i) { i.classList.remove('active'); });
@@ -567,114 +786,167 @@ function navigate(page) {
   var nav = document.querySelector('[data-page="' + page + '"]');
   if (el)  el.classList.add('active');
   if (nav) nav.classList.add('active');
-  var titles = {
-    home:'Home', appraisals:'Appraisals', analytics:'Analytics',
-    reports:'Reports', staff:'Staff', kpis:'KPI Templates', settings:'Settings'
-  };
+  var titles = { home:'Home', appraisals:'Appraisals', analytics:'Analytics', reports:'Reports', staff:'Staff', kpis:'KPI Templates', settings:'Settings' };
   document.getElementById('tb-title').textContent = titles[page] || page;
-  document.getElementById('tb-sub').textContent   = 'Simba Group \u2014 ' + dateStr();
+  document.getElementById('tb-sub').textContent   = orgLabel(currentOrg) + ' \u2014 ' + dateStr();
+  if (page === 'home')       loadHomeData();
+  if (page === 'staff')      loadStaffPage();
+  if (page === 'appraisals') loadAppraisalsPage();
+}
+
+function switchOrg(val) {
+  currentOrg = val;
+  document.getElementById('tb-sub').textContent = orgLabel(val) + ' \u2014 ' + dateStr();
+  var active = document.querySelector('.page-view.active');
+  if (!active) return;
+  if (active.id === 'page-home')       loadHomeData();
+  if (active.id === 'page-staff')      loadStaffPage();
+  if (active.id === 'page-appraisals') loadAppraisalsPage();
 }
 
 function setWelcome() {
   var h = new Date().getHours();
   var g = h < 12 ? 'Good morning' : h < 17 ? 'Good afternoon' : 'Good evening';
   document.getElementById('welcome-msg').textContent = g + ', ' + currentUser.name.split(' ')[0];
-  document.getElementById('tb-sub').textContent = 'Simba Group \u2014 ' + dateStr();
+  document.getElementById('tb-sub').textContent = orgLabel(currentOrg) + ' \u2014 ' + dateStr();
 }
 
-// ── HOME DATA ──
+// ── HOME DATA ───────────────────────────────────────────────
 async function loadHomeData() {
   try {
     var client = getClient();
+
+    // Active cycle
     var cr = await client.from('appraisal_cycles').select('id,label,start_date,end_date').eq('is_active', true).single();
     if (cr.error) throw cr.error;
     var cycle = cr.data;
-    document.getElementById('cycle-label').textContent = cycle.label + ' Active';
+    document.getElementById('cycle-badge').textContent = cycle.label + ' Active';
     var sd = new Date(cycle.start_date).toLocaleDateString('en-GB', { month:'short', year:'numeric' });
     var ed = new Date(cycle.end_date).toLocaleDateString('en-GB',   { month:'short', year:'numeric' });
-    document.getElementById('tb-cycle').innerHTML = '&#128197; ' + cycle.label + ' \u00B7 ' + sd + ' \u2013 ' + ed;
+    document.getElementById('tb-cycle').innerHTML = '&#128197;&nbsp; ' + cycle.label + ' &nbsp;&middot;&nbsp; ' + sd + ' &ndash; ' + ed;
 
-    var staffRes = await client.from('staff').select('id', { count:'exact', head:false }).eq('status','active');
+    // Staff count
+    var staffQ = client.from('staff').select('id', { count:'exact', head:false }).eq('status','active');
+    if (currentOrg !== 'both') staffQ = staffQ.eq('organisation', currentOrg);
+    var staffRes = await staffQ;
     var total = staffRes.count || (staffRes.data || []).length;
 
-    var apprRes = await client.from('appraisals').select('id,status,final_score,submitted_at,staff_id').eq('cycle_id', cycle.id);
-    var appraisals = apprRes.data || [];
-    var submitted  = appraisals.filter(function(a){ return ['submitted','approved'].includes(a.status); }).length;
-    var pending    = appraisals.filter(function(a){ return a.status === 'submitted'; }).length;
-    var completed  = appraisals.filter(function(a){ return a.status === 'approved' && a.final_score; });
-    var avgScore   = completed.length ? Math.round(completed.reduce(function(t,a){ return t+(a.final_score||0); },0)/completed.length) : 0;
-    var compRate   = total ? Math.round(submitted/total*100) : 0;
+    // Appraisals
+    var apprRes = await client.from('appraisals').select('id,status,final_score,staff_id,submitted_at').eq('cycle_id', cycle.id);
+    var appr = apprRes.data || [];
 
-    document.getElementById('m-total').textContent        = total;
-    document.getElementById('m-submitted').textContent    = submitted;
-    document.getElementById('m-submitted-sub').textContent = compRate + '% completion rate';
-    document.getElementById('m-pending').textContent      = pending;
-    document.getElementById('m-avg').innerHTML            = avgScore > 0 ? avgScore + '<span style="font-size:14px">%</span>' : '--';
-    document.getElementById('m-avg-sub').textContent      = avgScore > 0 ? bandLabel(avgScore) : 'No data yet';
-    document.getElementById('welcome-sub').textContent    = cycle.label + ' cycle active. ' + submitted + ' of ' + total + ' appraisals submitted.';
+    // Filter by org if needed
+    if (currentOrg !== 'both') {
+      var orgStaffRes = await client.from('staff').select('id').eq('organisation', currentOrg).eq('status','active');
+      var orgStaffIds = (orgStaffRes.data || []).map(function(s) { return s.id; });
+      appr = appr.filter(function(a) { return orgStaffIds.indexOf(a.staff_id) !== -1; });
+    }
 
+    var submitted  = appr.filter(function(a) { return ['submitted','approved','draft'].includes(a.status); }).length;
+    var pending    = appr.filter(function(a) { return a.status === 'submitted'; }).length;
+    var completed  = appr.filter(function(a) { return ['approved','submitted'].includes(a.status) && a.final_score; });
+    var avgScore   = completed.length ? Math.round(completed.reduce(function(t,a) { return t+(a.final_score||0); }, 0) / completed.length) : 0;
+    var completion = total ? Math.round(submitted / total * 100) : 0;
+
+    document.getElementById('m-total').textContent       = total;
+    document.getElementById('m-total-sub').textContent   = orgLabel(currentOrg);
+    document.getElementById('m-submitted').textContent   = submitted;
+    document.getElementById('m-submitted-sub').textContent = completion + '% completion rate';
+    document.getElementById('m-pending').textContent     = pending;
+    document.getElementById('m-pending-sub').textContent = 'Awaiting approval';
+    document.getElementById('m-avg').innerHTML           = avgScore > 0 ? avgScore + '<span style="font-size:15px">%</span>' : '--';
+    document.getElementById('m-avg-sub').textContent     = avgScore > 0 ? bandLabel(avgScore) : 'No data yet';
+    document.getElementById('welcome-sub').textContent   = cycle.label + ' cycle active. ' + submitted + ' of ' + total + ' appraisals submitted.';
+
+    renderDeptBars(completed);
     renderRatingDist(completed);
-    renderRecentActivity(appraisals.filter(function(a){ return a.submitted_at; }).sort(function(a,b){ return new Date(b.submitted_at)-new Date(a.submitted_at); }).slice(0,5));
+    renderRecentActivity(completed.slice().sort(function(a,b){ return new Date(b.submitted_at||0)-new Date(a.submitted_at||0); }).slice(0,5));
+
   } catch(e) {
-    var msg = e.message || JSON.stringify(e);
-    document.getElementById('welcome-sub').textContent = currentUser && currentUser.id === 'demo' ? 'Demo mode — connect Supabase to load live data.' : 'Could not load summary.';
-    if (currentUser && currentUser.id !== 'demo') console.error('loadHomeData:', e);
+    console.error('loadHomeData:', e);
+    document.getElementById('welcome-sub').textContent = 'Could not load summary. Check your connection.';
   }
+}
+
+function renderDeptBars(completed) {
+  var el = document.getElementById('dept-bars');
+  if (!el) return;
+  if (!completed || completed.length === 0 || _staffCache.length === 0) {
+    el.innerHTML = '<div style="font-size:11px;color:var(--text-light)">No appraisal data yet. Submit appraisals to see department breakdown.</div>';
+    return;
+  }
+  var depts = {};
+  completed.forEach(function(a) {
+    var s  = _staffCache.find(function(x) { return x.id === a.staff_id; }) || {};
+    var dn = s.department || 'Unknown';
+    if (!depts[dn]) depts[dn] = [];
+    depts[dn].push(a.final_score);
+  });
+  var deptAvgs = Object.keys(depts).map(function(dn) {
+    var scores = depts[dn];
+    return { name:dn, avg:Math.round(scores.reduce(function(t,s){return t+s;},0)/scores.length) };
+  }).sort(function(a,b){ return b.avg-a.avg; });
+  if (deptAvgs.length === 0) {
+    el.innerHTML = '<div style="font-size:11px;color:var(--text-light)">No scores yet.</div>';
+    return;
+  }
+  el.innerHTML = '<div style="font-size:11px;font-weight:600;color:var(--navy);margin-bottom:10px">Department scores &mdash; ' + orgLabel(currentOrg) + '</div>'
+    + deptAvgs.map(function(d) {
+        var col = d.avg>=90?'var(--green)':d.avg>=75?'#185FA5':d.avg>=60?'var(--navy)':d.avg>=40?'var(--amber)':'var(--red)';
+        return '<div class="dept-bar-row">'
+          + '<div class="dept-name">' + d.name + '</div>'
+          + '<div class="bar-track"><div class="bar-fill" style="width:'+d.avg+'%;background:'+col+'"></div></div>'
+          + '<div class="bar-pct" style="color:'+col+'">' + d.avg + '%</div>'
+          + '</div>';
+      }).join('');
 }
 
 function renderRatingDist(completed) {
   var el = document.getElementById('rating-dist');
   if (!el) return;
   if (!completed || completed.length === 0) {
-    el.innerHTML = '<div style="font-size:11px;color:var(--mid);grid-column:1/-1">No completed appraisals yet.</div>';
+    el.innerHTML = '<div style="font-size:11px;color:var(--text-light);grid-column:1/-1">No completed appraisals yet.</div>';
     return;
   }
-  var d = {exc:0,exceeds:0,meets:0,needs:0,unsat:0};
+  var c = { exc:0, exceeds:0, meets:0, needs:0, unsat:0 };
   completed.forEach(function(a) {
-    var s = a.final_score||0;
-    if(s>=90)d.exc++; else if(s>=75)d.exceeds++; else if(s>=60)d.meets++; else if(s>=40)d.needs++; else d.unsat++;
+    var sc = a.final_score || 0;
+    if (sc>=90) c.exc++; else if (sc>=75) c.exceeds++; else if (sc>=60) c.meets++; else if (sc>=40) c.needs++; else c.unsat++;
   });
   el.innerHTML =
-    '<div class="dist-box" style="background:rgba(59,109,17,.08)"><div class="dist-num" style="color:#3B6D11">' + d.exc + '</div><div class="dist-label" style="color:#3B6D11">Exceptional</div></div>'
-    + '<div class="dist-box" style="background:rgba(24,95,165,.08)"><div class="dist-num" style="color:#185FA5">' + d.exceeds + '</div><div class="dist-label" style="color:#185FA5">Exceeds</div></div>'
-    + '<div class="dist-box" style="background:rgba(15,30,60,.06)"><div class="dist-num" style="color:var(--navy)">' + d.meets + '</div><div class="dist-label" style="color:var(--navy)">Meets</div></div>'
-    + '<div class="dist-box" style="background:rgba(201,168,76,.1)"><div class="dist-num" style="color:var(--gold-dark)">' + d.needs + '</div><div class="dist-label" style="color:var(--gold-dark)">Needs improvement</div></div>'
-    + '<div class="dist-box" style="background:rgba(139,26,26,.08);grid-column:1/-1"><div class="dist-num" style="color:var(--red)">' + d.unsat + '</div><div class="dist-label" style="color:var(--red)">Unsatisfactory</div></div>';
+    '<div class="rating-box" style="background:#eaf3de"><div class="rating-num" style="color:var(--green)">' + c.exc + '</div><div class="rating-name" style="color:var(--green)">Exceptional</div></div>'
+    + '<div class="rating-box" style="background:#e6f1fb"><div class="rating-num" style="color:#185FA5">' + c.exceeds + '</div><div class="rating-name" style="color:#185FA5">Exceeds</div></div>'
+    + '<div class="rating-box" style="background:var(--grey-bg)"><div class="rating-num" style="color:var(--navy)">' + c.meets + '</div><div class="rating-name" style="color:var(--navy)">Meets</div></div>'
+    + '<div class="rating-box" style="background:#faeeda"><div class="rating-num" style="color:var(--amber)">' + c.needs + '</div><div class="rating-name" style="color:var(--amber)">Needs impr.</div></div>'
+    + '<div class="rating-box" style="background:#fcebeb;grid-column:1/-1"><div class="rating-num" style="color:#A32D2D">' + c.unsat + '</div><div class="rating-name" style="color:#A32D2D">Unsatisfactory</div></div>';
 }
 
 function renderRecentActivity(items) {
   var el = document.getElementById('recent-activity');
   if (!el) return;
   if (!items || items.length === 0) {
-    el.innerHTML = '<div style="font-size:11px;color:var(--mid)">No recent activity.</div>';
+    el.innerHTML = '<div style="font-size:11px;color:var(--text-light)">No recent activity.</div>';
     return;
   }
   el.innerHTML = items.map(function(a) {
-    var dot = a.status === 'approved' ? '#3B6D11' : 'var(--gold-dark)';
-    var lbl = a.status === 'approved' ? 'Approved' : 'Submitted';
-    var sc  = a.final_score ? ' \u2014 ' + Math.round(a.final_score) + '%' : '';
-    var dt  = a.submitted_at ? new Date(a.submitted_at).toLocaleDateString('en-GB',{day:'numeric',month:'short'}) : '';
-    return '<div class="act-row"><div class="act-dot" style="background:' + dot + '"></div>'
-      + '<div><div class="act-name">Appraisal ' + lbl.toLowerCase() + sc + '</div>'
-      + '<div class="act-meta">' + lbl + (dt ? ' \u00B7 ' + dt : '') + '</div></div></div>';
+    var s     = _staffCache.find(function(x) { return x.id === a.staff_id; }) || {};
+    var name  = s.full_name || 'Staff member';
+    var score = a.final_score ? ' \u2014 ' + Math.round(a.final_score) + '%' : '';
+    var time  = a.submitted_at ? new Date(a.submitted_at).toLocaleDateString('en-GB', { day:'numeric', month:'short' }) : '';
+    var dot   = a.status === 'approved' ? 'var(--green)' : 'var(--amber)';
+    return '<div class="activity-row">'
+      + '<div class="act-dot" style="background:' + dot + '"></div>'
+      + '<div><div class="act-text">' + name + score + '</div><div class="act-time">' + time + '</div></div>'
+      + '</div>';
   }).join('');
 }
 
-// ── KEYBOARD ──
-
-// ── ORG SWITCHER ──
-function switchOrg(val) {
-  currentOrg = val;
-  document.getElementById('org-switcher').value = val;
-  if (document.getElementById('page-staff').classList.contains('active')) loadStaffPage();
-  if (document.getElementById('page-home').classList.contains('active')) loadHomeData();
-}
-
-// ── STAFF PAGE ──
+// ── STAFF PAGE ──────────────────────────────────────────────
 async function loadStaffPage() {
-  var tbody = document.getElementById('staff-tbody');
+  var tbody   = document.getElementById('staff-tbody');
+  var counter = document.getElementById('staff-count');
   if (!tbody) return;
-  tbody.innerHTML = '<tr><td colspan="6" style="padding:30px;text-align:center;color:var(--mid);font-size:12px">Loading...</td></tr>';
+  tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;padding:24px;color:var(--text-light);font-size:12px">Loading staff...</td></tr>';
   try {
     var cl = getClient();
     var q = cl.from('staff').select('*').eq('status','active').order('full_name');
@@ -682,122 +954,132 @@ async function loadStaffPage() {
     var res = await q;
     if (res.error) throw res.error;
     _staffCache = res.data || [];
-    // Load user profiles for appraiser names
     var uRes = await cl.from('user_profiles').select('id,name,title');
     _userProfiles = uRes.data || [];
-    document.getElementById('staff-count').textContent = _staffCache.length;
-    var title = currentOrg === 'sg' ? 'Simba Group HO' : currentOrg === 'stl' ? 'Simba Telecom Uganda' : 'All Staff';
-    document.getElementById('staff-page-title').textContent = 'Staff — ' + title;
+    if (counter) counter.textContent = _staffCache.length + ' staff';
     renderStaffTable();
   } catch(e) {
-    if (tbody) tbody.innerHTML = '<tr><td colspan="6" style="padding:30px;text-align:center;color:var(--red);font-size:12px">Error: ' + e.message + '</td></tr>';
+    tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;padding:24px;color:var(--red);font-size:12px">Error: ' + e.message + '</td></tr>';
     console.error('loadStaffPage:', e);
   }
 }
 
 function renderStaffTable() {
-  var tbody = document.getElementById('staff-tbody');
+  var tbody  = document.getElementById('staff-tbody');
+  var search = (document.getElementById('filter-staff-search')||{value:''}).value.toLowerCase().trim();
+  var org    = (document.getElementById('filter-staff-org')   ||{value:''}).value;
+  var dept   = (document.getElementById('filter-staff-dept')  ||{value:''}).value;
   if (!tbody) return;
-  var search = (document.getElementById('staff-search') || {value:''}).value.toLowerCase().trim();
-  var dept   = (document.getElementById('staff-dept-filter') || {value:''}).value;
-  var list   = _staffCache.filter(function(s) {
+  var list = _staffCache.filter(function(s) {
     if (search && !s.full_name.toLowerCase().includes(search)) return false;
-    if (dept   && s.department !== dept) return false;
+    if (org    && s.organisation !== org)  return false;
+    if (dept   && s.department !== dept)   return false;
     return true;
   });
-  document.getElementById('staff-count').textContent = list.length;
+  var counter = document.getElementById('staff-count');
+  if (counter) counter.textContent = list.length + ' staff';
   if (list.length === 0) {
-    tbody.innerHTML = '<tr><td colspan="6" style="padding:30px;text-align:center;color:var(--mid);font-size:12px">No staff found.</td></tr>';
+    tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;padding:24px;color:var(--text-light);font-size:12px">No staff found.</td></tr>';
     return;
   }
   tbody.innerHTML = list.map(function(s) {
     var orgPill = s.organisation === 'sg'
-      ? '<span class="pill-sg">SG</span>'
-      : '<span class="pill-stl">STL</span>';
+      ? '<span class="pill pill-sg">SG</span>'
+      : '<span class="pill pill-stl">STL</span>';
     var appName = s.appraiser_id
-      ? (_userProfiles.find(function(u){ return u.id === s.appraiser_id; }) || {name:'--'}).name
-      : '<span style="color:var(--mid);font-style:italic">Unassigned</span>';
-    return '<tr style="border-bottom:.5px solid var(--border)">'
-      + '<td style="padding:9px 14px;font-weight:500">' + s.full_name + '</td>'
-      + '<td style="padding:9px 14px">' + orgPill + '</td>'
-      + '<td style="padding:9px 14px;color:var(--mid)">' + (s.department||'—') + '</td>'
-      + '<td style="padding:9px 14px;color:var(--mid)">' + (s.position||'—') + '</td>'
-      + '<td style="padding:9px 14px">' + appName + '</td>'
-      + '<td style="padding:9px 14px">'
-      + '<button data-action="edit" data-id="' + s.id + '" style="padding:4px 9px;background:var(--cream);border:1px solid var(--border);border-radius:3px;font-size:11px;cursor:pointer;margin-right:4px">Edit</button>'
-      + '</td></tr>';
+      ? (_userProfiles.find(function(u){ return u.id === s.appraiser_id; })||{name:'Assigned'}).name
+      : '<span style="color:var(--text-light);font-style:italic">Unassigned</span>';
+    var doj = s.date_of_joining ? new Date(s.date_of_joining).toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'}) : '\u2014';
+    return '<tr>'
+      + '<td><strong>' + s.full_name + '</strong></td>'
+      + '<td>' + orgPill + '</td>'
+      + '<td style="color:var(--text-mid)">' + (s.department||'\u2014') + '</td>'
+      + '<td style="color:var(--text-mid)">' + (s.position||'\u2014') + '</td>'
+      + '<td style="font-size:11px;color:var(--text-mid)">' + (s.region||'\u2014') + '</td>'
+      + '<td style="font-size:11px;color:var(--text-mid)">' + doj + '</td>'
+      + '<td class="no-print"><div class="table-actions">'
+      + '<button class="btn btn-secondary btn-sm" data-action="edit-staff" data-id="' + s.id + '">Edit</button>'
+      + '<button class="btn btn-primary btn-sm" data-action="appraise-staff" data-id="' + s.id + '">Appraise</button>'
+      + '</div></td></tr>';
   }).join('');
 }
 
-// ── TABLE EVENT DELEGATION ──
+// Staff table events
 document.addEventListener('click', function(e) {
-  var btn = e.target.closest('[data-action]');
+  var btn = e.target.closest('button[data-action]');
   if (!btn) return;
   var action = btn.dataset.action;
-  if (action === 'edit') openEditStaff(btn.dataset.id);
+  if (action === 'edit-staff')    openEditStaff(btn.dataset.id);
+  if (action === 'appraise-staff') {
+    var s = _staffCache.find(function(x){ return x.id === btn.dataset.id; });
+    if (s) openAppraisalForm(s, null);
+  }
 });
 
-// ── ADD / EDIT STAFF ──
+// Add staff button
+document.addEventListener('click', function(e) {
+  if (e.target.id === 'btn-add-staff') openAddStaff();
+  if (e.target.id === 'btn-new-appraisal') openStaffSearchModal();
+});
+
 function openAddStaff() {
   _editingStaffId = null;
-  document.getElementById('staff-modal-title').textContent = 'Add staff member';
-  document.getElementById('sf-name').value    = '';
-  document.getElementById('sf-no').value      = '';
-  document.getElementById('sf-org').value     = currentOrg === 'both' ? 'sg' : currentOrg;
-  document.getElementById('sf-dept').value    = '';
-  document.getElementById('sf-pos').value     = '';
-  document.getElementById('sf-region').value  = '';
-  document.getElementById('sf-doj').value     = '';
-  document.getElementById('sf-mode').value    = 'assisted';
-  document.getElementById('sf-appraiser').value = '';
+  document.getElementById('add-staff-modal-title').textContent = 'Add new staff member';
+  document.getElementById('asf-name').value    = '';
+  document.getElementById('asf-staffno').value = '';
+  document.getElementById('asf-org').value     = currentOrg !== 'both' ? currentOrg : 'sg';
+  document.getElementById('asf-dept').value    = '';
+  document.getElementById('asf-pos').value     = '';
+  document.getElementById('asf-region').value  = '';
+  document.getElementById('asf-loc').value     = '';
+  document.getElementById('asf-doj').value     = '';
+  document.getElementById('asf-mode').value    = 'assisted';
   populateAppraiserDropdown(null);
-  document.getElementById('modal-staff').style.display = 'flex';
+  document.getElementById('modal-add-staff').classList.remove('hidden');
 }
 
 function openEditStaff(id) {
   var s = _staffCache.find(function(x){ return x.id === id; });
   if (!s) return;
   _editingStaffId = id;
-  document.getElementById('staff-modal-title').textContent = 'Edit staff member';
-  document.getElementById('sf-name').value    = s.full_name || '';
-  document.getElementById('sf-no').value      = s.staff_no  || '';
-  document.getElementById('sf-org').value     = s.organisation || 'sg';
-  document.getElementById('sf-dept').value    = s.department  || '';
-  document.getElementById('sf-pos').value     = s.position    || '';
-  document.getElementById('sf-region').value  = s.region      || '';
-  document.getElementById('sf-doj').value     = s.date_of_joining ? s.date_of_joining.substring(0,10) : '';
-  document.getElementById('sf-mode').value    = s.appraisal_mode || 'assisted';
+  document.getElementById('add-staff-modal-title').textContent = 'Edit staff member';
+  document.getElementById('asf-name').value    = s.full_name    || '';
+  document.getElementById('asf-staffno').value = s.staff_no     || '';
+  document.getElementById('asf-org').value     = s.organisation || 'sg';
+  document.getElementById('asf-dept').value    = s.department   || '';
+  document.getElementById('asf-pos').value     = s.position     || '';
+  document.getElementById('asf-region').value  = s.region       || '';
+  document.getElementById('asf-loc').value     = s.location     || '';
+  document.getElementById('asf-doj').value     = s.date_of_joining ? s.date_of_joining.substring(0,10) : '';
+  document.getElementById('asf-mode').value    = s.appraisal_mode || 'assisted';
   populateAppraiserDropdown(s.appraiser_id);
-  document.getElementById('modal-staff').style.display = 'flex';
+  document.getElementById('modal-add-staff').classList.remove('hidden');
 }
 
 function populateAppraiserDropdown(currentId) {
-  var sel = document.getElementById('sf-appraiser');
+  var sel = document.getElementById('asf-appraiser');
   sel.innerHTML = '<option value="">Assign later</option>'
     + _userProfiles.map(function(u) {
         var sel2 = currentId && u.id === currentId ? ' selected' : '';
-        return '<option value="' + u.id + '"' + sel2 + '>' + u.name + (u.title ? ' — ' + u.title : '') + '</option>';
+        return '<option value="' + u.id + '"' + sel2 + '>' + u.name + (u.title ? ' \u2014 ' + u.title : '') + '</option>';
       }).join('');
 }
 
-function closeStaffModal() {
-  document.getElementById('modal-staff').style.display = 'none';
-}
-
 async function saveStaff() {
-  var name = document.getElementById('sf-name').value.trim();
+  var name = document.getElementById('asf-name').value.trim();
   if (!name) { showToast('Full name is required.'); return; }
   var payload = {
-    full_name:      name,
-    staff_no:       document.getElementById('sf-no').value.trim() || null,
-    organisation:   document.getElementById('sf-org').value,
-    department:     document.getElementById('sf-dept').value.trim() || null,
-    position:       document.getElementById('sf-pos').value.trim() || null,
-    region:         document.getElementById('sf-region').value.trim() || null,
-    date_of_joining:document.getElementById('sf-doj').value || null,
-    appraisal_mode: document.getElementById('sf-mode').value,
-    appraiser_id:   document.getElementById('sf-appraiser').value || null,
-    status:         'active'
+    full_name:       name,
+    staff_no:        document.getElementById('asf-staffno').value.trim() || null,
+    organisation:    document.getElementById('asf-org').value,
+    department:      document.getElementById('asf-dept').value.trim() || null,
+    position:        document.getElementById('asf-pos').value.trim() || null,
+    region:          document.getElementById('asf-region').value.trim() || null,
+    location:        document.getElementById('asf-loc').value.trim() || null,
+    date_of_joining: document.getElementById('asf-doj').value || null,
+    appraisal_mode:  document.getElementById('asf-mode').value,
+    appraiser_id:    document.getElementById('asf-appraiser').value || null,
+    status:          'active'
   };
   try {
     var cl = getClient();
@@ -805,29 +1087,25 @@ async function saveStaff() {
       ? await cl.from('staff').update(payload).eq('id', _editingStaffId)
       : await cl.from('staff').insert(payload);
     if (res.error) throw res.error;
-    closeStaffModal();
+    closeModal('modal-add-staff');
     showToast(_editingStaffId ? name + ' updated.' : name + ' added.');
     loadStaffPage();
+    loadHomeData();
   } catch(e) { showToast('Error: ' + e.message); console.error('saveStaff:', e); }
 }
 
-
-// ── APPRAISALS PAGE ──────────────────────────────────────
-var _appraisalsCache = [];
-var _activeCycleId   = null;
-var _currentApprTab  = 'all';
-
+// ── APPRAISALS PAGE ────────────────────────────────────────
 async function loadAppraisalsPage() {
   var tbody   = document.getElementById('appr-tbody');
   var counter = document.getElementById('appr-count');
   if (!tbody) return;
-  tbody.innerHTML = '<tr><td colspan="9" style="text-align:center;padding:24px;color:var(--text-light);font-size:12px">Loading...</td></tr>';
+  tbody.innerHTML = '<tr><td colspan="9" style="text-align:center;padding:24px;color:var(--text-light);font-size:12px">Loading appraisals...</td></tr>';
   try {
     if (_staffCache.length === 0) await loadStaffPage();
-    var cl    = getClient();
-    var cr    = await cl.from('appraisal_cycles').select('id,label').eq('is_active',true).single();
+    var cl = getClient();
+    var cr = await cl.from('appraisal_cycles').select('id,label').eq('is_active',true).single();
     if (cr.error) throw cr.error;
-    _activeCycleId = cr.data.id;
+    window._activeCycleId = cr.data.id;
     var staffIds = _staffCache.map(function(s){ return s.id; });
     var q = cl.from('appraisals')
       .select('id,status,self_kpi_score,appraiser_kpi_score,final_score,rating_band,staff_id,submitted_at,review_comments')
@@ -838,11 +1116,11 @@ async function loadAppraisalsPage() {
     }
     var ar = await q;
     if (ar.error) throw ar.error;
-    _appraisalsCache = ar.data || [];
-    if (counter) counter.textContent = _appraisalsCache.length + ' records';
-    renderAppraisalsTable(_appraisalsCache);
+    window._appraisalsCache = ar.data || [];
+    if (counter) counter.textContent = (ar.data||[]).length + ' records';
+    renderAppraisalsTable(ar.data || []);
   } catch(e) {
-    if (tbody) tbody.innerHTML = '<tr><td colspan="9" style="text-align:center;padding:24px;color:var(--red);font-size:12px">Error: ' + e.message + '</td></tr>';
+    tbody.innerHTML = '<tr><td colspan="9" style="text-align:center;padding:24px;color:var(--red);font-size:12px">Error: ' + e.message + '</td></tr>';
     console.error('loadAppraisalsPage:', e);
   }
 }
@@ -851,70 +1129,66 @@ function renderAppraisalsTable(appraisals) {
   var tbody = document.getElementById('appr-tbody');
   if (!tbody) return;
   if (!appraisals || appraisals.length === 0) {
-    tbody.innerHTML = '<tr><td colspan="9" style="text-align:center;padding:24px;color:var(--text-light);font-size:12px">No appraisals yet this cycle. Click “+ New” to start one.</td></tr>';
+    tbody.innerHTML = '<tr><td colspan="9" style="text-align:center;padding:24px;color:var(--text-light);font-size:12px">No appraisals yet this cycle. Click \u201C+ New\u201D to start one.</td></tr>';
     return;
   }
   tbody.innerHTML = appraisals.map(function(a) {
     var s      = _staffCache.find(function(x){ return x.id === a.staff_id; }) || {};
-    var orgPill= s.organisation === 'sg' ? '<span class="pill-sg">SG</span>' : '<span class="pill-stl">STL</span>';
-    var score  = a.final_score != null ? '<strong>' + Math.round(a.final_score) + '%</strong>' : '—';
-    var bClass = a.final_score >= 90 ? 'band-exc' : a.final_score >= 75 ? 'band-exceeds' : a.final_score >= 60 ? 'band-meets' : a.final_score >= 40 ? 'band-needs' : 'band-unsat';
-    var band   = a.rating_band ? '<span class="band ' + bClass + '">' + a.rating_band + '</span>' : '<span style="color:var(--text-light);font-size:10px">Pending</span>';
-    var sName  = s.full_name || '';
-    var isDraft    = a.status === 'draft';
-    var isSubmitted= a.status === 'submitted';
-    var isApproved = a.status === 'approved';
-    var selfDot = isApproved || isSubmitted ? 'dot-done' : isDraft ? 'dot-prog' : 'dot-open';
+    var orgPill= s.organisation === 'sg' ? '<span class="pill pill-sg">SG</span>' : '<span class="pill pill-stl">STL</span>';
+    var score  = a.final_score != null ? '<strong>' + Math.round(a.final_score) + '%</strong>' : '\u2014';
+    var band   = a.rating_band ? '<span class="band ' + bandClass(a.final_score||0) + '">' + a.rating_band + '</span>' : '<span style="color:var(--text-light);font-size:10px">Pending</span>';
+    var isDraft     = a.status === 'draft';
+    var isSubmitted = a.status === 'submitted';
+    var isApproved  = a.status === 'approved';
+    var selfDot = isApproved||isSubmitted ? 'dot-done' : isDraft ? 'dot-prog' : 'dot-open';
     var selfLbl = isApproved ? 'Approved' : isSubmitted ? 'Submitted' : isDraft ? 'Draft saved' : 'Not started';
     var hodDot  = isApproved ? 'dot-done' : isSubmitted ? 'dot-prog' : 'dot-open';
-    var hodLbl  = isApproved ? 'Complete' : isSubmitted ? 'Pending approval' : isDraft ? 'Pending' : 'Awaiting';
-    var canApprv= currentUser && (currentUser.role === 'admin' || currentUser.role === 'approver');
-    var canDel  = currentUser && currentUser.role === 'admin';
-    var resetBtn = canApprv ? ' <button class="btn btn-secondary btn-sm" data-action="reset-appr" data-appr-id="' + a.id + '" data-staff-name="' + sName + '">Reset</button>' : '';
-    var delBtn   = canDel   ? ' <button class="btn btn-danger btn-sm" data-action="delete-appr" data-appr-id="' + a.id + '" data-staff-name="' + sName + '">Delete</button>' : '';
+    var hodLbl  = isApproved ? 'Approved' : isSubmitted ? 'Pending approval' : isDraft ? 'Pending' : 'Awaiting';
+    var sName   = s.full_name || '';
     var actions;
     if (isApproved) {
-      actions = '<button class="btn btn-secondary btn-sm" data-action="view-appr" data-appr-id="' + a.id + '">View</button>' + resetBtn + delBtn;
-    } else if (isSubmitted && canApprv) {
+      actions = '<button class="btn btn-secondary btn-sm" data-action="view-appr" data-appr-id="' + a.id + '">View</button>';
+    } else if (isSubmitted && canApprove()) {
       actions = '<button class="btn btn-primary btn-sm" data-action="view-appr" data-appr-id="' + a.id + '">View</button>'
         + ' <button class="btn btn-secondary btn-sm" data-action="approve-appr" data-appr-id="' + a.id + '" data-staff-name="' + sName + '">Approve</button>'
-        + ' <button class="btn btn-danger btn-sm" data-action="reject-appr" data-appr-id="' + a.id + '" data-staff-name="' + sName + '">Return</button>'
-        + resetBtn + delBtn;
+        + ' <button class="btn btn-danger btn-sm" data-action="reject-appr" data-appr-id="' + a.id + '" data-staff-name="' + sName + '">Return</button>';
     } else if (isSubmitted) {
       actions = '<button class="btn btn-secondary btn-sm" data-action="view-appr" data-appr-id="' + a.id + '">View</button><span style="font-size:10px;color:var(--amber);margin-left:6px">Awaiting approval</span>';
     } else if (isDraft) {
       actions = (a.review_comments ? '<div style="font-size:10px;color:#A32D2D;margin-bottom:4px;padding:4px 8px;background:#fcebeb;border-radius:3px;border-left:3px solid #A32D2D">Returned: ' + a.review_comments + '</div>' : '')
         + '<button class="btn btn-primary btn-sm" data-action="continue-appr" data-appr-id="' + a.id + '" data-staff-id="' + a.staff_id + '">Continue</button>'
-        + ' <button class="btn btn-danger btn-sm" data-action="discard-appr" data-appr-id="' + a.id + '" data-staff-name="' + sName + '">Discard</button>'
-        + delBtn;
+        + ' <button class="btn btn-danger btn-sm" data-action="discard-appr" data-appr-id="' + a.id + '" data-staff-name="' + sName + '">Discard</button>';
     } else {
       actions = '<button class="btn btn-primary btn-sm" data-action="start-appr" data-staff-id="' + a.staff_id + '">Start</button>';
     }
-    return '<tr data-appr-id="' + a.id + '" data-org="' + (s.organisation||'') + '" data-status="' + a.status + '">'
-      + '<td><strong>' + (s.full_name || '—') + '</strong></td>'
+    return '<tr data-appr-id="' + a.id + '" data-org="' + (s.organisation||'') + '" data-dept="' + (s.department||'').toLowerCase() + '" data-status="' + a.status + '">'
+      + '<td><strong>' + (s.full_name||'\u2014') + '</strong></td>'
       + '<td>' + orgPill + '</td>'
-      + '<td>' + (s.department || '—') + '</td>'
-      + '<td>' + (s.position   || '—') + '</td>'
+      + '<td>' + (s.department||'\u2014') + '</td>'
+      + '<td>' + (s.position||'\u2014') + '</td>'
       + '<td><span class="status-badge"><span class="status-dot ' + selfDot + '"></span>' + selfLbl + '</span></td>'
       + '<td><span class="status-badge"><span class="status-dot ' + hodDot + '"></span>' + hodLbl + '</span></td>'
       + '<td>' + score + '</td>'
       + '<td>' + band + '</td>'
-      + '<td><div class="table-actions">' + actions + '</div></td>'
+      + '<td class="no-print"><div class="table-actions">' + actions + '</div></td>'
       + '</tr>';
   }).join('');
 }
 
 function filterAppraisalsTable() {
-  var orgF   = (document.getElementById('filter-appr-org') || {value:''}).value;
-  var rows   = document.querySelectorAll('#appr-tbody tr[data-appr-id]');
+  var orgF    = (document.getElementById('filter-appr-org') ||{value:''}).value;
+  var deptF   = (document.getElementById('filter-appr-dept')||{value:''}).value.toLowerCase();
+  var rows    = document.querySelectorAll('#appr-tbody tr[data-appr-id]');
   var visible = 0;
   rows.forEach(function(row) {
     var rOrg    = row.dataset.org    || '';
+    var rDept   = row.dataset.dept   || '';
     var rStatus = row.dataset.status || '';
     var show = true;
-    if (orgF && rOrg !== orgF) show = false;
-    if (_currentApprTab === 'pending' && rStatus !== 'submitted') show = false;
-    if (_currentApprTab === 'done'    && !['approved','complete'].includes(rStatus)) show = false;
+    if (orgF  && rOrg !== orgF) show = false;
+    if (deptF && !rDept.includes(deptF)) show = false;
+    if (_currentAppraisalTab === 'done'    && !['approved','submitted'].includes(rStatus)) show = false;
+    if (_currentAppraisalTab === 'pending' && rStatus !== 'submitted') show = false;
     row.style.display = show ? '' : 'none';
     if (show) visible++;
   });
@@ -922,77 +1196,52 @@ function filterAppraisalsTable() {
   if (counter) counter.textContent = visible + ' records';
 }
 
-// ── APPRAISAL TABS ──
+// Appraisal tab buttons
 document.addEventListener('click', function(e) {
   var tab = e.target.closest('.appr-tab');
   if (!tab) return;
-  _currentApprTab = tab.dataset.tab;
-  document.querySelectorAll('.appr-tab').forEach(function(b) { b.classList.remove('active'); });
-  tab.classList.add('active');
+  _currentAppraisalTab = tab.dataset.tab;
+  document.querySelectorAll('.appr-tab').forEach(function(b) {
+    b.style.background = 'transparent';
+    b.style.color = 'var(--text-mid)';
+    b.style.fontWeight = '400';
+  });
+  tab.style.background = '#fff';
+  tab.style.color = 'var(--navy)';
+  tab.style.fontWeight = '500';
   filterAppraisalsTable();
 });
 
-// ── APPRAISAL ACTIONS ──
+// Org + dept filter changes on appraisals page
+document.addEventListener('change', function(e) {
+  if (e.target.id === 'filter-appr-org' || e.target.id === 'filter-appr-dept') filterAppraisalsTable();
+});
+
+// Appraisal action delegation
 document.addEventListener('click', function(e) {
   var btn = e.target.closest('button[data-action]');
   if (!btn) return;
   var action = btn.dataset.action;
-  if (action === 'start-appr')    { var s1 = _staffCache.find(function(x){ return x.id === btn.dataset.staffId; }); if(s1) showToast('Appraisal form coming in R3.'); }
-  if (action === 'continue-appr') { showToast('Continue draft coming in R3.'); }
-  if (action === 'discard-appr')  { if(confirm('Discard draft for ' + (btn.dataset.staffName||'staff') + '?')) discardAppraisal(btn.dataset.apprId); }
-  if (action === 'approve-appr')  { approveAppraisal(btn.dataset.apprId, btn.dataset.staffName); }
-  if (action === 'reject-appr')   { openReturnModal(btn.dataset.apprId, btn.dataset.staffName); }
-  if (action === 'reset-appr')    { resetToDraft(btn.dataset.apprId, btn.dataset.staffName); }
-  if (action === 'delete-appr')   { deleteAppraisal(btn.dataset.apprId, btn.dataset.staffName); }
-  if (e.target.id === 'btn-new-appraisal') openNewAppraisalPicker();
+  if (action === 'approve-appr') approveAppraisal(btn.dataset.apprId, btn.dataset.staffName);
+  if (action === 'reject-appr')  openReturnModal(btn.dataset.apprId, btn.dataset.staffName);
+  if (action === 'discard-appr') { if (confirm('Discard draft for ' + (btn.dataset.staffName||'staff') + '?')) discardAppraisal(btn.dataset.apprId); }
+  if (action === 'start-appr')   { var s1=_staffCache.find(function(x){return x.id===btn.dataset.staffId;}); if(s1) openAppraisalForm(s1,null); }
+  if (action === 'continue-appr'){ var s2=_staffCache.find(function(x){return x.id===btn.dataset.staffId;}); if(s2) continueDraft(s2,btn.dataset.apprId); }
+  if (action === 'view-appr')    showToast('Individual report view coming in R3.'); 
 });
 
 async function approveAppraisal(id, name) {
-  if (!confirm('Approve the appraisal for ' + (name||'this staff member') + '?')) return;
+  if (!confirm('Approve appraisal for ' + (name||'this staff member') + '?')) return;
   try {
-    var cl = getClient();
-    var res = await cl.from('appraisals').update({ status:'approved', reviewed_by:currentUser.id, reviewed_at:new Date().toISOString() }).eq('id',id);
+    var res = await getClient().from('appraisals').update({ status:'approved', reviewed_by:currentUser.id, reviewed_at:new Date().toISOString() }).eq('id',id);
     if (res.error) throw res.error;
     showToast('Appraisal approved.');
     loadAppraisalsPage(); loadHomeData();
   } catch(e) { showToast('Error: ' + e.message); }
 }
 
-async function discardAppraisal(id) {
-  try {
-    var cl = getClient();
-    var res = await cl.from('appraisals').delete().eq('id',id);
-    if (res.error) throw res.error;
-    showToast('Draft discarded.');
-    loadAppraisalsPage(); loadHomeData();
-  } catch(e) { showToast('Error: ' + e.message); }
-}
-
-async function resetToDraft(id, name) {
-  if (!confirm('Reset appraisal for ' + (name||'staff') + ' to draft?')) return;
-  try {
-    var cl = getClient();
-    var res = await cl.from('appraisals').update({ status:'draft', review_comments:'Reset by ' + currentUser.name }).eq('id',id);
-    if (res.error) throw res.error;
-    showToast('Appraisal reset to draft.');
-    loadAppraisalsPage(); loadHomeData();
-  } catch(e) { showToast('Error: ' + e.message); }
-}
-
-async function deleteAppraisal(id, name) {
-  if (!confirm('Permanently delete appraisal for ' + (name||'staff') + '? This cannot be undone.')) return;
-  if (!confirm('Are you sure? All data will be lost.')) return;
-  try {
-    var cl = getClient();
-    var res = await cl.from('appraisals').delete().eq('id',id);
-    if (res.error) throw res.error;
-    showToast('Appraisal deleted.');
-    loadAppraisalsPage(); loadHomeData();
-  } catch(e) { showToast('Error: ' + e.message); }
-}
-
 function openReturnModal(id, name) {
-  var reason = prompt('Reason for returning to ' + (name||'staff member') + ':');
+  var reason = prompt('Reason for returning appraisal for ' + (name||'staff member') + ':');
   if (!reason) return;
   getClient().from('appraisals').update({ status:'draft', review_comments:reason, reviewed_by:currentUser.id, reviewed_at:new Date().toISOString() }).eq('id',id)
     .then(function(res) {
@@ -1002,16 +1251,340 @@ function openReturnModal(id, name) {
     });
 }
 
-function openNewAppraisalPicker() {
-  showToast('Select a staff member from the Staff page and click Appraise.');
-  navigate('staff');
+async function discardAppraisal(id) {
+  try {
+    var res = await getClient().from('appraisals').delete().eq('id',id);
+    if (res.error) throw res.error;
+    showToast('Draft discarded.');
+    loadAppraisalsPage(); loadHomeData();
+  } catch(e) { showToast('Error: ' + e.message); }
 }
 
+// ── STAFF SEARCH MODAL ────────────────────────────────────
+function openStaffSearchModal() {
+  document.getElementById('staff-search-input').value = '';
+  document.getElementById('staff-search-results').innerHTML = '<div style="padding:16px;text-align:center;font-size:11px;color:var(--text-light)">Start typing to search...</div>';
+  document.getElementById('modal-staff-search').classList.remove('hidden');
+  setTimeout(function() { document.getElementById('staff-search-input').focus(); }, 100);
+}
+
+document.addEventListener('input', function(e) {
+  if (e.target.id !== 'staff-search-input') return;
+  var q = e.target.value.toLowerCase().trim();
+  var results = document.getElementById('staff-search-results');
+  if (!q) { results.innerHTML = '<div style="padding:16px;text-align:center;font-size:11px;color:var(--text-light)">Start typing to search...</div>'; return; }
+  var filtered = _staffCache.filter(function(s) {
+    return s.full_name.toLowerCase().includes(q)
+      || (s.position   ||'').toLowerCase().includes(q)
+      || (s.department ||'').toLowerCase().includes(q);
+  }).slice(0,20);
+  if (filtered.length === 0) { results.innerHTML = '<div style="padding:16px;text-align:center;font-size:11px;color:var(--text-light)">No staff found.</div>'; return; }
+  results.innerHTML = filtered.map(function(s) {
+    var pill = s.organisation === 'sg' ? '<span class="pill pill-sg">SG</span>' : '<span class="pill pill-stl">STL</span>';
+    return '<div class="staff-search-item" data-staff-id="' + s.id + '" style="padding:10px 12px;border-bottom:.5px solid #eee;cursor:pointer">'
+      + '<div style="font-size:12px;font-weight:600;color:var(--navy)">' + s.full_name + '</div>'
+      + '<div style="font-size:10px;color:var(--text-light);margin-top:2px">' + (s.position||'') + ' &middot; ' + (s.department||'') + ' &middot; ' + pill + '</div>'
+      + '</div>';
+  }).join('');
+});
+
+document.addEventListener('mouseover', function(e) { var i=e.target.closest('.staff-search-item'); if(i) i.style.background='#f0f1f4'; });
+document.addEventListener('mouseout',  function(e) { var i=e.target.closest('.staff-search-item'); if(i) i.style.background=''; });
+
+document.addEventListener('click', function(e) {
+  var item = e.target.closest('.staff-search-item');
+  if (!item) return;
+  closeModal('modal-staff-search');
+  var s = _staffCache.find(function(x){ return x.id === item.dataset.staffId; });
+  if (s) openAppraisalForm(s, null);
+});
+
+// ── APPRAISAL FORM ─────────────────────────────────────────
+var _appraisalStaff = null;
+var _appraisalKPIs  = [];
+var _submitted      = false;
+
+// Default KPI set for all STL roles (customise per role in R2 KPI Templates)
+var DEFAULT_KPIS = [
+  { kpi:'Achievement of sales targets',    target:'100% of monthly target',  weight:30 },
+  { kpi:'Customer satisfaction score',     target:'90% and above',           weight:25 },
+  { kpi:'Compliance with SOPs',            target:'100%',                    weight:20 },
+  { kpi:'Attendance and punctuality',      target:'Zero unexcused absences', weight:15 },
+  { kpi:'Reporting accuracy and timeliness',target:'100% on-time reports',   weight:10 }
+];
+
+function getKPIsForStaff(s) {
+  // Will be replaced by KPI Templates lookup in R2
+  return DEFAULT_KPIS;
+}
+
+function openAppraisalForm(staff, savedData) {
+  _appraisalStaff = staff;
+  _submitted = false;
+  _appraisalKPIs = getKPIsForStaff(staff);
+  window._savedDraftData = savedData || null;
+  var orgName = staff.organisation === 'sg' ? 'Simba Group HO' : 'Simba Telecom Uganda';
+  document.getElementById('appr-modal-title').textContent = 'Appraisal \u2014 ' + staff.full_name;
+
+  var COMPETENCIES = [
+    { key:'time_mgmt',     label:'Time management',   desc:'Punctuality and reliability' },
+    { key:'dependability', label:'Dependability',      desc:'Attendance and consistency' },
+    { key:'appearance',    label:'Appearance',         desc:'Grooming and dress standards' },
+    { key:'cooperation',   label:'Cooperation',        desc:'Working well with colleagues' },
+    { key:'responsibility',label:'Responsibility',     desc:'Ownership of tasks' },
+    { key:'accuracy',      label:'Accuracy',           desc:'Correctness of work output' },
+    { key:'quality',       label:'Quality of work',    desc:'Standards of output' },
+    { key:'quantity',      label:'Quantity of work',   desc:'Volume and productivity' },
+    { key:'initiative',    label:'Initiative',         desc:'Proactiveness and self-direction' },
+    { key:'knowledge',     label:'Knowledge and skill',desc:'Role-specific expertise' },
+  ];
+
+  function ratingSelect(cls, idx) {
+    return '<select class="' + cls + '" data-idx="' + idx + '" style="width:100%;padding:5px 7px;border:1px solid var(--grey-border);border-radius:4px;font-size:11px">'
+      + '<option value="">Select</option>'
+      + '<option value="5">Exceptional (5)</option>'
+      + '<option value="4">Exceeds expectations (4)</option>'
+      + '<option value="3">Meets expectations (3)</option>'
+      + '<option value="2">Needs improvement (2)</option>'
+      + '<option value="1">Unsatisfactory (1)</option>'
+      + '</select>';
+  }
+
+  function ratingBtns(key, type) {
+    return [1,2,3,4,5].map(function(v) {
+      return '<button type="button" class="r-btn" data-key="' + key + '" data-type="' + type + '" data-val="' + v + '">' + v + '</button>';
+    }).join('');
+  }
+
+  var kpiRows = _appraisalKPIs.map(function(k, i) {
+    return '<div style="padding:10px 0;border-bottom:.5px solid #eee">'
+      + '<div style="display:grid;grid-template-columns:1.8fr 1fr 1fr .4fr;gap:10px;align-items:center">'
+      + '<div><div style="font-size:12px;font-weight:500">' + k.kpi + '</div><div style="font-size:10px;color:var(--text-light);margin-top:2px">Target: ' + k.target + '</div></div>'
+      + '<div>' + ratingSelect('kpi-self', i) + '</div>'
+      + '<div>' + ratingSelect('kpi-appraiser', i) + '</div>'
+      + '<div style="font-size:10px;font-weight:600;color:var(--red);text-align:right">' + k.weight + '%</div>'
+      + '</div>'
+      + '<div style="margin-top:6px"><textarea class="kpi-comment" data-idx="' + i + '" placeholder="Comments / evidence..." style="width:100%;padding:6px 8px;border:1px solid var(--grey-border);border-radius:4px;font-size:11px;min-height:40px;resize:vertical"></textarea></div>'
+      + '</div>';
+  }).join('');
+
+  var compRows = COMPETENCIES.map(function(c) {
+    return '<div style="display:grid;grid-template-columns:1.8fr 1fr 1fr;gap:10px;align-items:center;padding:8px 0;border-bottom:.5px solid #eee">'
+      + '<div><div style="font-size:12px">' + c.label + '</div><div style="font-size:10px;color:var(--text-light)">' + c.desc + '</div></div>'
+      + '<div class="rating-selector">' + ratingBtns(c.key, 'self') + '</div>'
+      + '<div class="rating-selector">' + ratingBtns(c.key, 'appraiser') + '</div>'
+      + '</div>';
+  }).join('');
+
+  document.getElementById('appr-modal-body').innerHTML =
+    '<div style="background:var(--navy);color:#fff;padding:12px 16px;border-radius:6px;margin-bottom:16px">'
+    + '<div style="font-family:var(--font-heading);font-size:13px;font-weight:600">' + staff.full_name + '</div>'
+    + '<div style="font-size:10px;opacity:.7;margin-top:2px">' + (staff.position||'') + ' &middot; ' + (staff.department||'') + ' &middot; ' + orgName + ' &middot; H1 2026</div>'
+    + '</div>'
+    + '<div class="form-section-title" style="margin-bottom:10px">Section 1 &mdash; KPI performance</div>'
+    + '<div style="display:grid;grid-template-columns:1.8fr 1fr 1fr .4fr;gap:10px;padding:6px 0;border-bottom:1.5px solid #000;margin-bottom:2px">'
+    + '<div style="font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.04em;color:var(--text-light)">KPI / Measure</div>'
+    + '<div style="font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.04em;color:var(--text-light);text-align:center">Staff (40%)</div>'
+    + '<div style="font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.04em;color:var(--text-light);text-align:center">Appraiser (60%)</div>'
+    + '<div style="font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.04em;color:var(--text-light);text-align:right">Weight</div>'
+    + '</div>'
+    + kpiRows
+    + '<div class="form-section-title" style="margin-top:18px;margin-bottom:10px">Section 2 &mdash; Behavioural competencies</div>'
+    + '<div style="display:grid;grid-template-columns:1.8fr 1fr 1fr;gap:10px;padding:6px 0;border-bottom:1.5px solid #000;margin-bottom:4px">'
+    + '<div style="font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.04em;color:var(--text-light)">Competency</div>'
+    + '<div style="font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.04em;color:var(--text-light);text-align:center">Staff</div>'
+    + '<div style="font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.04em;color:var(--text-light);text-align:center">Appraiser</div>'
+    + '</div>'
+    + compRows
+    + '<div class="form-section-title" style="margin-top:18px;margin-bottom:10px">Section 3 &mdash; Development plan</div>'
+    + '<div class="form-group-m"><label>Strong points</label><textarea id="dev-strong" placeholder="Key strengths observed this period..."></textarea></div>'
+    + '<div class="form-group-m"><label>Training and development needs</label><textarea id="dev-training" placeholder="Training gaps or development areas for next cycle..."></textarea></div>'
+    + '<div class="form-group-m"><label>Career objectives &mdash; next 6 months</label><textarea id="dev-career" placeholder="Agreed career development goals..."></textarea></div>'
+    + '<div style="background:var(--grey-bg);border:1px solid var(--grey-border);border-radius:6px;padding:12px 14px;margin-top:8px">'
+    + '<label style="display:flex;align-items:flex-start;gap:10px;cursor:pointer">'
+    + '<input type="checkbox" id="ack-checkbox" style="margin-top:2px;width:14px;height:14px;flex-shrink:0;accent-color:var(--navy)" />'
+    + '<span style="font-size:11px;color:var(--text-mid);line-height:1.5">I confirm this appraisal was conducted in the presence of <strong>' + staff.full_name + '</strong> and all ratings and the development plan were discussed and agreed upon.</span>'
+    + '</label></div>';
+
+  document.getElementById('modal-appraisal').classList.remove('hidden');
+  updateAppraisalScore();
+}
+
+async function continueDraft(s, apprId) {
+  try {
+    var res = await getClient().from('appraisals').select('kpi_responses').eq('id',apprId).single();
+    if (res.error) throw res.error;
+    openAppraisalForm(s, res.data ? res.data.kpi_responses : null);
+  } catch(e) { showToast('Could not load draft.'); openAppraisalForm(s, null); }
+}
+
+// Rating button selection
+document.addEventListener('click', function(e) {
+  var btn = e.target.closest('.r-btn');
+  if (!btn) return;
+  var container = btn.closest('.rating-selector');
+  if (!container) return;
+  container.querySelectorAll('.r-btn').forEach(function(b) { b.className = 'r-btn'; });
+  btn.classList.add('sel-' + btn.dataset.val);
+  updateAppraisalScore();
+});
+
+document.addEventListener('change', function(e) {
+  if (e.target.classList.contains('kpi-self') || e.target.classList.contains('kpi-appraiser')) updateAppraisalScore();
+});
+
+function updateAppraisalScore() {
+  var kpis = _appraisalKPIs;
+  if (!kpis || kpis.length === 0) return;
+  var selfScore = 0, apprScore = 0, totalW = 0;
+  kpis.forEach(function(k, i) {
+    var selfEl = document.querySelector('.kpi-self[data-idx="' + i + '"]');
+    var apprEl = document.querySelector('.kpi-appraiser[data-idx="' + i + '"]');
+    var sv = selfEl ? parseFloat(selfEl.value) || 0 : 0;
+    var av = apprEl ? parseFloat(apprEl.value) || 0 : 0;
+    selfScore += (sv / 5) * k.weight;
+    apprScore += (av / 5) * k.weight;
+    totalW    += k.weight;
+  });
+  if (totalW === 0) return;
+  var selfPct  = Math.round(selfScore / totalW * 100);
+  var apprPct  = Math.round(apprScore / totalW * 100);
+  var finalPct = Math.round(selfPct * 0.4 + apprPct * 0.6);
+  var display  = document.getElementById('appr-score-display');
+  if (display) {
+    if (finalPct > 0) {
+      display.innerHTML = 'KPI score: Self <strong>' + selfPct + '%</strong> &middot; Appraiser <strong>' + apprPct + '%</strong> &middot; Final <strong style="color:var(--red)">' + finalPct + '%</strong> (' + bandLabel(finalPct) + ')';
+    } else {
+      display.textContent = 'Score: pending \u2014 fill in KPI ratings above';
+    }
+  }
+}
+
+// Save draft
+document.addEventListener('click', function(e) {
+  if (e.target.id === 'btn-save-draft') { if (_appraisalStaff) saveDraft(); }
+});
+
+async function saveDraft() {
+  var s    = _appraisalStaff;
+  var kpis = _appraisalKPIs;
+  if (!s) return;
+  function getRVal(key, type) {
+    var sel = document.querySelector('.r-btn[data-key="'+key+'"][data-type="'+type+'"][class*="sel-"]');
+    return sel ? parseInt(sel.dataset.val) : null;
+  }
+  var compKeys = ['time_mgmt','dependability','appearance','cooperation','responsibility','accuracy','quality','quantity','initiative','knowledge'];
+  var dd = {
+    kpiSelf:     kpis.map(function(k,i){ var el=document.querySelector('.kpi-self[data-idx="'+i+'"]');        return el?el.value:''; }),
+    kpiAppr:     kpis.map(function(k,i){ var el=document.querySelector('.kpi-appraiser[data-idx="'+i+'"]');   return el?el.value:''; }),
+    kpiComments: kpis.map(function(k,i){ var el=document.querySelector('.kpi-comment[data-idx="'+i+'"]');     return el?el.value:''; }),
+    compSelf:    compKeys.map(function(k){ return getRVal(k,'self'); }),
+    compAppr:    compKeys.map(function(k){ return getRVal(k,'appraiser'); }),
+    devStrong:   (document.getElementById('dev-strong')  ||{value:''}).value,
+    devTraining: (document.getElementById('dev-training')||{value:''}).value,
+    devCareer:   (document.getElementById('dev-career')  ||{value:''}).value,
+  };
+  try {
+    var cl = getClient();
+    var cr = await cl.from('appraisal_cycles').select('id').eq('is_active',true).single();
+    if (cr.error) throw cr.error;
+    var ur = await cl.from('appraisals').upsert({
+      cycle_id:      cr.data.id,
+      staff_id:      s.id,
+      appraised_by:  currentUser.id,
+      status:        'draft',
+      kpi_responses: dd
+    }, { onConflict:'cycle_id,staff_id' });
+    if (ur.error) throw ur.error;
+    closeModal('modal-appraisal');
+    showToast('Draft saved for ' + s.full_name + '.');
+    loadAppraisalsPage();
+  } catch(err) { showToast('Error saving draft: ' + err.message); }
+}
+
+// Submit appraisal
+document.addEventListener('click', function(e) {
+  if (e.target.id === 'btn-submit-appraisal') submitAppraisal();
+});
+
+async function submitAppraisal() {
+  if (_submitted) return;
+  var ack = document.getElementById('ack-checkbox');
+  if (!ack || !ack.checked) { showToast('Please tick the acknowledgement checkbox before submitting.'); return; }
+  var s    = _appraisalStaff;
+  var kpis = _appraisalKPIs;
+  if (!s) return;
+  var kpiResponses = kpis.map(function(k, i) {
+    var selfEl = document.querySelector('.kpi-self[data-idx="' + i + '"]');
+    var apprEl = document.querySelector('.kpi-appraiser[data-idx="' + i + '"]');
+    var commEl = document.querySelector('.kpi-comment[data-idx="' + i + '"]');
+    return { kpi:k.kpi, target:k.target, weight:k.weight, self_rating:selfEl?selfEl.value:'', appraiser_rating:apprEl?apprEl.value:'', comment:commEl?commEl.value:'' };
+  });
+  var selfKPI = 0, apprKPI = 0, totalW = 0;
+  kpiResponses.forEach(function(k) {
+    var sv = parseFloat(k.self_rating) || 0;
+    var av = parseFloat(k.appraiser_rating) || 0;
+    selfKPI += (sv / 5) * k.weight;
+    apprKPI += (av / 5) * k.weight;
+    totalW  += k.weight;
+  });
+  selfKPI = totalW > 0 ? Math.round(selfKPI / totalW * 100) : 0;
+  apprKPI = totalW > 0 ? Math.round(apprKPI / totalW * 100) : 0;
+  var finalScore = Math.round(selfKPI * 0.4 + apprKPI * 0.6);
+  var rBand = bandLabel(finalScore);
+  try {
+    var client = getClient();
+    var cycleRes = await client.from('appraisal_cycles').select('id').eq('is_active',true).single();
+    if (!cycleRes.data) { showToast('No active appraisal cycle found.'); return; }
+    var saveRes = await client.from('appraisals').upsert({
+      cycle_id:           cycleRes.data.id,
+      staff_id:           s.id,
+      appraised_by:       currentUser.id,
+      status:             'submitted',
+      self_kpi_score:     selfKPI,
+      appraiser_kpi_score:apprKPI,
+      final_score:        finalScore,
+      rating_band:        rBand,
+      kpi_responses:      kpiResponses,
+      dev_strong:         (document.getElementById('dev-strong')  ||{value:''}).value,
+      dev_training:       (document.getElementById('dev-training')||{value:''}).value,
+      dev_career:         (document.getElementById('dev-career')  ||{value:''}).value,
+      submitted_at:       new Date().toISOString(),
+    }, { onConflict:'cycle_id,staff_id' });
+    if (saveRes.error) throw saveRes.error;
+    _submitted = true;
+    closeModal('modal-appraisal');
+    showToast(s.full_name + ' \u2014 ' + finalScore + '% \u00B7 ' + rBand + '. Submitted.');
+    loadAppraisalsPage();
+    loadHomeData();
+  } catch(e) { showToast('Error saving: ' + e.message); console.error('submitAppraisal:', e); }
+}
+
+// ── NEW CYCLE ──────────────────────────────────────────────
+async function createNewCycle() {
+  var label = (document.getElementById('nc-label')||{value:''}).value.trim();
+  var start = (document.getElementById('nc-start')||{value:''}).value;
+  var end   = (document.getElementById('nc-end')  ||{value:''}).value;
+  var self  = parseInt((document.getElementById('nc-self')||{value:'40'}).value)||40;
+  if (!label||!start||!end) { showToast('Label, start date and end date are required.'); return; }
+  try {
+    var cl = getClient();
+    await cl.from('appraisal_cycles').update({ is_active:false }).eq('is_active',true);
+    var res = await cl.from('appraisal_cycles').insert({ label:label, start_date:start, end_date:end, self_weight:self, hod_weight:100-self, is_active:true });
+    if (res.error) throw res.error;
+    closeModal('modal-new-cycle');
+    showToast('New cycle started: ' + label);
+    loadHomeData();
+  } catch(e) { showToast('Error: ' + e.message); }
+}
+
+// ── INIT ──────────────────────────────────────────────────
 document.addEventListener('DOMContentLoaded', function() {
   document.getElementById('login-password').addEventListener('keydown', function(e) { if (e.key === 'Enter') doLogin(); });
   document.getElementById('login-email').addEventListener('keydown',    function(e) { if (e.key === 'Enter') doLogin(); });
   restoreSession();
 });
+
 </script>
 </body>
 </html>
