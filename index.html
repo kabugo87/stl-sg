@@ -50,7 +50,7 @@ input,select,textarea{font-family:var(--font-ui)}
   box-shadow:0 8px 48px rgba(15,30,60,.12), 0 0 0 1px rgba(201,168,76,.25), 0 1px 3px rgba(0,0,0,.08);
 }
 .login-card-top{
-  background:#1A1A1A;
+  background:#8B1A1A;
   padding:32px 36px 28px;
   text-align:center;
   position:relative;
@@ -309,6 +309,15 @@ input,select,textarea{font-family:var(--font-ui)}
 .text-gold{color:var(--gold-dark)}
 .text-navy{color:var(--navy)}
 
+/* ORG PILLS */
+.pill-sg  { background:#e6f1fb;color:#185FA5;font-size:9px;font-weight:600;padding:2px 7px;border-radius:2px;display:inline-block }
+.pill-stl { background:rgba(139,26,26,.1);color:var(--red);font-size:9px;font-weight:600;padding:2px 7px;border-radius:2px;display:inline-block }
+.band { display:inline-block;font-size:10px;font-weight:600;padding:2px 8px;border-radius:2px }
+.band-exc     { background:#eaf3de;color:#3B6D11 }
+.band-exceeds { background:#e6f1fb;color:#185FA5 }
+.band-meets   { background:#f0f1f4;color:var(--navy) }
+.band-needs   { background:#faeeda;color:#854F0B }
+.band-unsat   { background:#fcebeb;color:#A32D2D }
 /* TOAST */
 #toast{
   position:fixed;bottom:24px;right:24px;
@@ -358,7 +367,7 @@ input,select,textarea{font-family:var(--font-ui)}
         <input type="password" id="login-password" placeholder="&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;" />
       </div>
       <button class="login-btn" id="login-btn" onclick="doLogin()">Sign in</button>
-      <div class="login-footer">Simba Group &copy; 2026 &nbsp;&middot;&nbsp; <strong>R1</strong></div>
+      <div class="login-footer">Simba Group &copy; 2026 &nbsp;&middot;&nbsp; <strong>R2</strong></div>
     </div>
   </div>
 </div>
@@ -375,6 +384,11 @@ input,select,textarea{font-family:var(--font-ui)}
           <div class="sb-tagline">Performance Management</div>
         </div>
       </div>
+      <select id="org-switcher" onchange="switchOrg(this.value)" style="width:100%;margin-bottom:8px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.15);border-radius:3px;color:rgba(255,255,255,.75);padding:5px 8px;font-size:11px;cursor:pointer">
+        <option value="both">Both organisations</option>
+        <option value="sg">Simba Group HO</option>
+        <option value="stl">Simba Telecom Uganda</option>
+      </select>
       <div class="sb-cycle">
         <span class="sb-cycle-dot"></span>
         <span id="cycle-label">H1 2026 Active</span>
@@ -539,7 +553,44 @@ input,select,textarea{font-family:var(--font-ui)}
         <div class="coming-soon"><div class="cs-icon"><svg viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg></div><h3>Reports</h3><p>Coming in R4</p></div>
       </div>
       <div class="page-view" id="page-staff">
-        <div class="coming-soon"><div class="cs-icon"><svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg></div><h3>Staff</h3><p>Coming in R2</p></div>
+        <div class="section-header" style="display:flex;align-items:center;justify-content:space-between;margin-bottom:18px">
+          <div>
+            <div style="font-family:var(--font-display);font-size:16px;font-weight:600;color:var(--navy)" id="staff-page-title">Staff</div>
+            <div style="font-size:11px;color:var(--mid);margin-top:2px"><span id="staff-count">--</span> staff</div>
+          </div>
+          <div style="display:flex;gap:8px;align-items:center">
+            <input type="text" id="staff-search" placeholder="Search name..." oninput="renderStaffTable()" style="padding:6px 10px;border:1px solid var(--border);border-radius:3px;font-size:12px;width:180px;background:var(--white)" />
+            <select id="staff-dept-filter" onchange="renderStaffTable()" style="padding:6px 10px;border:1px solid var(--border);border-radius:3px;font-size:12px;background:var(--white)">
+              <option value="">All departments</option>
+              <option value="Marketing">Marketing</option>
+              <option value="Projects">Projects</option>
+              <option value="Audit">Audit</option>
+              <option value="Legal">Legal</option>
+              <option value="Human Resource">Human Resource</option>
+              <option value="Executive">Executive</option>
+              <option value="Apartments">Apartments</option>
+              <option value="Accounts/ Finance">Accounts / Finance</option>
+              <option value="Sales & Operations">Sales & Operations</option>
+              <option value="IT">IT</option>
+            </select>
+            <button class="btn btn-primary btn-sm" id="btn-add-staff" onclick="openAddStaff()" style="background:var(--red);color:#fff;padding:6px 12px;border:none;border-radius:3px;font-size:11px;font-weight:600;cursor:pointer">+ Add staff</button>
+          </div>
+        </div>
+        <div style="background:var(--white);border:1px solid var(--border);border-radius:4px;overflow:hidden">
+          <table style="width:100%;border-collapse:collapse;font-size:12px" id="staff-table">
+            <thead>
+              <tr style="background:#f7f5f0;border-bottom:1.5px solid var(--border)">
+                <th style="padding:9px 14px;text-align:left;font-size:10px;text-transform:uppercase;letter-spacing:.05em;color:var(--mid);font-weight:600">Name</th>
+                <th style="padding:9px 14px;text-align:left;font-size:10px;text-transform:uppercase;letter-spacing:.05em;color:var(--mid);font-weight:600">Organisation</th>
+                <th style="padding:9px 14px;text-align:left;font-size:10px;text-transform:uppercase;letter-spacing:.05em;color:var(--mid);font-weight:600">Department</th>
+                <th style="padding:9px 14px;text-align:left;font-size:10px;text-transform:uppercase;letter-spacing:.05em;color:var(--mid);font-weight:600">Position</th>
+                <th style="padding:9px 14px;text-align:left;font-size:10px;text-transform:uppercase;letter-spacing:.05em;color:var(--mid);font-weight:600">Appraiser</th>
+                <th style="padding:9px 14px;text-align:left;font-size:10px;text-transform:uppercase;letter-spacing:.05em;color:var(--mid);font-weight:600">Actions</th>
+              </tr>
+            </thead>
+            <tbody id="staff-tbody"><tr><td colspan="6" style="padding:30px;text-align:center;color:var(--mid);font-size:12px">Loading...</td></tr></tbody>
+          </table>
+        </div>
       </div>
       <div class="page-view" id="page-kpis">
         <div class="coming-soon"><div class="cs-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/></svg></div><h3>KPI Templates</h3><p>Coming in R3</p></div>
@@ -552,9 +603,63 @@ input,select,textarea{font-family:var(--font-ui)}
   </div>
 </div>
 
+
+<!-- MODAL: Add / Edit Staff -->
+<div id="modal-staff" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:1000;align-items:center;justify-content:center">
+  <div style="background:var(--white);border-radius:4px;width:520px;max-height:90vh;overflow-y:auto;box-shadow:0 16px 48px rgba(0,0,0,.2)">
+    <div style="background:#f7f5f0;border-bottom:3px solid var(--red);padding:14px 20px;display:flex;align-items:center;justify-content:space-between">
+      <div style="font-family:var(--font-display);font-size:14px;font-weight:600;color:var(--navy)" id="staff-modal-title">Add staff member</div>
+      <button onclick="closeStaffModal()" style="background:none;border:none;font-size:18px;color:#888;cursor:pointer">&times;</button>
+    </div>
+    <div style="padding:20px">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px">
+        <div><label style="font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.06em;color:var(--mid);display:block;margin-bottom:5px">Full name *</label><input id="sf-name" type="text" style="width:100%;padding:8px 10px;border:1px solid var(--border);border-radius:3px;font-size:12px" /></div>
+        <div><label style="font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.06em;color:var(--mid);display:block;margin-bottom:5px">Staff No.</label><input id="sf-no" type="text" style="width:100%;padding:8px 10px;border:1px solid var(--border);border-radius:3px;font-size:12px" /></div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px">
+        <div><label style="font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.06em;color:var(--mid);display:block;margin-bottom:5px">Organisation *</label>
+          <select id="sf-org" style="width:100%;padding:8px 10px;border:1px solid var(--border);border-radius:3px;font-size:12px">
+            <option value="sg">Simba Group HO</option>
+            <option value="stl">Simba Telecom Uganda</option>
+          </select>
+        </div>
+        <div><label style="font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.06em;color:var(--mid);display:block;margin-bottom:5px">Department *</label><input id="sf-dept" type="text" style="width:100%;padding:8px 10px;border:1px solid var(--border);border-radius:3px;font-size:12px" placeholder="e.g. Marketing" /></div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px">
+        <div><label style="font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.06em;color:var(--mid);display:block;margin-bottom:5px">Position *</label><input id="sf-pos" type="text" style="width:100%;padding:8px 10px;border:1px solid var(--border);border-radius:3px;font-size:12px" /></div>
+        <div><label style="font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.06em;color:var(--mid);display:block;margin-bottom:5px">Region / Location</label><input id="sf-region" type="text" style="width:100%;padding:8px 10px;border:1px solid var(--border);border-radius:3px;font-size:12px" placeholder="e.g. Head Office" /></div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px">
+        <div><label style="font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.06em;color:var(--mid);display:block;margin-bottom:5px">Date of joining</label><input id="sf-doj" type="date" style="width:100%;padding:8px 10px;border:1px solid var(--border);border-radius:3px;font-size:12px" /></div>
+        <div><label style="font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.06em;color:var(--mid);display:block;margin-bottom:5px">Appraisal mode</label>
+          <select id="sf-mode" style="width:100%;padding:8px 10px;border:1px solid var(--border);border-radius:3px;font-size:12px">
+            <option value="assisted">Assisted (line manager appraises)</option>
+            <option value="self">Self-service</option>
+          </select>
+        </div>
+      </div>
+      <div style="margin-bottom:4px"><label style="font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.06em;color:var(--mid);display:block;margin-bottom:5px">Appraiser (line manager)</label>
+        <select id="sf-appraiser" style="width:100%;padding:8px 10px;border:1px solid var(--border);border-radius:3px;font-size:12px">
+          <option value="">Assign later</option>
+        </select>
+        <div style="font-size:10px;color:var(--mid);margin-top:4px">Appraiser must have a system account. You can assign later.</div>
+      </div>
+    </div>
+    <div style="padding:14px 20px;border-top:1px solid var(--border);display:flex;justify-content:flex-end;gap:8px;background:#f7f5f0">
+      <button onclick="closeStaffModal()" style="padding:7px 14px;background:var(--cream);border:1px solid var(--border);border-radius:3px;font-size:12px;font-weight:600;cursor:pointer">Cancel</button>
+      <button onclick="saveStaff()" style="padding:7px 14px;background:var(--red);color:#fff;border:none;border-radius:3px;font-size:12px;font-weight:600;cursor:pointer">Save staff member</button>
+    </div>
+  </div>
+</div>
+
 <div id="toast"></div>
 
 <script>
+let currentOrg = 'both'; // 'both', 'sg', 'stl'
+let _staffCache = [];
+let _editingStaffId = null;
+let _userProfiles = [];
+
 const SUPABASE_URL = 'https://fgjszajyfokykudfabqt.supabase.co';
 const SUPABASE_KEY = 'sb_publishable_DN8QT1FyZO8WUC-Gjb9k_Q_4fy85ogK';
 
@@ -758,6 +863,156 @@ function renderRecentActivity(items) {
 }
 
 // ── KEYBOARD ──
+
+// ── ORG SWITCHER ──
+function switchOrg(val) {
+  currentOrg = val;
+  document.getElementById('org-switcher').value = val;
+  if (document.getElementById('page-staff').classList.contains('active')) loadStaffPage();
+  if (document.getElementById('page-home').classList.contains('active')) loadHomeData();
+}
+
+// ── STAFF PAGE ──
+async function loadStaffPage() {
+  var tbody = document.getElementById('staff-tbody');
+  if (!tbody) return;
+  tbody.innerHTML = '<tr><td colspan="6" style="padding:30px;text-align:center;color:var(--mid);font-size:12px">Loading...</td></tr>';
+  try {
+    var cl = getClient();
+    var q = cl.from('staff').select('*').eq('status','active').order('full_name');
+    if (currentOrg !== 'both') q = q.eq('organisation', currentOrg);
+    var res = await q;
+    if (res.error) throw res.error;
+    _staffCache = res.data || [];
+    // Load user profiles for appraiser names
+    var uRes = await cl.from('user_profiles').select('id,name,title');
+    _userProfiles = uRes.data || [];
+    document.getElementById('staff-count').textContent = _staffCache.length;
+    var title = currentOrg === 'sg' ? 'Simba Group HO' : currentOrg === 'stl' ? 'Simba Telecom Uganda' : 'All Staff';
+    document.getElementById('staff-page-title').textContent = 'Staff — ' + title;
+    renderStaffTable();
+  } catch(e) {
+    if (tbody) tbody.innerHTML = '<tr><td colspan="6" style="padding:30px;text-align:center;color:var(--red);font-size:12px">Error: ' + e.message + '</td></tr>';
+    console.error('loadStaffPage:', e);
+  }
+}
+
+function renderStaffTable() {
+  var tbody = document.getElementById('staff-tbody');
+  if (!tbody) return;
+  var search = (document.getElementById('staff-search') || {value:''}).value.toLowerCase().trim();
+  var dept   = (document.getElementById('staff-dept-filter') || {value:''}).value;
+  var list   = _staffCache.filter(function(s) {
+    if (search && !s.full_name.toLowerCase().includes(search)) return false;
+    if (dept   && s.department !== dept) return false;
+    return true;
+  });
+  document.getElementById('staff-count').textContent = list.length;
+  if (list.length === 0) {
+    tbody.innerHTML = '<tr><td colspan="6" style="padding:30px;text-align:center;color:var(--mid);font-size:12px">No staff found.</td></tr>';
+    return;
+  }
+  tbody.innerHTML = list.map(function(s) {
+    var orgPill = s.organisation === 'sg'
+      ? '<span class="pill-sg">SG</span>'
+      : '<span class="pill-stl">STL</span>';
+    var appName = s.appraiser_id
+      ? (_userProfiles.find(function(u){ return u.id === s.appraiser_id; }) || {name:'--'}).name
+      : '<span style="color:var(--mid);font-style:italic">Unassigned</span>';
+    return '<tr style="border-bottom:.5px solid var(--border)">'
+      + '<td style="padding:9px 14px;font-weight:500">' + s.full_name + '</td>'
+      + '<td style="padding:9px 14px">' + orgPill + '</td>'
+      + '<td style="padding:9px 14px;color:var(--mid)">' + (s.department||'—') + '</td>'
+      + '<td style="padding:9px 14px;color:var(--mid)">' + (s.position||'—') + '</td>'
+      + '<td style="padding:9px 14px">' + appName + '</td>'
+      + '<td style="padding:9px 14px">'
+      + '<button data-action="edit" data-id="' + s.id + '" style="padding:4px 9px;background:var(--cream);border:1px solid var(--border);border-radius:3px;font-size:11px;cursor:pointer;margin-right:4px">Edit</button>'
+      + '</td></tr>';
+  }).join('');
+}
+
+// ── TABLE EVENT DELEGATION ──
+document.addEventListener('click', function(e) {
+  var btn = e.target.closest('[data-action]');
+  if (!btn) return;
+  var action = btn.dataset.action;
+  if (action === 'edit') openEditStaff(btn.dataset.id);
+});
+
+// ── ADD / EDIT STAFF ──
+function openAddStaff() {
+  _editingStaffId = null;
+  document.getElementById('staff-modal-title').textContent = 'Add staff member';
+  document.getElementById('sf-name').value    = '';
+  document.getElementById('sf-no').value      = '';
+  document.getElementById('sf-org').value     = currentOrg === 'both' ? 'sg' : currentOrg;
+  document.getElementById('sf-dept').value    = '';
+  document.getElementById('sf-pos').value     = '';
+  document.getElementById('sf-region').value  = '';
+  document.getElementById('sf-doj').value     = '';
+  document.getElementById('sf-mode').value    = 'assisted';
+  document.getElementById('sf-appraiser').value = '';
+  populateAppraiserDropdown(null);
+  document.getElementById('modal-staff').style.display = 'flex';
+}
+
+function openEditStaff(id) {
+  var s = _staffCache.find(function(x){ return x.id === id; });
+  if (!s) return;
+  _editingStaffId = id;
+  document.getElementById('staff-modal-title').textContent = 'Edit staff member';
+  document.getElementById('sf-name').value    = s.full_name || '';
+  document.getElementById('sf-no').value      = s.staff_no  || '';
+  document.getElementById('sf-org').value     = s.organisation || 'sg';
+  document.getElementById('sf-dept').value    = s.department  || '';
+  document.getElementById('sf-pos').value     = s.position    || '';
+  document.getElementById('sf-region').value  = s.region      || '';
+  document.getElementById('sf-doj').value     = s.date_of_joining ? s.date_of_joining.substring(0,10) : '';
+  document.getElementById('sf-mode').value    = s.appraisal_mode || 'assisted';
+  populateAppraiserDropdown(s.appraiser_id);
+  document.getElementById('modal-staff').style.display = 'flex';
+}
+
+function populateAppraiserDropdown(currentId) {
+  var sel = document.getElementById('sf-appraiser');
+  sel.innerHTML = '<option value="">Assign later</option>'
+    + _userProfiles.map(function(u) {
+        var sel2 = currentId && u.id === currentId ? ' selected' : '';
+        return '<option value="' + u.id + '"' + sel2 + '>' + u.name + (u.title ? ' — ' + u.title : '') + '</option>';
+      }).join('');
+}
+
+function closeStaffModal() {
+  document.getElementById('modal-staff').style.display = 'none';
+}
+
+async function saveStaff() {
+  var name = document.getElementById('sf-name').value.trim();
+  if (!name) { showToast('Full name is required.'); return; }
+  var payload = {
+    full_name:      name,
+    staff_no:       document.getElementById('sf-no').value.trim() || null,
+    organisation:   document.getElementById('sf-org').value,
+    department:     document.getElementById('sf-dept').value.trim() || null,
+    position:       document.getElementById('sf-pos').value.trim() || null,
+    region:         document.getElementById('sf-region').value.trim() || null,
+    date_of_joining:document.getElementById('sf-doj').value || null,
+    appraisal_mode: document.getElementById('sf-mode').value,
+    appraiser_id:   document.getElementById('sf-appraiser').value || null,
+    status:         'active'
+  };
+  try {
+    var cl = getClient();
+    var res = _editingStaffId
+      ? await cl.from('staff').update(payload).eq('id', _editingStaffId)
+      : await cl.from('staff').insert(payload);
+    if (res.error) throw res.error;
+    closeStaffModal();
+    showToast(_editingStaffId ? name + ' updated.' : name + ' added.');
+    loadStaffPage();
+  } catch(e) { showToast('Error: ' + e.message); console.error('saveStaff:', e); }
+}
+
 document.addEventListener('DOMContentLoaded', function() {
   restoreSession();
   document.getElementById('login-password').addEventListener('keydown', function(e) { if (e.key === 'Enter') doLogin(); });
