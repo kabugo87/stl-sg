@@ -248,7 +248,7 @@ tr:hover td{background:#fafafa}
       <input type="password" id="login-password" placeholder="&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;" />
     </div>
     <button class="btn btn-primary" id="login-btn" onclick="doLogin()">Sign in &rarr;</button>
-    <p style="font-size:10px;color:var(--text-light);margin-top:16px">Simba Group &copy; 2026 &nbsp;&middot;&nbsp; <strong>R1</strong></p>
+    <p style="font-size:10px;color:var(--text-light);margin-top:16px">Simba Group &copy; 2026 &nbsp;&middot;&nbsp; <strong>R3</strong></p>
   </div>
 </div>
 
@@ -468,7 +468,40 @@ tr:hover td{background:#fafafa}
 
       <div class="page-view" id="page-analytics"></div>
       <div class="page-view" id="page-reports">
-        <div class="coming-soon"><h3>Reports</h3><p>Coming in R3</p></div>
+        <div class="section-header">
+          <div class="section-title">Reports</div>
+          <div id="report-back" style="display:none">
+            <button class="btn btn-secondary btn-sm" onclick="showReportMenu()">&#8592; Back to reports</button>
+          </div>
+        </div>
+        <div id="report-menu" style="display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:20px">
+          <div class="nav-card" onclick="showDeptReport()">
+            <div class="nav-card-icon nc-blue"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" width="20" height="20"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg></div>
+            <div style="flex:1"><div class="nav-card-title">Department report</div><div class="nav-card-sub">All staff scores by department</div></div>
+            <div class="nav-card-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><polyline points="9 18 15 12 9 6"/></svg></div>
+          </div>
+          <div class="nav-card" onclick="showOrgReport()">
+            <div class="nav-card-icon nc-green"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" width="20" height="20"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></div>
+            <div style="flex:1"><div class="nav-card-title">Organisation report</div><div class="nav-card-sub">Department averages per organisation</div></div>
+            <div class="nav-card-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><polyline points="9 18 15 12 9 6"/></svg></div>
+          </div>
+          <div class="nav-card" onclick="showConsolidatedReport()">
+            <div class="nav-card-icon nc-purple"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" width="20" height="20"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg></div>
+            <div style="flex:1"><div class="nav-card-title">Consolidated report</div><div class="nav-card-sub">SG HO and STL side by side</div></div>
+            <div class="nav-card-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><polyline points="9 18 15 12 9 6"/></svg></div>
+          </div>
+          <div class="nav-card" onclick="showCompletionTracker()">
+            <div class="nav-card-icon nc-amber"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" width="20" height="20"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg></div>
+            <div style="flex:1"><div class="nav-card-title">Completion tracker</div><div class="nav-card-sub">Appraised vs total per department</div></div>
+            <div class="nav-card-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><polyline points="9 18 15 12 9 6"/></svg></div>
+          </div>
+          <div class="nav-card" onclick="showOutstandingList()">
+            <div class="nav-card-icon nc-red"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" width="20" height="20"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><line x1="23" y1="11" x2="17" y2="11"/></svg></div>
+            <div style="flex:1"><div class="nav-card-title">Outstanding appraisals</div><div class="nav-card-sub">Staff with nothing started yet</div></div>
+            <div class="nav-card-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><polyline points="9 18 15 12 9 6"/></svg></div>
+          </div>
+        </div>
+        <div id="report-content"></div>
       </div>
 
       <!-- STAFF PAGE -->
@@ -791,6 +824,7 @@ function navigate(page) {
   if (page === 'staff')      loadStaffPage();
   if (page === 'appraisals') loadAppraisalsPage();
   if (page === 'analytics')  loadAnalyticsPage();
+  if (page === 'reports')    loadReportsPage();
 }
 
 function switchOrg(val) {
@@ -1227,7 +1261,7 @@ document.addEventListener('click', function(e) {
   if (action === 'discard-appr') { if (confirm('Discard draft for ' + (btn.dataset.staffName||'staff') + '?')) discardAppraisal(btn.dataset.apprId); }
   if (action === 'start-appr')   { var s1=_staffCache.find(function(x){return x.id===btn.dataset.staffId;}); if(s1) openAppraisalForm(s1,null); }
   if (action === 'continue-appr'){ var s2=_staffCache.find(function(x){return x.id===btn.dataset.staffId;}); if(s2) continueDraft(s2,btn.dataset.apprId); }
-  if (action === 'view-appr')    showToast('Individual report view coming in R3.'); 
+  if (action === 'view-appr')    { navigate('reports'); setTimeout(function(){ showIndividualReport(btn.dataset.apprId); }, 150); } 
 });
 
 async function approveAppraisal(id, name) {
@@ -1980,6 +2014,645 @@ async function submitAppraisal() {
     loadAppraisalsPage();
     loadHomeData();
   } catch(e) { showToast('Error saving: ' + e.message); console.error('submitAppraisal:', e); }
+}
+
+// ── REPORTS PAGE ───────────────────────────────────────────
+async function loadReportsPage() {
+  showReportMenu();
+}
+
+function showReportMenu() {
+  document.getElementById('report-content').innerHTML = '';
+  document.getElementById('report-menu').style.display = 'grid';
+  document.getElementById('report-back').style.display = 'none';
+}
+
+function showReportContent(html) {
+  document.getElementById('report-menu').style.display = 'none';
+  document.getElementById('report-back').style.display = 'flex';
+  document.getElementById('report-content').innerHTML = html;
+}
+
+function rptToday() {
+  return new Date().toLocaleDateString('en-GB',{day:'numeric',month:'long',year:'numeric'});
+}
+function rptSectionHead(text) {
+  return '<div style="font-family:\'Palatino Linotype\',Palatino,Georgia,serif;font-size:13px;font-weight:700;color:#1B2A6B;border-bottom:2px solid #800020;padding-bottom:4px;display:inline-block;margin:16px 0 10px">' + text + '</div>';
+}
+function rptMetric(label, value, sub) {
+  return '<div style="background:#f0f1f4;border-radius:6px;padding:12px;text-align:center">'
+    + '<div style="font-size:10px;text-transform:uppercase;letter-spacing:.05em;color:#888;margin-bottom:4px">' + label + '</div>'
+    + '<div style="font-size:26px;font-weight:700;color:#1B2A6B;font-family:\'Palatino Linotype\',Palatino,Georgia,serif">' + value + '</div>'
+    + (sub ? '<div style="font-size:10px;color:#888;margin-top:3px">' + sub + '</div>' : '')
+    + '</div>';
+}
+function rptHeader(title, subtitle) {
+  return '<div style="text-align:center;padding-bottom:14px;border-bottom:2px solid #000;margin-bottom:20px">'
+    + '<div style="font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:#888;margin-bottom:6px">Simba Group \u2014 Performance Management System</div>'
+    + '<div style="font-size:22px;font-weight:700;color:#1B2A6B;font-family:\'Palatino Linotype\',Palatino,Georgia,serif">' + title + '</div>'
+    + '<div style="font-size:12px;color:#555;margin-top:4px">' + subtitle + '</div>'
+    + '</div>';
+}
+function rptBandClass(s){ return s>=90?'band-exc':s>=75?'band-exceeds':s>=60?'band-meets':s>=40?'band-needs':'band-unsat'; }
+function rptBandLabel(s){ return s>=90?'Exceptional':s>=75?'Exceeds expectations':s>=60?'Meets expectations':s>=40?'Needs improvement':'Unsatisfactory'; }
+function rptRatingLabel(v) {
+  return ['','Unsatisfactory','Needs improvement','Meets expectations','Exceeds expectations','Exceptional'][parseInt(v)] || v || '\u2014';
+}
+
+function printReport() {
+  var body = document.getElementById('printable-report');
+  if (!body) { window.print(); return; }
+  var w = window.open('','_blank','width=1000,height=700');
+  var css = '<style>'
+    + '*{box-sizing:border-box;margin:0;padding:0}'
+    + 'body{font-family:"Palatino Linotype",Palatino,Georgia,serif;padding:28px;color:#1a1a2e;font-size:12px;line-height:1.6}'
+    + 'table{width:100%;border-collapse:collapse}'
+    + 'th{background:#f0f1f4;padding:7px 10px;text-align:left;border-bottom:1.5px solid #000;font-size:10px;text-transform:uppercase;letter-spacing:.04em}'
+    + 'td{padding:7px 10px;border-bottom:.5px solid #ccc}'
+    + 'h1{font-size:20px;color:#1B2A6B;font-family:"Palatino Linotype",Palatino,Georgia,serif}'
+    + 'h2{font-size:14px;color:#1B2A6B;border-bottom:2px solid #800020;padding-bottom:4px;margin:16px 0 10px;font-family:"Palatino Linotype",Palatino,Georgia,serif}'
+    + '.band{display:inline-block;font-size:9px;font-weight:600;padding:2px 7px;border-radius:3px}'
+    + '.band-exc{background:#eaf3de;color:#3B6D11}.band-exceeds{background:#e6f1fb;color:#185FA5}'
+    + '.band-meets{background:#f0f1f4;color:#1B2A6B}.band-needs{background:#faeeda;color:#854F0B}.band-unsat{background:#fcebeb;color:#A32D2D}'
+    + '.pill-sg{background:#e6f1fb;color:#185FA5;display:inline-block;font-size:9px;font-weight:600;padding:2px 7px;border-radius:3px}'
+    + '.pill-stl{background:#fcebeb;color:#800020;display:inline-block;font-size:9px;font-weight:600;padding:2px 7px;border-radius:3px}'
+    + '@media print{body{padding:14px}@page{margin:10mm}}'
+    + '</style>';
+  w.document.write('<!DOCTYPE html><html><head><title>Report</title>' + css + '</head><body>');
+  w.document.write(body.innerHTML);
+  w.document.write('</body></html>');
+  w.document.close();
+  setTimeout(function(){ w.print(); }, 400);
+}
+
+// ── 1. INDIVIDUAL REPORT ──────────────────────────────────
+async function showIndividualReport(appraisalId) {
+  showReportContent('<div style="text-align:center;padding:40px;color:#888;font-size:12px">Loading report...</div>');
+  try {
+    var cl  = getClient();
+    var res = await cl.from('appraisals').select('*').eq('id', appraisalId).single();
+    if (res.error) throw res.error;
+    var a = res.data;
+    var s = _staffCache.find(function(x){ return x.id === a.staff_id; }) || {};
+    var orgName  = s.organisation === 'sg' ? 'Simba Group HO' : 'Simba Telecom Uganda';
+    var kpis     = a.kpi_responses  || [];
+    var comps    = a.comp_responses || [];
+    var selfKPI  = Math.round(a.self_kpi_score        || 0);
+    var apprKPI  = Math.round(a.appraiser_kpi_score   || 0);
+    var selfComp = Math.round(a.self_comp_score        || 0);
+    var apprComp = Math.round(a.appraiser_comp_score   || 0);
+    var final    = Math.round(a.final_score            || 0);
+    var band     = a.rating_band || rptBandLabel(final);
+
+    var kpiRows = Array.isArray(kpis) ? kpis.map(function(k) {
+      var sv = parseFloat(k.self_rating)       || 0;
+      var av = parseFloat(k.appraiser_rating)  || 0;
+      var ws = sv > 0 && av > 0 ? Math.round((sv * 0.4 + av * 0.6) / 5 * 100) : 0;
+      return '<tr>'
+        + '<td style="padding:8px 10px;border-bottom:.5px solid #eee"><strong>' + (k.kpi||'') + '</strong><br><span style="font-size:10px;color:#888">Target: ' + (k.target||'') + '</span>'
+        + (k.comment ? '<br><span style="font-size:10px;color:#555;font-style:italic">' + k.comment + '</span>' : '') + '</td>'
+        + '<td style="padding:8px 10px;border-bottom:.5px solid #eee;text-align:center;font-size:11px">' + rptRatingLabel(k.self_rating) + '</td>'
+        + '<td style="padding:8px 10px;border-bottom:.5px solid #eee;text-align:center;font-size:11px">' + rptRatingLabel(k.appraiser_rating) + '</td>'
+        + '<td style="padding:8px 10px;border-bottom:.5px solid #eee;text-align:center;color:#800020;font-weight:600">' + (k.weight||'') + '%</td>'
+        + '<td style="padding:8px 10px;border-bottom:.5px solid #eee;text-align:center;font-weight:600">' + (ws > 0 ? ws + '%' : '\u2014') + '</td>'
+        + '</tr>';
+    }).join('') : '<tr><td colspan="5" style="padding:12px;text-align:center;color:#888">No KPI data recorded.</td></tr>';
+
+    var compLabels = ['Time management','Dependability','Appearance','Cooperation','Responsibility','Accuracy','Quality of work','Quantity of work','Initiative','Knowledge & skill'];
+    var compRows = Array.isArray(comps) ? comps.map(function(c, i) {
+      return '<tr>'
+        + '<td style="padding:7px 10px;border-bottom:.5px solid #eee">' + (compLabels[i]||c.key||'') + '</td>'
+        + '<td style="padding:7px 10px;border-bottom:.5px solid #eee;text-align:center">' + (c.self_val||'\u2014') + ' / 5</td>'
+        + '<td style="padding:7px 10px;border-bottom:.5px solid #eee;text-align:center">' + (c.appraiser_val||'\u2014') + ' / 5</td>'
+        + '</tr>';
+    }).join('') : '';
+
+    var submitted = a.submitted_at ? new Date(a.submitted_at).toLocaleDateString('en-GB',{day:'numeric',month:'long',year:'numeric'}) : '\u2014';
+    var doj = s.date_of_joining ? new Date(s.date_of_joining).toLocaleDateString('en-GB',{day:'numeric',month:'long',year:'numeric'}) : '\u2014';
+
+    var html = '<div style="background:#fff;border:1px solid #d0d0d8;border-radius:8px;overflow:hidden">'
+      + '<div style="background:#f0f1f4;border-bottom:3px solid #800020;padding:10px 20px;display:flex;align-items:center;justify-content:space-between" class="no-print">'
+      + '<div style="font-family:\'Palatino Linotype\',Palatino,Georgia,serif;font-size:13px;font-weight:600;color:#1B2A6B">Individual Appraisal Report \u2014 ' + s.full_name + '</div>'
+      + '<button class="btn btn-sm btn-secondary" onclick="printReport()">Print / PDF</button>'
+      + '</div>'
+      + '<div id="printable-report" style="padding:28px 32px;font-family:\'Palatino Linotype\',Palatino,Georgia,serif">'
+      + rptHeader('Employee Appraisal Report', 'H1 2026 \u00B7 January to June 2026 \u00B7 Generated ' + rptToday())
+
+      // Staff details grid
+      + '<div style="display:grid;grid-template-columns:1fr 1fr;gap:0;margin-bottom:20px;border:1px solid #000;border-radius:4px;overflow:hidden">'
+      + '<div style="padding:9px 14px;border-right:1px solid #000;border-bottom:1px solid #000;background:#f0f1f4"><div style="font-size:9px;text-transform:uppercase;color:#888;margin-bottom:2px">Full name</div><div style="font-size:13px;font-weight:600;color:#1B2A6B">' + (s.full_name||'\u2014') + '</div></div>'
+      + '<div style="padding:9px 14px;border-bottom:1px solid #000;background:#f0f1f4"><div style="font-size:9px;text-transform:uppercase;color:#888;margin-bottom:2px">Staff number</div><div style="font-size:13px;font-weight:600;color:#1B2A6B">' + (s.staff_no||'\u2014') + '</div></div>'
+      + '<div style="padding:9px 14px;border-right:1px solid #000;border-bottom:1px solid #000"><div style="font-size:9px;text-transform:uppercase;color:#888;margin-bottom:2px">Position</div><div style="font-size:12px">' + (s.position||'\u2014') + '</div></div>'
+      + '<div style="padding:9px 14px;border-bottom:1px solid #000"><div style="font-size:9px;text-transform:uppercase;color:#888;margin-bottom:2px">Department</div><div style="font-size:12px">' + (s.department||'\u2014') + '</div></div>'
+      + '<div style="padding:9px 14px;border-right:1px solid #000;border-bottom:1px solid #000"><div style="font-size:9px;text-transform:uppercase;color:#888;margin-bottom:2px">Organisation</div><div style="font-size:12px">' + orgName + '</div></div>'
+      + '<div style="padding:9px 14px;border-bottom:1px solid #000"><div style="font-size:9px;text-transform:uppercase;color:#888;margin-bottom:2px">Region</div><div style="font-size:12px">' + (s.region||'\u2014') + '</div></div>'
+      + '<div style="padding:9px 14px;border-right:1px solid #000"><div style="font-size:9px;text-transform:uppercase;color:#888;margin-bottom:2px">Date of joining</div><div style="font-size:12px">' + doj + '</div></div>'
+      + '<div style="padding:9px 14px"><div style="font-size:9px;text-transform:uppercase;color:#888;margin-bottom:2px">Date submitted</div><div style="font-size:12px">' + submitted + '</div></div>'
+      + '</div>'
+
+      // Score summary
+      + '<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:20px">'
+      + rptMetric('KPI score (self)',      selfKPI + '%',  '')
+      + rptMetric('KPI score (appraiser)', apprKPI + '%',  '')
+      + rptMetric('Final score',           final + '%',    'Self 40% + Appraiser 60%')
+      + '<div style="background:#f0f1f4;border-radius:6px;padding:12px;text-align:center"><div style="font-size:10px;text-transform:uppercase;letter-spacing:.05em;color:#888;margin-bottom:4px">Rating</div><div style="margin-top:6px"><span class="band ' + rptBandClass(final) + '" style="font-size:12px">' + band + '</span></div></div>'
+      + '</div>'
+
+      // Section 1: KPIs
+      + rptSectionHead('Section 1 \u2014 KPI performance')
+      + '<table style="width:100%;border-collapse:collapse;font-size:12px;margin-bottom:16px">'
+      + '<thead><tr style="background:#f0f1f4">'
+      + '<th style="padding:8px 10px;text-align:left;border-bottom:1.5px solid #000;font-size:10px;text-transform:uppercase">KPI / Measure</th>'
+      + '<th style="padding:8px 10px;text-align:center;border-bottom:1.5px solid #000;font-size:10px;text-transform:uppercase">Staff response</th>'
+      + '<th style="padding:8px 10px;text-align:center;border-bottom:1.5px solid #000;font-size:10px;text-transform:uppercase">Appraiser rating</th>'
+      + '<th style="padding:8px 10px;text-align:center;border-bottom:1.5px solid #000;font-size:10px;text-transform:uppercase">Weight</th>'
+      + '<th style="padding:8px 10px;text-align:center;border-bottom:1.5px solid #000;font-size:10px;text-transform:uppercase">Weighted score</th>'
+      + '</tr></thead><tbody>' + kpiRows + '</tbody>'
+      + '<tfoot><tr style="background:#f0f1f4">'
+      + '<td colspan="4" style="padding:8px 10px;font-weight:600;font-size:11px;border-top:1.5px solid #000">KPI score — Self 40% + Appraiser 60%</td>'
+      + '<td style="padding:8px 10px;text-align:center;font-weight:700;border-top:1.5px solid #000">' + final + '%</td>'
+      + '</tr></tfoot></table>'
+
+      // Section 2: Competencies
+      + rptSectionHead('Section 2 \u2014 Behavioural competencies')
+      + '<table style="width:100%;border-collapse:collapse;font-size:12px;margin-bottom:16px">'
+      + '<thead><tr style="background:#f0f1f4">'
+      + '<th style="padding:8px 10px;text-align:left;border-bottom:1.5px solid #000;font-size:10px;text-transform:uppercase">Competency</th>'
+      + '<th style="padding:8px 10px;text-align:center;border-bottom:1.5px solid #000;font-size:10px;text-transform:uppercase">Staff score</th>'
+      + '<th style="padding:8px 10px;text-align:center;border-bottom:1.5px solid #000;font-size:10px;text-transform:uppercase">Appraiser score</th>'
+      + '</tr></thead><tbody>' + (compRows||'<tr><td colspan="3" style="padding:12px;text-align:center;color:#888">No competency data recorded.</td></tr>') + '</tbody>'
+      + '<tfoot><tr style="background:#f0f1f4">'
+      + '<td style="padding:8px 10px;font-weight:600;font-size:11px;border-top:1.5px solid #000">Average competency score</td>'
+      + '<td style="padding:8px 10px;text-align:center;font-weight:600;border-top:1.5px solid #000">' + selfComp + '%</td>'
+      + '<td style="padding:8px 10px;text-align:center;font-weight:600;border-top:1.5px solid #000">' + apprComp + '%</td>'
+      + '</tr></tfoot></table>'
+
+      // Section 3: Development plan
+      + rptSectionHead('Section 3 \u2014 Development plan')
+      + '<table style="width:100%;border-collapse:collapse;font-size:12px;margin-bottom:20px">'
+      + '<tr><td style="padding:10px 12px;border:1px solid #000;background:#f0f1f4;font-weight:600;font-size:11px;width:200px;vertical-align:top">Strong points</td><td style="padding:10px 12px;border:1px solid #000;vertical-align:top;line-height:1.6">' + (a.dev_strong||'Not recorded.') + '</td></tr>'
+      + '<tr><td style="padding:10px 12px;border:1px solid #000;background:#f0f1f4;font-weight:600;font-size:11px;vertical-align:top">Training &amp; development needs</td><td style="padding:10px 12px;border:1px solid #000;vertical-align:top;line-height:1.6">' + (a.dev_training||'Not recorded.') + '</td></tr>'
+      + '<tr><td style="padding:10px 12px;border:1px solid #000;background:#f0f1f4;font-weight:600;font-size:11px;vertical-align:top">Career objectives \u2014 next 6 months</td><td style="padding:10px 12px;border:1px solid #000;vertical-align:top;line-height:1.6">' + (a.dev_career||'Not recorded.') + '</td></tr>'
+      + '</table>'
+
+      // Signatures
+      + rptSectionHead('Acknowledgement &amp; Signatures')
+      + '<div style="font-size:11px;color:#555;margin-bottom:16px;line-height:1.6">I confirm that this appraisal was conducted, the ratings were discussed, and the development plan was agreed upon between the staff member and the appraising line manager.</div>'
+      + '<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:24px;margin-top:8px">'
+      + '<div><div style="border-top:1.5px solid #000;margin-bottom:6px;padding-top:6px"></div><div style="font-size:11px;font-weight:600;color:#1B2A6B">' + (s.full_name||'') + '</div><div style="font-size:10px;color:#888">' + (s.position||'') + '</div><div style="font-size:10px;color:#aaa;margin-top:2px">Date: _______________</div></div>'
+      + '<div><div style="border-top:1.5px solid #000;margin-bottom:6px;padding-top:6px"></div><div style="font-size:11px;font-weight:600;color:#1B2A6B">Line Manager / Appraiser</div><div style="font-size:10px;color:#888">' + (s.department||'') + ' Department</div><div style="font-size:10px;color:#aaa;margin-top:2px">Date: _______________</div></div>'
+      + '<div><div style="border-top:1.5px solid #000;margin-bottom:6px;padding-top:6px"></div><div style="font-size:11px;font-weight:600;color:#1B2A6B">Kabugo Kusain</div><div style="font-size:10px;color:#888">Head of Human Resources</div><div style="font-size:10px;color:#aaa;margin-top:2px">Date: _______________</div></div>'
+      + '</div>'
+      + '</div></div>';
+
+    showReportContent(html);
+  } catch(e) {
+    showReportContent('<div style="padding:20px;color:#A32D2D;font-size:12px">Error loading report: ' + e.message + '</div>');
+    console.error('showIndividualReport:', e);
+  }
+}
+
+// ── 2. DEPARTMENT REPORT ──────────────────────────────────
+async function showDeptReport() {
+  showReportContent('<div style="text-align:center;padding:40px;color:#888;font-size:12px">Loading department report...</div>');
+  try {
+    if (_staffCache.length === 0) await loadStaffPage();
+    var cl = getClient();
+    var cr = await cl.from('appraisal_cycles').select('id,label,start_date,end_date').eq('is_active',true).single();
+    if (cr.error) throw cr.error;
+    var cycle = cr.data;
+    var ar = await cl.from('appraisals')
+      .select('id,status,final_score,self_kpi_score,appraiser_kpi_score,rating_band,staff_id')
+      .eq('cycle_id', cycle.id)
+      .in('status',['submitted','approved']);
+    if (ar.error) throw ar.error;
+    var appraisals = ar.data || [];
+    if (currentOrg !== 'both') {
+      var orgIds = _staffCache.filter(function(s){ return s.organisation === currentOrg; }).map(function(s){ return s.id; });
+      appraisals = appraisals.filter(function(a){ return orgIds.indexOf(a.staff_id) !== -1; });
+    }
+    if (appraisals.length === 0) {
+      showReportContent('<div style="padding:40px;text-align:center;font-size:12px;color:#888">No completed appraisals yet for this cycle.</div>');
+      return;
+    }
+    var depts = {};
+    appraisals.forEach(function(a) {
+      var s  = _staffCache.find(function(x){ return x.id === a.staff_id; }) || {};
+      var dn = s.department || 'Unknown';
+      if (!depts[dn]) depts[dn] = [];
+      depts[dn].push({ a:a, s:s });
+    });
+    var overall = Math.round(appraisals.reduce(function(t,a){ return t+(a.final_score||0); },0)/appraisals.length);
+    var sd = new Date(cycle.start_date).toLocaleDateString('en-GB',{month:'long',year:'numeric'});
+    var ed = new Date(cycle.end_date).toLocaleDateString('en-GB',{month:'long',year:'numeric'});
+
+    var deptSections = Object.keys(depts).sort().map(function(dn) {
+      var rows = depts[dn];
+      var avg  = Math.round(rows.reduce(function(t,r){ return t+(r.a.final_score||0); },0)/rows.length);
+      var staffRows = rows.slice().sort(function(a,b){ return (b.a.final_score||0)-(a.a.final_score||0); }).map(function(r) {
+        var sc   = Math.round(r.a.final_score||0);
+        var pill = r.s.organisation === 'sg' ? '<span class="pill-sg">SG</span>' : '<span class="pill-stl">STL</span>';
+        return '<tr>'
+          +'<td style="padding:7px 10px;border-bottom:.5px solid #eee">' + r.s.full_name + '</td>'
+          +'<td style="padding:7px 10px;border-bottom:.5px solid #eee">' + pill + '</td>'
+          +'<td style="padding:7px 10px;border-bottom:.5px solid #eee">' + (r.s.position||'\u2014') + '</td>'
+          +'<td style="padding:7px 10px;border-bottom:.5px solid #eee;text-align:center">' + Math.round(r.a.self_kpi_score||0) + '%</td>'
+          +'<td style="padding:7px 10px;border-bottom:.5px solid #eee;text-align:center">' + Math.round(r.a.appraiser_kpi_score||0) + '%</td>'
+          +'<td style="padding:7px 10px;border-bottom:.5px solid #eee;text-align:center;font-weight:600">' + sc + '%</td>'
+          +'<td style="padding:7px 10px;border-bottom:.5px solid #eee;text-align:center"><span class="band ' + rptBandClass(sc) + '">' + rptBandLabel(sc) + '</span></td>'
+          +'</tr>';
+      }).join('');
+      return '<div style="margin-bottom:28px;page-break-inside:avoid">'
+        +'<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">'
+        +'<div style="font-family:\'Palatino Linotype\',Palatino,Georgia,serif;font-size:14px;font-weight:700;color:#1B2A6B;border-bottom:2px solid #800020;padding-bottom:4px">' + dn + '</div>'
+        +'<div style="display:flex;gap:8px;align-items:center"><span style="font-size:11px;color:#555">' + rows.length + ' appraised \u00B7 Avg:</span><span class="band ' + rptBandClass(avg) + '">' + avg + '%</span></div>'
+        +'</div>'
+        +'<table style="width:100%;border-collapse:collapse;font-size:12px">'
+        +'<thead><tr style="background:#f0f1f4">'
+        +'<th style="padding:7px 10px;text-align:left;border-bottom:1.5px solid #000;font-size:10px;text-transform:uppercase">Name</th>'
+        +'<th style="padding:7px 10px;border-bottom:1.5px solid #000;font-size:10px;text-transform:uppercase">Org</th>'
+        +'<th style="padding:7px 10px;border-bottom:1.5px solid #000;font-size:10px;text-transform:uppercase">Position</th>'
+        +'<th style="padding:7px 10px;text-align:center;border-bottom:1.5px solid #000;font-size:10px;text-transform:uppercase">Self KPI</th>'
+        +'<th style="padding:7px 10px;text-align:center;border-bottom:1.5px solid #000;font-size:10px;text-transform:uppercase">Appraiser KPI</th>'
+        +'<th style="padding:7px 10px;text-align:center;border-bottom:1.5px solid #000;font-size:10px;text-transform:uppercase">Final</th>'
+        +'<th style="padding:7px 10px;text-align:center;border-bottom:1.5px solid #000;font-size:10px;text-transform:uppercase">Rating</th>'
+        +'</tr></thead><tbody>' + staffRows + '</tbody>'
+        +'<tfoot><tr style="background:#f0f1f4">'
+        +'<td colspan="5" style="padding:7px 10px;font-weight:600;font-size:11px;border-top:1.5px solid #000">Department average</td>'
+        +'<td style="padding:7px 10px;text-align:center;font-weight:700;border-top:1.5px solid #000">' + avg + '%</td>'
+        +'<td style="padding:7px 10px;text-align:center;border-top:1.5px solid #000"><span class="band ' + rptBandClass(avg) + '">' + rptBandLabel(avg) + '</span></td>'
+        +'</tr></tfoot></table></div>';
+    }).join('<hr style="border:.5px solid #eee;margin:20px 0">');
+
+    var html = '<div style="background:#fff;border:1px solid #d0d0d8;border-radius:8px;overflow:hidden">'
+      +'<div style="background:#f0f1f4;border-bottom:3px solid #800020;padding:10px 20px;display:flex;align-items:center;justify-content:space-between" class="no-print">'
+      +'<div style="font-family:\'Palatino Linotype\',Palatino,Georgia,serif;font-size:13px;font-weight:600;color:#1B2A6B">Department Report \u2014 ' + cycle.label + '</div>'
+      +'<button class="btn btn-sm btn-secondary" onclick="printReport()">Print / PDF</button>'
+      +'</div>'
+      +'<div id="printable-report" style="padding:28px 32px;font-family:\'Palatino Linotype\',Palatino,Georgia,serif">'
+      + rptHeader('Department Appraisal Report', cycle.label + ' \u00B7 ' + sd + ' to ' + ed + ' \u00B7 Generated ' + rptToday())
+      +'<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:24px">'
+      + rptMetric('Total appraised', appraisals.length, '')
+      + rptMetric('Overall average', overall + '%', rptBandLabel(overall))
+      + rptMetric('Departments', Object.keys(depts).length, '')
+      +'</div>'
+      + deptSections
+      +'</div></div>';
+
+    showReportContent(html);
+  } catch(e) {
+    showReportContent('<div style="padding:20px;color:#A32D2D;font-size:12px">Error: ' + e.message + '</div>');
+    console.error('showDeptReport:', e);
+  }
+}
+
+// ── 3. ORGANISATION REPORT ────────────────────────────────
+async function showOrgReport() {
+  showReportContent('<div style="text-align:center;padding:40px;color:#888;font-size:12px">Loading organisation report...</div>');
+  try {
+    if (_staffCache.length === 0) await loadStaffPage();
+    var cl = getClient();
+    var cr = await cl.from('appraisal_cycles').select('id,label,start_date,end_date').eq('is_active',true).single();
+    if (cr.error) throw cr.error;
+    var cycle = cr.data;
+    var ar = await cl.from('appraisals')
+      .select('id,status,final_score,self_kpi_score,appraiser_kpi_score,rating_band,staff_id')
+      .eq('cycle_id', cycle.id)
+      .in('status',['submitted','approved']);
+    if (ar.error) throw ar.error;
+    var all = ar.data || [];
+
+    var orgFilter = currentOrg;
+    var appraisals = orgFilter !== 'both'
+      ? all.filter(function(a){ var s=_staffCache.find(function(x){return x.id===a.staff_id;})||{}; return s.organisation===orgFilter; })
+      : all;
+
+    var orgName = orgFilter === 'sg' ? 'Simba Group HO' : orgFilter === 'stl' ? 'Simba Telecom Uganda' : 'Both Organisations';
+    var totalStaff = orgFilter !== 'both'
+      ? _staffCache.filter(function(s){ return s.organisation===orgFilter; }).length
+      : _staffCache.length;
+
+    var depts = {};
+    appraisals.forEach(function(a) {
+      var s  = _staffCache.find(function(x){ return x.id===a.staff_id; })||{};
+      var dn = s.department||'Unknown';
+      if (!depts[dn]) depts[dn] = [];
+      depts[dn].push(a);
+    });
+
+    var overall   = appraisals.length ? Math.round(appraisals.reduce(function(t,a){ return t+(a.final_score||0); },0)/appraisals.length) : 0;
+    var compRate  = totalStaff ? Math.round(appraisals.length/totalStaff*100) : 0;
+    var sd = new Date(cycle.start_date).toLocaleDateString('en-GB',{month:'long',year:'numeric'});
+    var ed = new Date(cycle.end_date).toLocaleDateString('en-GB',{month:'long',year:'numeric'});
+
+    var deptRows = Object.keys(depts).sort().map(function(dn) {
+      var arr = depts[dn];
+      var avg = Math.round(arr.reduce(function(t,a){ return t+(a.final_score||0); },0)/arr.length);
+      var col = avg>=90?'#3B6D11':avg>=75?'#185FA5':avg>=60?'#1B2A6B':avg>=40?'#854F0B':'#A32D2D';
+      var deptStaff = _staffCache.filter(function(s){ return s.department===dn && (orgFilter==='both'||s.organisation===orgFilter); }).length;
+      var compPct = deptStaff ? Math.round(arr.length/deptStaff*100) : 0;
+      return '<tr>'
+        +'<td style="padding:8px 10px;border-bottom:.5px solid #eee;font-weight:600">' + dn + '<div style="font-size:9px;color:#888;font-weight:400">' + arr.length + ' of ' + deptStaff + ' appraised (' + compPct + '%)</div></td>'
+        +'<td style="padding:8px 10px;border-bottom:.5px solid #eee;text-align:center">' + arr.length + '</td>'
+        +'<td style="padding:8px 10px;border-bottom:.5px solid #eee;text-align:center;font-weight:700;color:' + col + '">' + avg + '%</td>'
+        +'<td style="padding:8px 10px;border-bottom:.5px solid #eee;text-align:center"><span class="band ' + rptBandClass(avg) + '">' + rptBandLabel(avg) + '</span></td>'
+        +'<td style="padding:8px 10px;border-bottom:.5px solid #eee"><div style="background:#eee;border-radius:2px;height:8px;width:100%"><div style="width:' + avg + '%;background:' + col + ';height:8px;border-radius:2px"></div></div></td>'
+        +'</tr>';
+    }).join('');
+
+    var html = '<div style="background:#fff;border:1px solid #d0d0d8;border-radius:8px;overflow:hidden">'
+      +'<div style="background:#f0f1f4;border-bottom:3px solid #800020;padding:10px 20px;display:flex;align-items:center;justify-content:space-between" class="no-print">'
+      +'<div style="font-family:\'Palatino Linotype\',Palatino,Georgia,serif;font-size:13px;font-weight:600;color:#1B2A6B">Organisation Report \u2014 ' + orgName + '</div>'
+      +'<div style="display:flex;gap:8px;align-items:center">'
+      +'<div style="display:flex;gap:4px">'
+      +'<button class="btn btn-sm' + (orgFilter==='both'?' btn-primary':' btn-secondary') + '" onclick="currentOrg=\'both\';showOrgReport()">Both</button>'
+      +'<button class="btn btn-sm' + (orgFilter==='sg'?' btn-primary':' btn-secondary') + '" onclick="currentOrg=\'sg\';showOrgReport()">SG HO</button>'
+      +'<button class="btn btn-sm' + (orgFilter==='stl'?' btn-primary':' btn-secondary') + '" onclick="currentOrg=\'stl\';showOrgReport()">STL</button>'
+      +'</div>'
+      +'<button class="btn btn-sm btn-secondary" onclick="printReport()">Print / PDF</button>'
+      +'</div></div>'
+      +'<div id="printable-report" style="padding:28px 32px;font-family:\'Palatino Linotype\',Palatino,Georgia,serif">'
+      + rptHeader('Organisation Appraisal Report', orgName + ' \u00B7 ' + cycle.label + ' \u00B7 Generated ' + rptToday())
+      +'<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:24px">'
+      + rptMetric('Total staff', totalStaff, '')
+      + rptMetric('Appraised', appraisals.length, compRate + '% completion')
+      + rptMetric('Overall average', overall > 0 ? overall + '%' : '--', overall > 0 ? rptBandLabel(overall) : '')
+      + rptMetric('Departments', Object.keys(depts).length, '')
+      +'</div>'
+      + rptSectionHead('Department performance')
+      +'<table style="width:100%;border-collapse:collapse;font-size:12px">'
+      +'<thead><tr style="background:#f0f1f4">'
+      +'<th style="padding:8px 10px;text-align:left;border-bottom:1.5px solid #000;font-size:10px;text-transform:uppercase">Department</th>'
+      +'<th style="padding:8px 10px;text-align:center;border-bottom:1.5px solid #000;font-size:10px;text-transform:uppercase">Appraised</th>'
+      +'<th style="padding:8px 10px;text-align:center;border-bottom:1.5px solid #000;font-size:10px;text-transform:uppercase">Avg score</th>'
+      +'<th style="padding:8px 10px;text-align:center;border-bottom:1.5px solid #000;font-size:10px;text-transform:uppercase">Rating</th>'
+      +'<th style="padding:8px 10px;text-align:left;border-bottom:1.5px solid #000;font-size:10px;text-transform:uppercase">Score bar</th>'
+      +'</tr></thead><tbody>'
+      + (deptRows||'<tr><td colspan="5" style="padding:20px;text-align:center;color:#888">No completed appraisals yet.</td></tr>')
+      + '</tbody></table>'
+      +'</div></div>';
+
+    showReportContent(html);
+  } catch(e) {
+    showReportContent('<div style="padding:20px;color:#A32D2D;font-size:12px">Error: ' + e.message + '</div>');
+    console.error('showOrgReport:', e);
+  }
+}
+
+// ── 4. CONSOLIDATED REPORT ────────────────────────────────
+async function showConsolidatedReport() {
+  showReportContent('<div style="text-align:center;padding:40px;color:#888;font-size:12px">Loading consolidated report...</div>');
+  try {
+    if (_staffCache.length === 0) await loadStaffPage();
+    var cl = getClient();
+    var cr = await cl.from('appraisal_cycles').select('id,label,start_date,end_date').eq('is_active',true).single();
+    if (cr.error) throw cr.error;
+    var cycle = cr.data;
+    var ar = await cl.from('appraisals')
+      .select('id,status,final_score,self_kpi_score,appraiser_kpi_score,rating_band,staff_id')
+      .eq('cycle_id', cycle.id)
+      .in('status',['submitted','approved']);
+    if (ar.error) throw ar.error;
+    var all = ar.data || [];
+
+    var sgStaff  = _staffCache.filter(function(s){ return s.organisation==='sg'; });
+    var stlStaff = _staffCache.filter(function(s){ return s.organisation==='stl'; });
+    var sgAppr   = all.filter(function(a){ return sgStaff.some(function(s){ return s.id===a.staff_id; }); });
+    var stlAppr  = all.filter(function(a){ return stlStaff.some(function(s){ return s.id===a.staff_id; }); });
+    var sgAvg    = sgAppr.length  ? Math.round(sgAppr.reduce(function(t,a){  return t+(a.final_score||0);},0)/sgAppr.length)  : 0;
+    var stlAvg   = stlAppr.length ? Math.round(stlAppr.reduce(function(t,a){ return t+(a.final_score||0);},0)/stlAppr.length) : 0;
+    var groupAvg = all.length     ? Math.round(all.reduce(function(t,a){ return t+(a.final_score||0);},0)/all.length)         : 0;
+
+    // All departments across both orgs
+    var allDepts = {};
+    all.forEach(function(a) {
+      var s  = _staffCache.find(function(x){ return x.id===a.staff_id; })||{};
+      var dn = s.department||'Unknown';
+      var og = s.organisation||'';
+      if (!allDepts[dn]) allDepts[dn] = { sg:[], stl:[] };
+      if (og === 'sg') allDepts[dn].sg.push(a);
+      else             allDepts[dn].stl.push(a);
+    });
+
+    var deptRows = Object.keys(allDepts).sort().map(function(dn) {
+      var sg  = allDepts[dn].sg;
+      var stl = allDepts[dn].stl;
+      var sgA = sg.length  ? Math.round(sg.reduce(function(t,a){ return t+(a.final_score||0);},0)/sg.length)   : null;
+      var stA = stl.length ? Math.round(stl.reduce(function(t,a){ return t+(a.final_score||0);},0)/stl.length) : null;
+      var cmb = [...sg,...stl];
+      var cmbA = cmb.length ? Math.round(cmb.reduce(function(t,a){ return t+(a.final_score||0);},0)/cmb.length) : null;
+      function cell(v) {
+        return v !== null
+          ? '<span style="font-weight:600">' + v + '%</span> <span class="band ' + rptBandClass(v) + '" style="font-size:9px">' + rptBandLabel(v) + '</span>'
+          : '<span style="color:#aaa;font-size:11px">No data</span>';
+      }
+      return '<tr>'
+        +'<td style="padding:8px 10px;border-bottom:.5px solid #eee;font-weight:600">' + dn + '</td>'
+        +'<td style="padding:8px 10px;border-bottom:.5px solid #eee;text-align:center">' + cell(sgA)  + '</td>'
+        +'<td style="padding:8px 10px;border-bottom:.5px solid #eee;text-align:center">' + cell(stA)  + '</td>'
+        +'<td style="padding:8px 10px;border-bottom:.5px solid #eee;text-align:center">' + cell(cmbA) + '</td>'
+        +'</tr>';
+    }).join('');
+
+    var sd = new Date(cycle.start_date).toLocaleDateString('en-GB',{month:'long',year:'numeric'});
+    var ed = new Date(cycle.end_date).toLocaleDateString('en-GB',{month:'long',year:'numeric'});
+
+    var html = '<div style="background:#fff;border:1px solid #d0d0d8;border-radius:8px;overflow:hidden">'
+      +'<div style="background:#f0f1f4;border-bottom:3px solid #800020;padding:10px 20px;display:flex;align-items:center;justify-content:space-between" class="no-print">'
+      +'<div style="font-family:\'Palatino Linotype\',Palatino,Georgia,serif;font-size:13px;font-weight:600;color:#1B2A6B">Consolidated Group Report \u2014 ' + cycle.label + '</div>'
+      +'<button class="btn btn-sm btn-secondary" onclick="printReport()">Print / PDF</button>'
+      +'</div>'
+      +'<div id="printable-report" style="padding:28px 32px;font-family:\'Palatino Linotype\',Palatino,Georgia,serif">'
+      + rptHeader('Consolidated Group Appraisal Report', 'Simba Group HO &amp; Simba Telecom Uganda \u00B7 ' + cycle.label + ' \u00B7 Generated ' + rptToday())
+      +'<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:24px">'
+      +'<div style="background:#f0f1f4;border-radius:6px;padding:14px;text-align:center;border-bottom:3px solid #1B2A6B">'
+      +'<div style="font-size:10px;text-transform:uppercase;color:#888;margin-bottom:4px">Simba Group HO</div>'
+      +'<div style="font-size:26px;font-weight:700;color:#1B2A6B;font-family:\'Palatino Linotype\',Palatino,Georgia,serif">' + (sgAvg||'--') + '%</div>'
+      +'<div style="margin-top:4px"><span class="band ' + rptBandClass(sgAvg) + '">' + rptBandLabel(sgAvg) + '</span></div>'
+      +'<div style="font-size:10px;color:#888;margin-top:4px">' + sgAppr.length + ' of ' + sgStaff.length + ' appraised</div>'
+      +'</div>'
+      +'<div style="background:#f0f1f4;border-radius:6px;padding:14px;text-align:center;border-bottom:3px solid #800020">'
+      +'<div style="font-size:10px;text-transform:uppercase;color:#888;margin-bottom:4px">Simba Telecom Uganda</div>'
+      +'<div style="font-size:26px;font-weight:700;color:#1B2A6B;font-family:\'Palatino Linotype\',Palatino,Georgia,serif">' + (stlAvg||'--') + '%</div>'
+      +'<div style="margin-top:4px"><span class="band ' + rptBandClass(stlAvg) + '">' + rptBandLabel(stlAvg) + '</span></div>'
+      +'<div style="font-size:10px;color:#888;margin-top:4px">' + stlAppr.length + ' of ' + stlStaff.length + ' appraised</div>'
+      +'</div>'
+      +'<div style="background:#1B2A6B;border-radius:6px;padding:14px;text-align:center">'
+      +'<div style="font-size:10px;text-transform:uppercase;color:rgba(255,255,255,.6);margin-bottom:4px">Group overall</div>'
+      +'<div style="font-size:26px;font-weight:700;color:#fff;font-family:\'Palatino Linotype\',Palatino,Georgia,serif">' + (groupAvg||'--') + '%</div>'
+      +'<div style="margin-top:4px"><span class="band ' + rptBandClass(groupAvg) + '">' + rptBandLabel(groupAvg) + '</span></div>'
+      +'<div style="font-size:10px;color:rgba(255,255,255,.6);margin-top:4px">' + all.length + ' total appraised</div>'
+      +'</div></div>'
+      + rptSectionHead('Department comparison \u2014 SG HO vs STL')
+      +'<table style="width:100%;border-collapse:collapse;font-size:12px;margin-bottom:20px">'
+      +'<thead><tr style="background:#f0f1f4">'
+      +'<th style="padding:8px 10px;text-align:left;border-bottom:1.5px solid #000;font-size:10px;text-transform:uppercase">Department</th>'
+      +'<th style="padding:8px 10px;text-align:center;border-bottom:1.5px solid #000;font-size:10px;text-transform:uppercase">Simba Group HO</th>'
+      +'<th style="padding:8px 10px;text-align:center;border-bottom:1.5px solid #000;font-size:10px;text-transform:uppercase">Simba Telecom Uganda</th>'
+      +'<th style="padding:8px 10px;text-align:center;border-bottom:1.5px solid #000;font-size:10px;text-transform:uppercase">Combined</th>'
+      +'</tr></thead><tbody>'
+      + (deptRows||'<tr><td colspan="4" style="padding:20px;text-align:center;color:#888">No completed appraisals yet.</td></tr>')
+      + '</tbody></table>'
+      +'</div></div>';
+
+    showReportContent(html);
+  } catch(e) {
+    showReportContent('<div style="padding:20px;color:#A32D2D;font-size:12px">Error: ' + e.message + '</div>');
+    console.error('showConsolidatedReport:', e);
+  }
+}
+
+// ── 5. COMPLETION TRACKER ─────────────────────────────────
+async function showCompletionTracker() {
+  showReportContent('<div style="text-align:center;padding:40px;color:#888;font-size:12px">Loading completion tracker...</div>');
+  try {
+    if (_staffCache.length === 0) await loadStaffPage();
+    var cl = getClient();
+    var cr = await cl.from('appraisal_cycles').select('id,label').eq('is_active',true).single();
+    if (cr.error) throw cr.error;
+    var ar = await cl.from('appraisals').select('staff_id,status').eq('cycle_id', cr.data.id);
+    if (ar.error) throw ar.error;
+    var appraisals = ar.data || [];
+    var apprMap = {};
+    appraisals.forEach(function(a){ apprMap[a.staff_id] = a.status; });
+
+    var staffList = currentOrg !== 'both'
+      ? _staffCache.filter(function(s){ return s.organisation === currentOrg; })
+      : _staffCache;
+
+    var depts = {};
+    staffList.forEach(function(s) {
+      var dn = s.department || 'Unknown';
+      if (!depts[dn]) depts[dn] = { total:0, complete:0, draft:0, pending:0 };
+      depts[dn].total++;
+      var status = apprMap[s.id];
+      if (['submitted','approved'].includes(status)) depts[dn].complete++;
+      else if (status === 'draft') depts[dn].draft++;
+      else depts[dn].pending++;
+    });
+
+    var totalStaff    = staffList.length;
+    var totalComplete = Object.values(depts).reduce(function(t,d){ return t+d.complete; },0);
+    var totalDraft    = Object.values(depts).reduce(function(t,d){ return t+d.draft; },0);
+    var totalPending  = totalStaff - totalComplete - totalDraft;
+    var compRate      = totalStaff ? Math.round(totalComplete/totalStaff*100) : 0;
+
+    var deptRows = Object.keys(depts).sort().map(function(dn) {
+      var d   = depts[dn];
+      var pct = d.total ? Math.round(d.complete/d.total*100) : 0;
+      var barColor = pct >= 80 ? '#3B6D11' : pct >= 50 ? '#854F0B' : '#A32D2D';
+      return '<tr>'
+        +'<td style="padding:8px 10px;border-bottom:.5px solid #eee;font-weight:500">' + dn + '</td>'
+        +'<td style="padding:8px 10px;border-bottom:.5px solid #eee;text-align:center">' + d.total + '</td>'
+        +'<td style="padding:8px 10px;border-bottom:.5px solid #eee;text-align:center;color:#3B6D11;font-weight:600">' + d.complete + '</td>'
+        +'<td style="padding:8px 10px;border-bottom:.5px solid #eee;text-align:center;color:#854F0B">' + d.draft + '</td>'
+        +'<td style="padding:8px 10px;border-bottom:.5px solid #eee;text-align:center;color:#A32D2D">' + d.pending + '</td>'
+        +'<td style="padding:8px 10px;border-bottom:.5px solid #eee">'
+        +'<div style="display:flex;align-items:center;gap:8px">'
+        +'<div style="flex:1;background:#eee;border-radius:2px;height:8px"><div style="width:' + pct + '%;background:' + barColor + ';height:8px;border-radius:2px"></div></div>'
+        +'<span style="font-size:11px;font-weight:600;min-width:32px;color:' + barColor + '">' + pct + '%</span>'
+        +'</div></td></tr>';
+    }).join('');
+
+    var html = '<div style="background:#fff;border:1px solid #d0d0d8;border-radius:8px;overflow:hidden">'
+      +'<div style="background:#f0f1f4;border-bottom:3px solid #800020;padding:10px 20px;display:flex;align-items:center;justify-content:space-between" class="no-print">'
+      +'<div style="font-family:\'Palatino Linotype\',Palatino,Georgia,serif;font-size:13px;font-weight:600;color:#1B2A6B">Completion Tracker \u2014 ' + cr.data.label + '</div>'
+      +'<button class="btn btn-sm btn-secondary" onclick="printReport()">Print / PDF</button>'
+      +'</div>'
+      +'<div id="printable-report" style="padding:28px 32px;font-family:\'Palatino Linotype\',Palatino,Georgia,serif">'
+      + rptHeader('Appraisal Completion Tracker', cr.data.label + ' \u00B7 ' + orgLabel(currentOrg) + ' \u00B7 Generated ' + rptToday())
+      +'<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:24px">'
+      + rptMetric('Total staff',      totalStaff,    '')
+      + rptMetric('Completed',        totalComplete,  compRate + '% of total')
+      + rptMetric('Drafts in progress',totalDraft,   'Awaiting submission')
+      + rptMetric('Not started',      totalPending,   'Action required')
+      +'</div>'
+      + rptSectionHead('Completion by department')
+      +'<table style="width:100%;border-collapse:collapse;font-size:12px">'
+      +'<thead><tr style="background:#f0f1f4">'
+      +'<th style="padding:8px 10px;text-align:left;border-bottom:1.5px solid #000;font-size:10px;text-transform:uppercase">Department</th>'
+      +'<th style="padding:8px 10px;text-align:center;border-bottom:1.5px solid #000;font-size:10px;text-transform:uppercase">Total staff</th>'
+      +'<th style="padding:8px 10px;text-align:center;border-bottom:1.5px solid #000;font-size:10px;text-transform:uppercase">Completed</th>'
+      +'<th style="padding:8px 10px;text-align:center;border-bottom:1.5px solid #000;font-size:10px;text-transform:uppercase">Draft</th>'
+      +'<th style="padding:8px 10px;text-align:center;border-bottom:1.5px solid #000;font-size:10px;text-transform:uppercase">Not started</th>'
+      +'<th style="padding:8px 10px;text-align:left;border-bottom:1.5px solid #000;font-size:10px;text-transform:uppercase">Progress</th>'
+      +'</tr></thead><tbody>' + deptRows + '</tbody></table>'
+      +'</div></div>';
+
+    showReportContent(html);
+  } catch(e) {
+    showReportContent('<div style="padding:20px;color:#A32D2D;font-size:12px">Error: ' + e.message + '</div>');
+    console.error('showCompletionTracker:', e);
+  }
+}
+
+// ── 6. OUTSTANDING APPRAISALS ─────────────────────────────
+async function showOutstandingList() {
+  showReportContent('<div style="text-align:center;padding:40px;color:#888;font-size:12px">Loading outstanding appraisals...</div>');
+  try {
+    if (_staffCache.length === 0) await loadStaffPage();
+    var cl = getClient();
+    var cr = await cl.from('appraisal_cycles').select('id,label').eq('is_active',true).single();
+    if (cr.error) throw cr.error;
+    var ar = await cl.from('appraisals').select('staff_id,status').eq('cycle_id', cr.data.id);
+    if (ar.error) throw ar.error;
+    var started = new Set((ar.data||[]).map(function(a){ return a.staff_id; }));
+
+    var staffList = currentOrg !== 'both'
+      ? _staffCache.filter(function(s){ return s.organisation === currentOrg; })
+      : _staffCache;
+    var outstanding = staffList.filter(function(s){ return !started.has(s.id); });
+
+    var depts = {};
+    outstanding.forEach(function(s) {
+      var dn = s.department||'Unknown';
+      if (!depts[dn]) depts[dn] = [];
+      depts[dn].push(s);
+    });
+
+    var rows = outstanding.slice().sort(function(a,b){ return (a.department||'').localeCompare(b.department||'')||a.full_name.localeCompare(b.full_name); }).map(function(s) {
+      var pill = s.organisation === 'sg' ? '<span class="pill-sg">SG</span>' : '<span class="pill-stl">STL</span>';
+      var doj  = s.date_of_joining ? new Date(s.date_of_joining).toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'}) : '\u2014';
+      return '<tr>'
+        +'<td style="padding:8px 10px;border-bottom:.5px solid #eee"><strong>' + s.full_name + '</strong></td>'
+        +'<td style="padding:8px 10px;border-bottom:.5px solid #eee">' + pill + '</td>'
+        +'<td style="padding:8px 10px;border-bottom:.5px solid #eee">' + (s.department||'\u2014') + '</td>'
+        +'<td style="padding:8px 10px;border-bottom:.5px solid #eee">' + (s.position||'\u2014') + '</td>'
+        +'<td style="padding:8px 10px;border-bottom:.5px solid #eee;font-size:11px;color:#555">' + doj + '</td>'
+        +'</tr>';
+    }).join('');
+
+    var html = '<div style="background:#fff;border:1px solid #d0d0d8;border-radius:8px;overflow:hidden">'
+      +'<div style="background:#f0f1f4;border-bottom:3px solid #800020;padding:10px 20px;display:flex;align-items:center;justify-content:space-between" class="no-print">'
+      +'<div style="font-family:\'Palatino Linotype\',Palatino,Georgia,serif;font-size:13px;font-weight:600;color:#1B2A6B">Outstanding Appraisals \u2014 ' + cr.data.label + '</div>'
+      +'<button class="btn btn-sm btn-secondary" onclick="printReport()">Print / PDF</button>'
+      +'</div>'
+      +'<div id="printable-report" style="padding:28px 32px;font-family:\'Palatino Linotype\',Palatino,Georgia,serif">'
+      + rptHeader('Outstanding Appraisals', cr.data.label + ' \u00B7 ' + orgLabel(currentOrg) + ' \u00B7 Generated ' + rptToday())
+      +'<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:24px">'
+      + rptMetric('Not started',          outstanding.length, 'Require immediate action')
+      + rptMetric('Departments affected', Object.keys(depts).length, '')
+      + rptMetric('Generated',            rptToday(), '')
+      +'</div>'
+      + (outstanding.length === 0
+        ? '<div style="text-align:center;padding:30px;color:#3B6D11;font-size:13px">All appraisals have been started for this cycle.</div>'
+        : rptSectionHead('Staff with no appraisal started')
+          +'<table style="width:100%;border-collapse:collapse;font-size:12px">'
+          +'<thead><tr style="background:#f0f1f4">'
+          +'<th style="padding:8px 10px;text-align:left;border-bottom:1.5px solid #000;font-size:10px;text-transform:uppercase">Name</th>'
+          +'<th style="padding:8px 10px;border-bottom:1.5px solid #000;font-size:10px;text-transform:uppercase">Org</th>'
+          +'<th style="padding:8px 10px;text-align:left;border-bottom:1.5px solid #000;font-size:10px;text-transform:uppercase">Department</th>'
+          +'<th style="padding:8px 10px;text-align:left;border-bottom:1.5px solid #000;font-size:10px;text-transform:uppercase">Position</th>'
+          +'<th style="padding:8px 10px;text-align:left;border-bottom:1.5px solid #000;font-size:10px;text-transform:uppercase">Date joined</th>'
+          +'</tr></thead><tbody>' + rows + '</tbody></table>'
+      )
+      +'</div></div>';
+
+    showReportContent(html);
+  } catch(e) {
+    showReportContent('<div style="padding:20px;color:#A32D2D;font-size:12px">Error: ' + e.message + '</div>');
+    console.error('showOutstandingList:', e);
+  }
 }
 
 // ── ANALYTICS PAGE ─────────────────────────────────────────
