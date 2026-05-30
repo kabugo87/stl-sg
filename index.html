@@ -1299,23 +1299,399 @@ document.addEventListener('click', function(e) {
   if (s) openAppraisalForm(s, null);
 });
 
+// ── KPI TEMPLATES BY POSITION ──────────────────────────────
+var ROLE_KPIS = {
+
+  // ── STL: REGIONAL SALES MANAGER ─────────────────────────
+  'Regional Sales Manager': [
+    { kpi:'Achievement of regional sales target',     target:'100% of monthly target',        weight:35 },
+    { kpi:'New dealer and outlet activations',        target:'5 new activations per month',   weight:25 },
+    { kpi:'Market share growth in region',            target:'5% growth per half year',       weight:20 },
+    { kpi:'Team reporting accuracy and timeliness',   target:'100% reports submitted on time',weight:10 },
+    { kpi:'Attendance and punctuality',               target:'Zero unexcused absences',       weight:10 }
+  ],
+
+  // ── STL: SHOP MANAGER ────────────────────────────────────
+  'Shop Manager': [
+    { kpi:'Achievement of shop sales target',         target:'100% of monthly target',        weight:35 },
+    { kpi:'Customer satisfaction score',              target:'90% and above',                 weight:25 },
+    { kpi:'Stock accuracy and loss prevention',       target:'Zero unexplained stock variance',weight:20 },
+    { kpi:'Team attendance and discipline',           target:'Zero unexcused absences in team',weight:10 },
+    { kpi:'Attendance and punctuality',               target:'Zero unexcused absences',       weight:10 }
+  ],
+
+  // ── STL: SHOP SUPERVISOR ─────────────────────────────────
+  'Shop Supervisor': [
+    { kpi:'Achievement of shop sales target',         target:'100% of monthly target',        weight:35 },
+    { kpi:'Customer satisfaction score',              target:'90% and above',                 weight:25 },
+    { kpi:'Stock management compliance',              target:'Zero unexplained variance',      weight:20 },
+    { kpi:'Compliance with SOPs and standards',       target:'100%',                          weight:10 },
+    { kpi:'Attendance and punctuality',               target:'Zero unexcused absences',       weight:10 }
+  ],
+
+  // ── STL: SHOP ASSISTANT ──────────────────────────────────
+  'Shop Assistant': [
+    { kpi:'Achievement of individual sales target',   target:'100% of monthly target',        weight:35 },
+    { kpi:'Customer satisfaction and service quality',target:'90% and above',                 weight:30 },
+    { kpi:'Compliance with SOPs',                     target:'100%',                          weight:20 },
+    { kpi:'Attendance and punctuality',               target:'Zero unexcused absences',       weight:15 }
+  ],
+
+  // ── STL: SVC CENTRE SUPERVISOR ───────────────────────────
+  'Svc Centre Supervisor': [
+    { kpi:'Customer resolution rate',                 target:'95% first contact resolution',  weight:35 },
+    { kpi:'Customer satisfaction score',              target:'90% and above',                 weight:25 },
+    { kpi:'Team productivity and output',             target:'Meets daily targets',           weight:20 },
+    { kpi:'Compliance with MTN service standards',    target:'100%',                          weight:10 },
+    { kpi:'Attendance and punctuality',               target:'Zero unexcused absences',       weight:10 }
+  ],
+
+  // ── STL: SERVICE CENTRE SUPERVISOR ───────────────────────
+  'Service Centre Supervisor': [
+    { kpi:'Customer resolution rate',                 target:'95% first contact resolution',  weight:35 },
+    { kpi:'Customer satisfaction score',              target:'90% and above',                 weight:25 },
+    { kpi:'Team productivity and output',             target:'Meets daily targets',           weight:20 },
+    { kpi:'Compliance with MTN service standards',    target:'100%',                          weight:10 },
+    { kpi:'Attendance and punctuality',               target:'Zero unexcused absences',       weight:10 }
+  ],
+
+  // ── STL: SVC CENTRE CARE REP ─────────────────────────────
+  'Svc Centre Care Rep': [
+    { kpi:'Customer resolution rate',                 target:'95% first contact resolution',  weight:35 },
+    { kpi:'Customer satisfaction score',              target:'90% and above',                 weight:30 },
+    { kpi:'Compliance with service scripts and SOPs', target:'100%',                          weight:20 },
+    { kpi:'Attendance and punctuality',               target:'Zero unexcused absences',       weight:15 }
+  ],
+
+  // ── STL: SERVICE CENTRE CARE REP ─────────────────────────
+  'Service Centre Care Rep': [
+    { kpi:'Customer resolution rate',                 target:'95% first contact resolution',  weight:35 },
+    { kpi:'Customer satisfaction score',              target:'90% and above',                 weight:30 },
+    { kpi:'Compliance with service scripts and SOPs', target:'100%',                          weight:20 },
+    { kpi:'Attendance and punctuality',               target:'Zero unexcused absences',       weight:15 }
+  ],
+
+  // ── STL: FINANCE MANAGER ─────────────────────────────────
+  'Finance Manager': [
+    { kpi:'Financial reporting accuracy and timeliness',target:'Zero errors, 100% on time',  weight:30 },
+    { kpi:'Cash handling and reconciliation compliance', target:'Zero discrepancies',         weight:25 },
+    { kpi:'Budget variance management',                  target:'Within 5% of approved budget',weight:25 },
+    { kpi:'Statutory and audit compliance',              target:'100% on time',               weight:20 }
+  ],
+
+  // ── STL: ACCOUNTS RECONCILIATION OFFICER / RSFC ──────────
+  'Accounts Reconciliation Officer': [
+    { kpi:'Reconciliation accuracy',                  target:'Zero unresolved variances',     weight:35 },
+    { kpi:'Timeliness of reconciliation reports',     target:'100% submitted on time',        weight:30 },
+    { kpi:'Compliance with financial controls',       target:'100%',                          weight:20 },
+    { kpi:'Attendance and punctuality',               target:'Zero unexcused absences',       weight:15 }
+  ],
+
+  'RSFC': [
+    { kpi:'Reconciliation accuracy',                  target:'Zero unresolved variances',     weight:35 },
+    { kpi:'Timeliness of financial reports',          target:'100% submitted on time',        weight:30 },
+    { kpi:'Compliance with financial controls',       target:'100%',                          weight:20 },
+    { kpi:'Attendance and punctuality',               target:'Zero unexcused absences',       weight:15 }
+  ],
+
+  // ── STL: INTERNAL REGIONAL AUDITOR ───────────────────────
+  'Internal Regional Auditor': [
+    { kpi:'Audit assignments completed on schedule',  target:'100% within agreed timelines',  weight:30 },
+    { kpi:'Quality of audit findings and reports',    target:'Zero factual errors in reports',weight:30 },
+    { kpi:'Follow-up on prior audit recommendations', target:'90% closure rate',              weight:25 },
+    { kpi:'Attendance and punctuality',               target:'Zero unexcused absences',       weight:15 }
+  ],
+
+  // ── STL: INTERNAL AUDIT ASSISTANT ────────────────────────
+  'Internal Audit Assistant': [
+    { kpi:'Audit support tasks completed on time',    target:'100%',                          weight:35 },
+    { kpi:'Accuracy of audit working papers',         target:'Zero factual errors',           weight:30 },
+    { kpi:'Compliance with audit methodology',        target:'100%',                          weight:20 },
+    { kpi:'Attendance and punctuality',               target:'Zero unexcused absences',       weight:15 }
+  ],
+
+  // ── STL: DATA ANALYST ────────────────────────────────────
+  'Data Analyst': [
+    { kpi:'Accuracy of data reports and dashboards',  target:'Zero material errors',          weight:35 },
+    { kpi:'Timeliness of reports',                    target:'100% delivered on time',        weight:25 },
+    { kpi:'Actionable insights generated',            target:'At least 2 per month',          weight:25 },
+    { kpi:'Attendance and punctuality',               target:'Zero unexcused absences',       weight:15 }
+  ],
+
+  // ── STL: CUSTOMER CARE OFFICER ───────────────────────────
+  'Customer Care Officer': [
+    { kpi:'Customer resolution rate',                 target:'95% first contact resolution',  weight:35 },
+    { kpi:'Customer satisfaction score',              target:'90% and above',                 weight:30 },
+    { kpi:'Complaint escalation handling',            target:'Zero unresolved escalations',   weight:20 },
+    { kpi:'Attendance and punctuality',               target:'Zero unexcused absences',       weight:15 }
+  ],
+
+  // ── STL: FIELD SALES REPRESENTATIVE ──────────────────────
+  'Field Sales Representative': [
+    { kpi:'Achievement of individual sales target',   target:'100% of monthly target',        weight:40 },
+    { kpi:'New customer acquisitions',                target:'10 new customers per month',    weight:25 },
+    { kpi:'Customer retention and relationship',      target:'85% retention rate',            weight:20 },
+    { kpi:'Attendance and punctuality',               target:'Zero unexcused absences',       weight:15 }
+  ],
+
+  // ── STL: RETAIL INTERN ───────────────────────────────────
+  'Retail Intern': [
+    { kpi:'Assigned tasks completed on time',         target:'100%',                          weight:35 },
+    { kpi:'Learning and development participation',   target:'Complete all assigned training', weight:30 },
+    { kpi:'Customer service quality',                 target:'Positive feedback from supervisor',weight:20 },
+    { kpi:'Attendance and punctuality',               target:'Zero unexcused absences',       weight:15 }
+  ],
+
+  // ── SG HO: HEAD OF HUMAN RESOURCES ──────────────────────
+  'Head of Human Resources': [
+    { kpi:'Staff on formal development programmes',   target:'80% annually',                  weight:25 },
+    { kpi:'Regrettable attrition reduction',          target:'50% year on year',              weight:20 },
+    { kpi:'Staff satisfaction score',                 target:'90% and above',                 weight:20 },
+    { kpi:'Recruitment turnaround time',              target:'30% reduction vs 2025 baseline',weight:20 },
+    { kpi:'HR policy and compliance rate',            target:'100%',                          weight:15 }
+  ],
+
+  // ── SG HO: HR AND ADMIN ASSISTANT ───────────────────────
+  'HR and Admin Assistant': [
+    { kpi:'HR records accuracy',                      target:'Zero errors in personnel files', weight:30 },
+    { kpi:'Recruitment support turnaround',           target:'Vacancies posted within 48 hrs', weight:25 },
+    { kpi:'Onboarding completion rate',               target:'100% within first week',        weight:25 },
+    { kpi:'Attendance and punctuality',               target:'Zero unexcused absences',       weight:20 }
+  ],
+
+  // ── SG HO: HEAD OF MARKETING ─────────────────────────────
+  'Head of Marketing': [
+    { kpi:'Brand visibility and campaign delivery',   target:'100% campaigns delivered on time',weight:30 },
+    { kpi:'Digital engagement growth',                target:'20% growth per half year',      weight:25 },
+    { kpi:'Marketing budget utilisation',             target:'Within approved budget',        weight:25 },
+    { kpi:'Stakeholder satisfaction with marketing',  target:'90% and above',                 weight:20 }
+  ],
+
+  // ── SG HO: MARKETING / CREATIVE ROLES ───────────────────
+  'Brand Lead': [
+    { kpi:'Brand content delivered on time',          target:'100% of assigned deliverables', weight:35 },
+    { kpi:'Quality of creative output',               target:'Approved first time 90%+',      weight:30 },
+    { kpi:'Compliance with brand guidelines',         target:'100%',                          weight:20 },
+    { kpi:'Attendance and punctuality',               target:'Zero unexcused absences',       weight:15 }
+  ],
+
+  'Lead Graphics Designer': [
+    { kpi:'Design deliverables completed on time',    target:'100% of assigned work',         weight:35 },
+    { kpi:'Quality and accuracy of designs',          target:'Approved first time 90%+',      weight:30 },
+    { kpi:'Brand guideline compliance',               target:'100%',                          weight:20 },
+    { kpi:'Attendance and punctuality',               target:'Zero unexcused absences',       weight:15 }
+  ],
+
+  'Media Manager': [
+    { kpi:'Media content published on schedule',      target:'100% on time',                  weight:35 },
+    { kpi:'Audience engagement growth',               target:'15% growth per half year',      weight:30 },
+    { kpi:'Content quality and accuracy',             target:'Zero factual errors published', weight:20 },
+    { kpi:'Attendance and punctuality',               target:'Zero unexcused absences',       weight:15 }
+  ],
+
+  'Social Media Associate': [
+    { kpi:'Social media posts published on schedule', target:'100% on time',                  weight:35 },
+    { kpi:'Follower and engagement growth',           target:'10% growth per half year',      weight:30 },
+    { kpi:'Content quality and brand alignment',      target:'Zero unapproved posts',         weight:20 },
+    { kpi:'Attendance and punctuality',               target:'Zero unexcused absences',       weight:15 }
+  ],
+
+  'Web Developer': [
+    { kpi:'Website uptime and performance',           target:'99.5% uptime',                  weight:35 },
+    { kpi:'Development tasks completed on time',      target:'100% within agreed sprints',    weight:30 },
+    { kpi:'Zero critical bugs in production',         target:'Zero critical bugs',            weight:20 },
+    { kpi:'Attendance and punctuality',               target:'Zero unexcused absences',       weight:15 }
+  ],
+
+  // ── SG HO: PROJECTS ──────────────────────────────────────
+  'Head of Projects': [
+    { kpi:'Projects delivered on time and budget',    target:'90% of projects',               weight:30 },
+    { kpi:'Stakeholder satisfaction',                 target:'90% and above',                 weight:25 },
+    { kpi:'Budget utilisation accuracy',              target:'Within 5% of approved budget',  weight:25 },
+    { kpi:'Team performance and reporting',           target:'100% reports submitted on time', weight:20 }
+  ],
+
+  'Operations Manager': [
+    { kpi:'Operational targets achieved',             target:'100% of agreed KPIs',           weight:35 },
+    { kpi:'Process compliance and efficiency',        target:'Zero critical process failures', weight:25 },
+    { kpi:'Team reporting accuracy',                  target:'100% on time',                  weight:25 },
+    { kpi:'Attendance and punctuality',               target:'Zero unexcused absences',       weight:15 }
+  ],
+
+  'Project Manager - Her Sacco': [
+    { kpi:'Sacco project milestones delivered',       target:'100% on time',                  weight:35 },
+    { kpi:'Member satisfaction score',                target:'90% and above',                 weight:25 },
+    { kpi:'Budget and financial compliance',          target:'Within approved limits',        weight:25 },
+    { kpi:'Attendance and punctuality',               target:'Zero unexcused absences',       weight:15 }
+  ],
+
+  // ── SG HO: AUDIT ─────────────────────────────────────────
+  'Head of Audit': [
+    { kpi:'Audit plan completion rate',               target:'100% annually',                 weight:30 },
+    { kpi:'Quality of audit reports',                 target:'Zero material errors',          weight:25 },
+    { kpi:'Audit findings closure rate',              target:'90% within agreed timelines',   weight:25 },
+    { kpi:'Compliance and risk management',           target:'Zero repeat critical findings', weight:20 }
+  ],
+
+  'Assets Manager': [
+    { kpi:'Assets register accuracy',                 target:'100% up to date',               weight:35 },
+    { kpi:'Asset verification completion',            target:'100% annually',                 weight:30 },
+    { kpi:'Compliance with asset management policy',  target:'100%',                          weight:20 },
+    { kpi:'Attendance and punctuality',               target:'Zero unexcused absences',       weight:15 }
+  ],
+
+  // ── SG HO: LEGAL ─────────────────────────────────────────
+  'Head of Legal': [
+    { kpi:'Legal compliance rate across Group',       target:'Zero regulatory breaches',      weight:30 },
+    { kpi:'Contract review turnaround',               target:'Within 5 working days',         weight:25 },
+    { kpi:'Legal risk management',                    target:'Zero unmitigated critical risks',weight:25 },
+    { kpi:'Board and company secretarial compliance', target:'100% filings on time',          weight:20 }
+  ],
+
+  'Group Registrar': [
+    { kpi:'Company secretarial filings on time',      target:'100% on time',                  weight:35 },
+    { kpi:'Accuracy of statutory records',            target:'Zero errors',                   weight:30 },
+    { kpi:'Compliance with regulatory requirements',  target:'100%',                          weight:20 },
+    { kpi:'Attendance and punctuality',               target:'Zero unexcused absences',       weight:15 }
+  ],
+
+  // ── SG HO: APARTMENTS ────────────────────────────────────
+  'Property Manager': [
+    { kpi:'Occupancy rate',                           target:'85% and above',                 weight:30 },
+    { kpi:'Tenant satisfaction score',                target:'90% and above',                 weight:25 },
+    { kpi:'Maintenance resolution time',              target:'Within 24 hours',               weight:25 },
+    { kpi:'Revenue collection rate',                  target:'100% of due rents collected',   weight:20 }
+  ],
+
+  'Supervisor': [
+    { kpi:'Team task completion rate',                target:'100% of daily tasks',           weight:35 },
+    { kpi:'Quality of work and cleanliness standards',target:'Zero guest/tenant complaints',  weight:30 },
+    { kpi:'Team attendance management',               target:'Zero unexcused absences in team',weight:20 },
+    { kpi:'Attendance and punctuality',               target:'Zero unexcused absences',       weight:15 }
+  ],
+
+  'Housekeeper': [
+    { kpi:'Cleanliness standards compliance',         target:'Zero complaints from tenants',  weight:40 },
+    { kpi:'Room/unit turnaround time',                target:'Within agreed standard',        weight:30 },
+    { kpi:'Compliance with cleaning SOPs',            target:'100%',                          weight:15 },
+    { kpi:'Attendance and punctuality',               target:'Zero unexcused absences',       weight:15 }
+  ],
+
+  'Public Area Attendant': [
+    { kpi:'Cleanliness of public areas',              target:'Zero complaints',               weight:40 },
+    { kpi:'Compliance with cleaning schedule',        target:'100% tasks completed daily',    weight:30 },
+    { kpi:'Compliance with SOPs',                     target:'100%',                          weight:15 },
+    { kpi:'Attendance and punctuality',               target:'Zero unexcused absences',       weight:15 }
+  ],
+
+  'Pool Attendant': [
+    { kpi:'Pool cleanliness and safety standards',    target:'100% compliance',               weight:40 },
+    { kpi:'Compliance with pool management schedule', target:'100% tasks completed daily',    weight:30 },
+    { kpi:'Zero safety incidents',                    target:'Zero incidents',                weight:15 },
+    { kpi:'Attendance and punctuality',               target:'Zero unexcused absences',       weight:15 }
+  ],
+
+  'Accounts Clerk': [
+    { kpi:'Posting and reconciliation accuracy',      target:'Zero errors',                   weight:35 },
+    { kpi:'Timeliness of accounts processing',        target:'Within agreed deadlines',       weight:30 },
+    { kpi:'Filing and records compliance',            target:'100%',                          weight:20 },
+    { kpi:'Attendance and punctuality',               target:'Zero unexcused absences',       weight:15 }
+  ],
+
+  'General Maintenance': [
+    { kpi:'Maintenance tasks completed on time',      target:'95% within agreed SLA',         weight:35 },
+    { kpi:'Quality of maintenance work',              target:'Zero repeat callouts',          weight:30 },
+    { kpi:'Preventive maintenance compliance',        target:'100% of schedule',              weight:20 },
+    { kpi:'Attendance and punctuality',               target:'Zero unexcused absences',       weight:15 }
+  ],
+
+  // ── DEFAULT ───────────────────────────────────────────────
+  'default': [
+    { kpi:'Quality and accuracy of work output',      target:'Meets departmental standards',  weight:35 },
+    { kpi:'Customer and stakeholder satisfaction',    target:'90% and above',                 weight:25 },
+    { kpi:'Compliance with SOPs and policies',        target:'100%',                          weight:25 },
+    { kpi:'Attendance and punctuality',               target:'Zero unexcused absences',       weight:15 }
+  ]
+};
+
+// Role aliases — map variants to KPI templates
+var ROLE_ALIASES = {
+  'Finance Manager - Projects':     'Finance Manager',
+  'Admin Lead':                     'HR and Admin Assistant',
+  'Sacco Admin':                    'HR and Admin Assistant',
+  'P.A':                            'HR and Admin Assistant',
+  'Caretaker':                      'General Maintenance',
+  'Photography':                    'default',
+  'Videography':                    'default',
+  'Videography/Photography':        'default',
+  'Assistant Graphics Designer':    'Lead Graphics Designer',
+  'Intern':                         'default'
+};
+
+function getKPIsForStaff(s) {
+  var pos = s.position || '';
+  if (ROLE_KPIS[pos]) return ROLE_KPIS[pos];
+  if (ROLE_ALIASES[pos] && ROLE_KPIS[ROLE_ALIASES[pos]]) return ROLE_KPIS[ROLE_ALIASES[pos]];
+  return ROLE_KPIS['default'];
+}
+
+// Management positions (get Section 3 management factors)
+var MGMT_POSITIONS = [
+  'Regional Sales Manager','Shop Manager','Finance Manager','Head of Human Resources',
+  'Head of Marketing','Head of Projects','Head of Audit','Head of Legal',
+  'Property Manager','Operations Manager','Project Manager - Her Sacco',
+  'Internal Regional Auditor','Svc Centre Supervisor','Service Centre Supervisor',
+  'Lead Graphics Designer','Media Manager','Assets Manager','Group Registrar',
+  'Head of Audit','Supervisor'
+];
+
 // ── APPRAISAL FORM ─────────────────────────────────────────
 var _appraisalStaff = null;
 var _appraisalKPIs  = [];
 var _submitted      = false;
 
-// Default KPI set for all STL roles (customise per role in R2 KPI Templates)
-var DEFAULT_KPIS = [
-  { kpi:'Achievement of sales targets',    target:'100% of monthly target',  weight:30 },
-  { kpi:'Customer satisfaction score',     target:'90% and above',           weight:25 },
-  { kpi:'Compliance with SOPs',            target:'100%',                    weight:20 },
-  { kpi:'Attendance and punctuality',      target:'Zero unexcused absences', weight:15 },
-  { kpi:'Reporting accuracy and timeliness',target:'100% on-time reports',   weight:10 }
+var COMPETENCIES = [
+  { key:'time_mgmt',     label:'Time management',    desc:'Punctuality and reliability' },
+  { key:'dependability', label:'Dependability',       desc:'Attendance and consistency' },
+  { key:'appearance',    label:'Appearance',          desc:'Grooming and dress standards' },
+  { key:'cooperation',   label:'Cooperation',         desc:'Working well with colleagues' },
+  { key:'responsibility',label:'Responsibility',      desc:'Ownership of tasks' },
+  { key:'accuracy',      label:'Accuracy',            desc:'Correctness of work output' },
+  { key:'quality',       label:'Quality of work',     desc:'Standards of output' },
+  { key:'quantity',      label:'Quantity of work',    desc:'Volume and productivity' },
+  { key:'initiative',    label:'Initiative',          desc:'Proactiveness and self-direction' },
+  { key:'knowledge',     label:'Knowledge and skill', desc:'Role-specific expertise' }
 ];
 
-function getKPIsForStaff(s) {
-  // Will be replaced by KPI Templates lookup in R2
-  return DEFAULT_KPIS;
+var MGMT_FACTORS = [
+  { key:'planning',   label:'Planning'   },
+  { key:'leading',    label:'Leading'    },
+  { key:'organising', label:'Organising' },
+  { key:'control',    label:'Control'    }
+];
+
+var COMP_KEYS = ['time_mgmt','dependability','appearance','cooperation','responsibility','accuracy','quality','quantity','initiative','knowledge'];
+var MGMT_KEYS = ['planning','leading','organising','control'];
+
+function isMgmtPosition(pos) {
+  return MGMT_POSITIONS.indexOf(pos||'') !== -1;
+}
+
+function ratingSelect(cls, idx) {
+  return '<select class="' + cls + '" data-idx="' + idx + '" style="width:100%;padding:5px 7px;border:1px solid var(--grey-border);border-radius:4px;font-size:11px">'
+    + '<option value="">Select</option>'
+    + '<option value="5">Exceptional (5)</option>'
+    + '<option value="4">Exceeds expectations (4)</option>'
+    + '<option value="3">Meets expectations (3)</option>'
+    + '<option value="2">Needs improvement (2)</option>'
+    + '<option value="1">Unsatisfactory (1)</option>'
+    + '</select>';
+}
+
+function ratingBtns(key, type) {
+  return [1,2,3,4,5].map(function(v) {
+    return '<button type="button" class="r-btn" data-key="' + key + '" data-type="' + type + '" data-val="' + v + '">' + v + '</button>';
+  }).join('');
 }
 
 function openAppraisalForm(staff, savedData) {
@@ -1323,43 +1699,15 @@ function openAppraisalForm(staff, savedData) {
   _submitted = false;
   _appraisalKPIs = getKPIsForStaff(staff);
   window._savedDraftData = savedData || null;
+  var isMgmt = isMgmtPosition(staff.position);
   var orgName = staff.organisation === 'sg' ? 'Simba Group HO' : 'Simba Telecom Uganda';
-  document.getElementById('appr-modal-title').textContent = 'Appraisal \u2014 ' + staff.full_name;
-
-  var COMPETENCIES = [
-    { key:'time_mgmt',     label:'Time management',   desc:'Punctuality and reliability' },
-    { key:'dependability', label:'Dependability',      desc:'Attendance and consistency' },
-    { key:'appearance',    label:'Appearance',         desc:'Grooming and dress standards' },
-    { key:'cooperation',   label:'Cooperation',        desc:'Working well with colleagues' },
-    { key:'responsibility',label:'Responsibility',     desc:'Ownership of tasks' },
-    { key:'accuracy',      label:'Accuracy',           desc:'Correctness of work output' },
-    { key:'quality',       label:'Quality of work',    desc:'Standards of output' },
-    { key:'quantity',      label:'Quantity of work',   desc:'Volume and productivity' },
-    { key:'initiative',    label:'Initiative',         desc:'Proactiveness and self-direction' },
-    { key:'knowledge',     label:'Knowledge and skill',desc:'Role-specific expertise' },
-  ];
-
-  function ratingSelect(cls, idx) {
-    return '<select class="' + cls + '" data-idx="' + idx + '" style="width:100%;padding:5px 7px;border:1px solid var(--grey-border);border-radius:4px;font-size:11px">'
-      + '<option value="">Select</option>'
-      + '<option value="5">Exceptional (5)</option>'
-      + '<option value="4">Exceeds expectations (4)</option>'
-      + '<option value="3">Meets expectations (3)</option>'
-      + '<option value="2">Needs improvement (2)</option>'
-      + '<option value="1">Unsatisfactory (1)</option>'
-      + '</select>';
-  }
-
-  function ratingBtns(key, type) {
-    return [1,2,3,4,5].map(function(v) {
-      return '<button type="button" class="r-btn" data-key="' + key + '" data-type="' + type + '" data-val="' + v + '">' + v + '</button>';
-    }).join('');
-  }
+  document.getElementById('appr-modal-title').textContent = 'Appraisal \u2014 ' + staff.full_name + ' \u00B7 H1 2026';
 
   var kpiRows = _appraisalKPIs.map(function(k, i) {
     return '<div style="padding:10px 0;border-bottom:.5px solid #eee">'
       + '<div style="display:grid;grid-template-columns:1.8fr 1fr 1fr .4fr;gap:10px;align-items:center">'
-      + '<div><div style="font-size:12px;font-weight:500">' + k.kpi + '</div><div style="font-size:10px;color:var(--text-light);margin-top:2px">Target: ' + k.target + '</div></div>'
+      + '<div><div style="font-size:12px;font-weight:500">' + k.kpi + '</div>'
+      + '<div style="font-size:10px;color:var(--text-light);margin-top:2px">Target: ' + k.target + '</div></div>'
       + '<div>' + ratingSelect('kpi-self', i) + '</div>'
       + '<div>' + ratingSelect('kpi-appraiser', i) + '</div>'
       + '<div style="font-size:10px;font-weight:600;color:var(--red);text-align:right">' + k.weight + '%</div>'
@@ -1370,36 +1718,56 @@ function openAppraisalForm(staff, savedData) {
 
   var compRows = COMPETENCIES.map(function(c) {
     return '<div style="display:grid;grid-template-columns:1.8fr 1fr 1fr;gap:10px;align-items:center;padding:8px 0;border-bottom:.5px solid #eee">'
-      + '<div><div style="font-size:12px">' + c.label + '</div><div style="font-size:10px;color:var(--text-light)">' + c.desc + '</div></div>'
+      + '<div><div style="font-size:12px">' + c.label + '</div>'
+      + '<div style="font-size:10px;color:var(--text-light)">' + c.desc + '</div></div>'
       + '<div class="rating-selector">' + ratingBtns(c.key, 'self') + '</div>'
       + '<div class="rating-selector">' + ratingBtns(c.key, 'appraiser') + '</div>'
       + '</div>';
   }).join('');
 
+  var mgmtSection = isMgmt
+    ? '<div class="form-section-title" style="margin-top:18px;margin-bottom:10px">Section 3 \u2014 Management factors <span style="font-size:10px;color:var(--green);font-weight:400">(supervisory roles)</span></div>'
+      + '<div style="display:grid;grid-template-columns:1.8fr 1fr 1fr;gap:10px;padding:6px 0;border-bottom:1.5px solid #000;margin-bottom:4px">'
+      + '<div style="font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.04em;color:var(--text-light)">Factor</div>'
+      + '<div style="font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.04em;color:var(--text-light);text-align:center">Staff</div>'
+      + '<div style="font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.04em;color:var(--text-light);text-align:center">Appraiser</div>'
+      + '</div>'
+      + MGMT_FACTORS.map(function(m) {
+          return '<div style="display:grid;grid-template-columns:1.8fr 1fr 1fr;gap:10px;align-items:center;padding:8px 0;border-bottom:.5px solid #eee">'
+            + '<div style="font-size:12px">' + m.label + '</div>'
+            + '<div class="rating-selector">' + ratingBtns(m.key, 'self') + '</div>'
+            + '<div class="rating-selector">' + ratingBtns(m.key, 'appraiser') + '</div>'
+            + '</div>';
+        }).join('')
+    : '';
+
+  var devSection = '<div class="form-section-title" style="margin-top:18px;margin-bottom:10px">Section ' + (isMgmt ? '4' : '3') + ' \u2014 Development plan</div>'
+    + '<div class="form-group-m"><label>Strong points</label><textarea id="dev-strong" placeholder="Key strengths observed this period..."></textarea></div>'
+    + '<div class="form-group-m"><label>Training and development needs</label><textarea id="dev-training" placeholder="Training gaps or development areas for next cycle..."></textarea></div>'
+    + '<div class="form-group-m"><label>Career objectives \u2014 next 6 months</label><textarea id="dev-career" placeholder="Agreed career development goals..."></textarea></div>';
+
   document.getElementById('appr-modal-body').innerHTML =
     '<div style="background:var(--navy);color:#fff;padding:12px 16px;border-radius:6px;margin-bottom:16px">'
     + '<div style="font-family:var(--font-heading);font-size:13px;font-weight:600">' + staff.full_name + '</div>'
-    + '<div style="font-size:10px;opacity:.7;margin-top:2px">' + (staff.position||'') + ' &middot; ' + (staff.department||'') + ' &middot; ' + orgName + ' &middot; H1 2026</div>'
+    + '<div style="font-size:10px;opacity:.7;margin-top:2px">' + (staff.position||'') + ' \u00B7 ' + (staff.department||'') + ' \u00B7 ' + orgName + ' \u00B7 H1 2026</div>'
     + '</div>'
-    + '<div class="form-section-title" style="margin-bottom:10px">Section 1 &mdash; KPI performance</div>'
+    + '<div class="form-section-title" style="margin-bottom:10px">Section 1 \u2014 KPI performance</div>'
     + '<div style="display:grid;grid-template-columns:1.8fr 1fr 1fr .4fr;gap:10px;padding:6px 0;border-bottom:1.5px solid #000;margin-bottom:2px">'
     + '<div style="font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.04em;color:var(--text-light)">KPI / Measure</div>'
-    + '<div style="font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.04em;color:var(--text-light);text-align:center">Staff (40%)</div>'
-    + '<div style="font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.04em;color:var(--text-light);text-align:center">Appraiser (60%)</div>'
+    + '<div style="font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.04em;color:var(--text-light);text-align:center">Staff response (40%)</div>'
+    + '<div style="font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.04em;color:var(--text-light);text-align:center">Appraiser rating (60%)</div>'
     + '<div style="font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.04em;color:var(--text-light);text-align:right">Weight</div>'
     + '</div>'
     + kpiRows
-    + '<div class="form-section-title" style="margin-top:18px;margin-bottom:10px">Section 2 &mdash; Behavioural competencies</div>'
+    + '<div class="form-section-title" style="margin-top:18px;margin-bottom:10px">Section 2 \u2014 Behavioural competencies</div>'
     + '<div style="display:grid;grid-template-columns:1.8fr 1fr 1fr;gap:10px;padding:6px 0;border-bottom:1.5px solid #000;margin-bottom:4px">'
     + '<div style="font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.04em;color:var(--text-light)">Competency</div>'
     + '<div style="font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.04em;color:var(--text-light);text-align:center">Staff</div>'
     + '<div style="font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.04em;color:var(--text-light);text-align:center">Appraiser</div>'
     + '</div>'
     + compRows
-    + '<div class="form-section-title" style="margin-top:18px;margin-bottom:10px">Section 3 &mdash; Development plan</div>'
-    + '<div class="form-group-m"><label>Strong points</label><textarea id="dev-strong" placeholder="Key strengths observed this period..."></textarea></div>'
-    + '<div class="form-group-m"><label>Training and development needs</label><textarea id="dev-training" placeholder="Training gaps or development areas for next cycle..."></textarea></div>'
-    + '<div class="form-group-m"><label>Career objectives &mdash; next 6 months</label><textarea id="dev-career" placeholder="Agreed career development goals..."></textarea></div>'
+    + mgmtSection
+    + devSection
     + '<div style="background:var(--grey-bg);border:1px solid var(--grey-border);border-radius:6px;padding:12px 14px;margin-top:8px">'
     + '<label style="display:flex;align-items:flex-start;gap:10px;cursor:pointer">'
     + '<input type="checkbox" id="ack-checkbox" style="margin-top:2px;width:14px;height:14px;flex-shrink:0;accent-color:var(--navy)" />'
@@ -1407,6 +1775,32 @@ function openAppraisalForm(staff, savedData) {
     + '</label></div>';
 
   document.getElementById('modal-appraisal').classList.remove('hidden');
+  if (window._savedDraftData) { setTimeout(function(){ restoreDraft(window._savedDraftData); updateAppraisalScore(); }, 50); }
+  else { updateAppraisalScore(); }
+}
+
+function restoreDraft(d) {
+  if (!d) return;
+  (d.kpiSelf||[]).forEach(function(v,i){ var el=document.querySelector('.kpi-self[data-idx="'+i+'"]'); if(el&&v) el.value=v; });
+  (d.kpiAppr||[]).forEach(function(v,i){ var el=document.querySelector('.kpi-appraiser[data-idx="'+i+'"]'); if(el&&v) el.value=v; });
+  (d.kpiComments||[]).forEach(function(v,i){ var el=document.querySelector('.kpi-comment[data-idx="'+i+'"]'); if(el&&v) el.value=v; });
+  function restoreRatings(vals, keys, type) {
+    if (!vals) return;
+    vals.forEach(function(val,i) {
+      if (!val||!keys[i]) return;
+      var grp = document.querySelectorAll('.r-btn[data-key="'+keys[i]+'"][data-type="'+type+'"]');
+      grp.forEach(function(b){ b.className='r-btn'; });
+      var target = document.querySelector('.r-btn[data-key="'+keys[i]+'"][data-type="'+type+'"][data-val="'+val+'"]');
+      if (target) target.classList.add('sel-'+val);
+    });
+  }
+  restoreRatings(d.compSelf, COMP_KEYS, 'self');
+  restoreRatings(d.compAppr, COMP_KEYS, 'appraiser');
+  restoreRatings(d.mgmtSelf, MGMT_KEYS, 'self');
+  restoreRatings(d.mgmtAppr, MGMT_KEYS, 'appraiser');
+  if (d.devStrong   && document.getElementById('dev-strong'))   document.getElementById('dev-strong').value   = d.devStrong;
+  if (d.devTraining && document.getElementById('dev-training')) document.getElementById('dev-training').value = d.devTraining;
+  if (d.devCareer   && document.getElementById('dev-career'))   document.getElementById('dev-career').value   = d.devCareer;
   updateAppraisalScore();
 }
 
@@ -1473,13 +1867,14 @@ async function saveDraft() {
     var sel = document.querySelector('.r-btn[data-key="'+key+'"][data-type="'+type+'"][class*="sel-"]');
     return sel ? parseInt(sel.dataset.val) : null;
   }
-  var compKeys = ['time_mgmt','dependability','appearance','cooperation','responsibility','accuracy','quality','quantity','initiative','knowledge'];
   var dd = {
     kpiSelf:     kpis.map(function(k,i){ var el=document.querySelector('.kpi-self[data-idx="'+i+'"]');        return el?el.value:''; }),
     kpiAppr:     kpis.map(function(k,i){ var el=document.querySelector('.kpi-appraiser[data-idx="'+i+'"]');   return el?el.value:''; }),
     kpiComments: kpis.map(function(k,i){ var el=document.querySelector('.kpi-comment[data-idx="'+i+'"]');     return el?el.value:''; }),
-    compSelf:    compKeys.map(function(k){ return getRVal(k,'self'); }),
-    compAppr:    compKeys.map(function(k){ return getRVal(k,'appraiser'); }),
+    compSelf:    COMP_KEYS.map(function(k){ return getRVal(k,'self'); }),
+    compAppr:    COMP_KEYS.map(function(k){ return getRVal(k,'appraiser'); }),
+    mgmtSelf:    MGMT_KEYS.map(function(k){ return getRVal(k,'self'); }),
+    mgmtAppr:    MGMT_KEYS.map(function(k){ return getRVal(k,'appraiser'); }),
     devStrong:   (document.getElementById('dev-strong')  ||{value:''}).value,
     devTraining: (document.getElementById('dev-training')||{value:''}).value,
     devCareer:   (document.getElementById('dev-career')  ||{value:''}).value,
@@ -1514,12 +1909,28 @@ async function submitAppraisal() {
   var s    = _appraisalStaff;
   var kpis = _appraisalKPIs;
   if (!s) return;
+
   var kpiResponses = kpis.map(function(k, i) {
     var selfEl = document.querySelector('.kpi-self[data-idx="' + i + '"]');
     var apprEl = document.querySelector('.kpi-appraiser[data-idx="' + i + '"]');
     var commEl = document.querySelector('.kpi-comment[data-idx="' + i + '"]');
     return { kpi:k.kpi, target:k.target, weight:k.weight, self_rating:selfEl?selfEl.value:'', appraiser_rating:apprEl?apprEl.value:'', comment:commEl?commEl.value:'' };
   });
+
+  function getSelected(key, type) {
+    var sel = document.querySelector('.r-btn[data-key="' + key + '"][data-type="' + type + '"][class*="sel-"]');
+    return sel ? parseInt(sel.dataset.val) : null;
+  }
+
+  var compResponses = COMP_KEYS.map(function(key) {
+    return { key:key, self_val:getSelected(key,'self'), appraiser_val:getSelected(key,'appraiser') };
+  });
+
+  var mgmtResponses = isMgmtPosition(s.position) ? MGMT_KEYS.map(function(key) {
+    return { key:key, self_val:getSelected(key,'self'), appraiser_val:getSelected(key,'appraiser') };
+  }) : [];
+
+  // Calculate KPI scores
   var selfKPI = 0, apprKPI = 0, totalW = 0;
   kpiResponses.forEach(function(k) {
     var sv = parseFloat(k.self_rating) || 0;
@@ -1530,26 +1941,37 @@ async function submitAppraisal() {
   });
   selfKPI = totalW > 0 ? Math.round(selfKPI / totalW * 100) : 0;
   apprKPI = totalW > 0 ? Math.round(apprKPI / totalW * 100) : 0;
+
+  // Calculate competency scores
+  var compSelfVals = compResponses.filter(function(c){return c.self_val;}).map(function(c){return c.self_val;});
+  var compApprVals = compResponses.filter(function(c){return c.appraiser_val;}).map(function(c){return c.appraiser_val;});
+  var selfComp = compSelfVals.length ? Math.round(compSelfVals.reduce(function(a,b){return a+b;},0)/compSelfVals.length/5*100) : 0;
+  var apprComp = compApprVals.length ? Math.round(compApprVals.reduce(function(a,b){return a+b;},0)/compApprVals.length/5*100) : 0;
+
   var finalScore = Math.round(selfKPI * 0.4 + apprKPI * 0.6);
   var rBand = bandLabel(finalScore);
+
   try {
     var client = getClient();
     var cycleRes = await client.from('appraisal_cycles').select('id').eq('is_active',true).single();
     if (!cycleRes.data) { showToast('No active appraisal cycle found.'); return; }
     var saveRes = await client.from('appraisals').upsert({
-      cycle_id:           cycleRes.data.id,
-      staff_id:           s.id,
-      appraised_by:       currentUser.id,
-      status:             'submitted',
-      self_kpi_score:     selfKPI,
-      appraiser_kpi_score:apprKPI,
-      final_score:        finalScore,
-      rating_band:        rBand,
-      kpi_responses:      kpiResponses,
-      dev_strong:         (document.getElementById('dev-strong')  ||{value:''}).value,
-      dev_training:       (document.getElementById('dev-training')||{value:''}).value,
-      dev_career:         (document.getElementById('dev-career')  ||{value:''}).value,
-      submitted_at:       new Date().toISOString(),
+      cycle_id:              cycleRes.data.id,
+      staff_id:              s.id,
+      appraised_by:          currentUser.id,
+      status:                'submitted',
+      self_kpi_score:        selfKPI,
+      appraiser_kpi_score:   apprKPI,
+      self_comp_score:       selfComp,
+      appraiser_comp_score:  apprComp,
+      final_score:           finalScore,
+      rating_band:           rBand,
+      kpi_responses:         kpiResponses,
+      comp_responses:        compResponses,
+      dev_strong:            (document.getElementById('dev-strong')  ||{value:''}).value,
+      dev_training:          (document.getElementById('dev-training')||{value:''}).value,
+      dev_career:            (document.getElementById('dev-career')  ||{value:''}).value,
+      submitted_at:          new Date().toISOString(),
     }, { onConflict:'cycle_id,staff_id' });
     if (saveRes.error) throw saveRes.error;
     _submitted = true;
