@@ -248,7 +248,7 @@ tr:hover td{background:#fafafa}
       <input type="password" id="login-password" placeholder="&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;" />
     </div>
     <button class="btn btn-primary" id="login-btn" onclick="doLogin()">Sign in &rarr;</button>
-    <p style="font-size:10px;color:var(--text-light);margin-top:16px">Simba Group &copy; 2026 &nbsp;&middot;&nbsp; <strong>R3</strong></p>
+    <p style="font-size:10px;color:var(--text-light);margin-top:16px">Simba Group &copy; 2026 &nbsp;&middot;&nbsp; <strong>R4</strong></p>
   </div>
 </div>
 
@@ -547,9 +547,7 @@ tr:hover td{background:#fafafa}
         </div>
       </div>
 
-      <div class="page-view" id="page-kpis">
-        <div class="coming-soon"><h3>KPI Templates</h3><p>Coming in R2</p></div>
-      </div>
+      <div class="page-view" id="page-kpis"></div>
       <div class="page-view" id="page-settings">
         <div class="coming-soon"><h3>Settings</h3><p>Coming soon</p></div>
       </div>
@@ -664,6 +662,37 @@ tr:hover td{background:#fafafa}
     <div class="modal-footer">
       <button class="btn btn-secondary" onclick="closeModal('modal-new-cycle')">Cancel</button>
       <button class="btn btn-primary" onclick="createNewCycle()">Create cycle</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: KPI Role Editor -->
+<div class="modal-overlay hidden" id="modal-kpi-editor">
+  <div class="modal" style="width:700px">
+    <div class="modal-header" style="background:#f0f1f4;border-bottom:3px solid var(--red)">
+      <h3 id="kpi-editor-title">KPIs for role</h3>
+      <button class="modal-close" id="btn-close-kpi-editor">&times;</button>
+    </div>
+    <div class="modal-body">
+      <div style="background:#e6f1fb;border-left:3px solid #185FA5;border-radius:0 5px 5px 0;padding:10px 14px;margin-bottom:14px;font-size:11px;color:#185FA5;line-height:1.5">
+        KPIs are aligned to the Simba Group Balanced Scorecard — Vision 2030. Weights must total exactly 100%. Each KPI is tagged to a BSC pillar: Financial, Customer, Internal Processes, or Learning &amp; Growth.
+      </div>
+      <div style="display:grid;grid-template-columns:2fr 1.2fr .5fr .8fr .35fr;gap:8px;padding:5px 0;border-bottom:1.5px solid #000;margin-bottom:4px">
+        <div style="font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.04em;color:var(--text-light)">KPI / Measure</div>
+        <div style="font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.04em;color:var(--text-light)">Target</div>
+        <div style="font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.04em;color:var(--text-light);text-align:center">Wt %</div>
+        <div style="font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.04em;color:var(--text-light)">BSC Pillar</div>
+        <div></div>
+      </div>
+      <div id="kpi-editor-rows"></div>
+      <div style="margin-top:10px;display:flex;align-items:center;justify-content:space-between">
+        <button class="btn btn-secondary btn-sm" id="btn-add-kpi-row">+ Add KPI</button>
+        <div id="kpi-weight-total" style="font-size:12px;font-weight:600;color:var(--red)">Total weight: 0%</div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" id="btn-close-kpi-editor-cancel">Cancel</button>
+      <button class="btn btn-primary" id="btn-save-kpi-role">Save KPIs</button>
     </div>
   </div>
 </div>
@@ -825,6 +854,7 @@ function navigate(page) {
   if (page === 'appraisals') loadAppraisalsPage();
   if (page === 'analytics')  loadAnalyticsPage();
   if (page === 'reports')    loadReportsPage();
+  if (page === 'kpis')       loadKPIPage();
 }
 
 function switchOrg(val) {
@@ -1034,6 +1064,7 @@ function renderStaffTable() {
       + '<td class="no-print"><div class="table-actions">'
       + '<button class="btn btn-secondary btn-sm" data-action="edit-staff" data-id="' + s.id + '">Edit</button>'
       + '<button class="btn btn-primary btn-sm" data-action="appraise-staff" data-id="' + s.id + '">Appraise</button>'
+      + '<button class="btn btn-danger btn-sm" data-action="deactivate-staff" data-id="' + s.id + '" data-name="' + s.full_name.replace(/"/g,'&quot;') + '">Remove</button>'
       + '</div></td></tr>';
   }).join('');
 }
@@ -1043,7 +1074,8 @@ document.addEventListener('click', function(e) {
   var btn = e.target.closest('button[data-action]');
   if (!btn) return;
   var action = btn.dataset.action;
-  if (action === 'edit-staff')    openEditStaff(btn.dataset.id);
+  if (action === 'edit-staff')       openEditStaff(btn.dataset.id);
+  if (action === 'deactivate-staff') deactivateStaff(btn.dataset.id, btn.dataset.name);
   if (action === 'appraise-staff') {
     var s = _staffCache.find(function(x){ return x.id === btn.dataset.id; });
     if (s) openAppraisalForm(s, null);
@@ -1333,6 +1365,16 @@ document.addEventListener('click', function(e) {
   if (s) openAppraisalForm(s, null);
 });
 
+// ── BSC PILLARS — VISION 2030 ──────────────────────────────
+// Financial · Customer · Internal Processes · Learning & Growth
+var BSC_PILLARS = [
+  { key:'financial',  label:'Financial',          color:'#3B6D11', bg:'#eaf3de' },
+  { key:'customer',   label:'Customer',           color:'#185FA5', bg:'#e6f1fb' },
+  { key:'internal',   label:'Internal Processes', color:'#1B2A6B', bg:'#f0f1f4' },
+  { key:'learning',   label:'Learning & Growth',  color:'#854F0B', bg:'#faeeda' },
+  { key:'people',     label:'People',             color:'#800020', bg:'#fcebeb' }
+];
+
 // ── KPI TEMPLATES BY POSITION ──────────────────────────────
 var ROLE_KPIS = {
 
@@ -1476,21 +1518,38 @@ var ROLE_KPIS = {
     { kpi:'Attendance and punctuality',               target:'Zero unexcused absences',       weight:15 }
   ],
 
-  // ── SG HO: HEAD OF HUMAN RESOURCES ──────────────────────
+  // ── SG HO: HEAD OF HUMAN RESOURCES — VISION 2030 ───────
+  // Kabugo Kusain — aligned to Vision 2030 pillars
   'Head of Human Resources': [
-    { kpi:'Staff on formal development programmes',   target:'80% annually',                  weight:25 },
-    { kpi:'Regrettable attrition reduction',          target:'50% year on year',              weight:20 },
-    { kpi:'Staff satisfaction score',                 target:'90% and above',                 weight:20 },
-    { kpi:'Recruitment turnaround time',              target:'30% reduction vs 2025 baseline',weight:20 },
-    { kpi:'HR policy and compliance rate',            target:'100%',                          weight:15 }
+    { kpi:'Regrettable attrition rate',                    target:'Below 5% per half year',                        weight:20, pillar:'people' },
+    { kpi:'Staff on formal training and development plans', target:'80% of total headcount annually',              weight:20, pillar:'learning' },
+    { kpi:'Recruitment turnaround time',                   target:'Critical roles filled within 30 days',          weight:15, pillar:'internal' },
+    { kpi:'HR policy compliance and documentation rate',   target:'100% — zero overdue files or lapses',           weight:15, pillar:'internal' },
+    { kpi:'Staff satisfaction and engagement score',       target:'75% favourable rating on Group survey',         weight:15, pillar:'learning' },
+    { kpi:'ESG and social responsibility reporting',       target:'Monthly ESG report submitted on time',          weight:10, pillar:'customer' },
+    { kpi:'Payroll accuracy and timeliness',               target:'Zero payroll errors, submitted by 25th monthly',weight:5,  pillar:'financial' }
   ],
 
-  // ── SG HO: HR AND ADMIN ASSISTANT ───────────────────────
+  // ── SG HO: HR AND ADMIN ASSISTANT — VISION 2030 ─────────
+  // Aturinda Josephine
   'HR and Admin Assistant': [
-    { kpi:'HR records accuracy',                      target:'Zero errors in personnel files', weight:30 },
-    { kpi:'Recruitment support turnaround',           target:'Vacancies posted within 48 hrs', weight:25 },
-    { kpi:'Onboarding completion rate',               target:'100% within first week',        weight:25 },
-    { kpi:'Attendance and punctuality',               target:'Zero unexcused absences',       weight:20 }
+    { kpi:'Personnel file accuracy and completeness',      target:'Zero missing or incorrect documents',           weight:25, pillar:'internal' },
+    { kpi:'Recruitment administration turnaround',         target:'Shortlists and offers processed within 48 hrs', weight:20, pillar:'internal' },
+    { kpi:'Onboarding completion rate',                    target:'100% of new hires onboarded within first week', weight:20, pillar:'learning' },
+    { kpi:'Leave and attendance records accuracy',         target:'Zero errors in monthly leave register',         weight:20, pillar:'internal' },
+    { kpi:'Attendance and punctuality',                    target:'Zero unexcused absences',                       weight:15, pillar:'learning' }
+  ],
+
+  // ── STL: HUMAN RESOURCES MANAGER — MOUREEN KYALIGONZA ───
+  // STL counterpart to Group HoHR — same Vision 2030 HR pillars, STL workforce lens
+  'Human Resources Manager': [
+    { kpi:'STL regrettable attrition rate',                 target:'Below 5% per half year',                         weight:20, pillar:'people'    },
+    { kpi:'STL staff on formal training and development',   target:'80% of STL headcount annually',                  weight:20, pillar:'learning'  },
+    { kpi:'STL recruitment turnaround time',                target:'Critical roles filled within 30 days',            weight:15, pillar:'internal'  },
+    { kpi:'STL HR policy compliance and documentation',     target:'100% — zero overdue files or lapses',             weight:15, pillar:'internal'  },
+    { kpi:'STL staff satisfaction and engagement score',    target:'75% favourable rating on Group survey',           weight:15, pillar:'learning'  },
+    { kpi:'STL payroll accuracy and timeliness',            target:'Zero payroll errors, submitted by 25th monthly',  weight:10, pillar:'financial' },
+    { kpi:'Monthly HR report to Group HoHR',                target:'Submitted by 5th of following month, zero gaps',  weight:5,  pillar:'internal'  }
   ],
 
   // ── SG HO: HEAD OF MARKETING ─────────────────────────────
@@ -1659,7 +1718,9 @@ var ROLE_ALIASES = {
   'Videography':                    'default',
   'Videography/Photography':        'default',
   'Assistant Graphics Designer':    'Lead Graphics Designer',
-  'Intern':                         'default'
+  'Intern':                         'default',
+  'Customer Care Supervisor (HO)':  'Customer Care Supervisor',
+  'HR Manager':                     'Human Resources Manager'
 };
 
 function getKPIsForStaff(s) {
@@ -2653,6 +2714,241 @@ async function showOutstandingList() {
     showReportContent('<div style="padding:20px;color:#A32D2D;font-size:12px">Error: ' + e.message + '</div>');
     console.error('showOutstandingList:', e);
   }
+}
+
+// ── KPI TEMPLATES PAGE ─────────────────────────────────────
+var _kpiFilter = '';
+
+function loadKPIPage() { renderKPIPage(); }
+
+function renderKPIPage() {
+  var page = document.getElementById('page-kpis');
+  if (!page) return;
+  var filter   = _kpiFilter.toLowerCase();
+  var roleKeys = Object.keys(ROLE_KPIS).filter(function(r){ return r !== 'default'; }).sort();
+  var filtered = filter ? roleKeys.filter(function(r){ return r.toLowerCase().includes(filter); }) : roleKeys;
+
+  // BSC pillar summary
+  var pillarCounts = { financial:0, customer:0, internal:0, learning:0 };
+  roleKeys.forEach(function(r) {
+    (ROLE_KPIS[r]||[]).forEach(function(k) {
+      if (k.pillar && pillarCounts[k.pillar] !== undefined) pillarCounts[k.pillar]++;
+    });
+  });
+
+  var pillarBadges = BSC_PILLARS.map(function(p) {
+    return '<span style="background:' + p.bg + ';color:' + p.color + ';font-size:10px;font-weight:600;padding:3px 9px;border-radius:3px">' + p.label + ' (' + pillarCounts[p.key] + ' KPIs)</span>';
+  }).join('');
+
+  var rows = filtered.map(function(role) {
+    var kpis   = ROLE_KPIS[role] || [];
+    var totalW = kpis.reduce(function(t,k){ return t+(parseInt(k.weight)||0); },0);
+    var wtBadge = totalW === 100
+      ? '<span style="color:#3B6D11;font-size:10px;font-weight:600">\u2713 100%</span>'
+      : '<span style="color:#A32D2D;font-size:10px;font-weight:600">\u26A0 ' + totalW + '%</span>';
+    var orgBadge = role === 'default' ? '' :
+      (Object.values(ROLE_KPIS).indexOf(ROLE_KPIS[role]) !== -1)
+        ? '<span style="background:#f0f1f4;color:#1B2A6B;font-size:9px;font-weight:600;padding:1px 6px;border-radius:3px;margin-left:6px">'
+          + (kpis.length > 0 ? kpis.length + ' KPIs' : 'No KPIs') + '</span>'
+        : '';
+    var kpiList = kpis.map(function(k) {
+      var p = BSC_PILLARS.find(function(x){ return x.key === k.pillar; });
+      var pBadge = p ? '<span style="background:' + p.bg + ';color:' + p.color + ';font-size:9px;font-weight:600;padding:1px 5px;border-radius:2px;margin-left:4px">' + p.label + '</span>' : '';
+      return '<div style="font-size:11px;color:#333;margin-bottom:3px;display:flex;align-items:center;gap:4px">'
+        + '<span style="color:#800020;font-weight:600;min-width:28px">' + k.weight + '%</span>'
+        + '<span>' + k.kpi + '</span>'
+        + pBadge
+        + '</div>';
+    }).join('');
+    return '<tr>'
+      + '<td style="padding:9px 12px;border-bottom:.5px solid #eee;font-weight:600;vertical-align:top">' + role + orgBadge + '</td>'
+      + '<td style="padding:9px 12px;border-bottom:.5px solid #eee;vertical-align:top">' + (kpiList||'<span style="font-size:11px;color:#888">No KPIs set</span>') + '</td>'
+      + '<td style="padding:9px 12px;border-bottom:.5px solid #eee;text-align:center;vertical-align:top">' + wtBadge + '</td>'
+      + '<td style="padding:9px 12px;border-bottom:.5px solid #eee;vertical-align:top"><div class="table-actions">'
+      + '<button class="btn btn-secondary btn-sm" data-action="edit-kpi-role" data-role="' + role.replace(/"/g,'&quot;') + '">Edit</button>'
+      + '<button class="btn btn-danger btn-sm" data-action="del-kpi-role" data-role="' + role.replace(/"/g,'&quot;') + '">Delete</button>'
+      + '</div></td>'
+      + '</tr>';
+  }).join('');
+
+  page.innerHTML = ''
+    + '<div class="section-header">'
+    + '<div>'
+    + '<div class="section-title">KPI Templates</div>'
+    + '<div style="font-size:11px;color:var(--text-light);margin-top:3px">Aligned to Simba Group Vision 2030 Balanced Scorecard</div>'
+    + '</div>'
+    + '<div class="filter-row">'
+    + '<input type="text" class="filter-select" placeholder="Search role..." style="width:180px" id="kpi-search-input" value="' + _kpiFilter + '" oninput="_kpiFilter=this.value;renderKPIPage()" />'
+    + '<button class="btn btn-primary btn-sm" data-action="new-kpi-role">+ New role</button>'
+    + '</div></div>'
+
+    // BSC summary strip
+    + '<div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px;padding:10px 14px;background:#fff;border:1px solid var(--grey-border);border-radius:6px;align-items:center">'
+    + '<span style="font-size:10px;font-weight:600;color:var(--text-light);text-transform:uppercase;letter-spacing:.05em;margin-right:4px">BSC Pillars:</span>'
+    + pillarBadges
+    + '<span style="margin-left:auto;font-size:10px;color:var(--text-light)">' + roleKeys.length + ' role templates</span>'
+    + '</div>'
+
+    + '<div class="table-wrap"><table>'
+    + '<thead><tr>'
+    + '<th style="width:200px">Role / Position</th>'
+    + '<th>KPIs assigned</th>'
+    + '<th style="text-align:center;width:80px">Total weight</th>'
+    + '<th class="no-print" style="width:100px">Actions</th>'
+    + '</tr></thead>'
+    + '<tbody>' + (rows||'<tr><td colspan="4" style="padding:20px;text-align:center;color:var(--text-light)">No roles found.</td></tr>') + '</tbody>'
+    + '</table></div>'
+    + '<div style="font-size:11px;color:var(--text-light);margin-top:8px">KPI changes take effect immediately for any new appraisals. Existing submitted appraisals are not affected.</div>';
+}
+
+// KPI page events
+document.addEventListener('click', function(e) {
+  var btn = e.target.closest('button[data-action]');
+  if (!btn) return;
+  var action = btn.dataset.action;
+  var role   = btn.dataset.role;
+  if (action === 'edit-kpi-role') openKPIRoleEditor(role);
+  if (action === 'del-kpi-role')  deleteKPIRole(role);
+  if (action === 'new-kpi-role')  promptNewKPIRole();
+});
+
+function openKPIRoleEditor(role) {
+  var kpis = ROLE_KPIS[role] ? JSON.parse(JSON.stringify(ROLE_KPIS[role])) : [];
+  window._editingKPIRole = role;
+  window._editingKPIs    = kpis;
+  var modal = document.getElementById('modal-kpi-editor');
+  if (!modal) return;
+  document.getElementById('kpi-editor-title').textContent = 'KPIs \u2014 ' + role;
+  renderKPIEditorRows();
+  updateKPIWeightTotal();
+  modal.classList.remove('hidden');
+}
+
+function renderKPIEditorRows() {
+  var kpis    = window._editingKPIs || [];
+  var rowsEl  = document.getElementById('kpi-editor-rows');
+  if (!rowsEl) return;
+  var pillarOptions = BSC_PILLARS.map(function(p) {
+    return '<option value="' + p.key + '">' + p.label + '</option>';
+  }).join('');
+  rowsEl.innerHTML = kpis.map(function(k, i) {
+    return '<div id="kpi-row-' + i + '" style="display:grid;grid-template-columns:2fr 1.2fr .5fr .8fr .35fr;gap:8px;align-items:center;padding:8px 0;border-bottom:.5px solid #eee">'
+      + '<input type="text" class="filter-select" style="width:100%;font-size:12px" value="' + (k.kpi||'').replace(/"/g,'&quot;') + '" data-field="kpi" data-idx="' + i + '" />'
+      + '<input type="text" class="filter-select" style="width:100%;font-size:10px" value="' + (k.target||'').replace(/"/g,'&quot;') + '" data-field="target" data-idx="' + i + '" />'
+      + '<input type="number" class="filter-select" style="width:100%;text-align:center" value="' + (k.weight||0) + '" min="0" max="100" data-field="weight" data-idx="' + i + '" />'
+      + '<select class="filter-select" style="width:100%;font-size:10px" data-field="pillar" data-idx="' + i + '">'
+      + '<option value="">No pillar</option>'
+      + BSC_PILLARS.map(function(p){ return '<option value="' + p.key + '"' + (k.pillar===p.key?' selected':'') + '>' + p.label + '</option>'; }).join('')
+      + '</select>'
+      + '<button class="btn btn-danger btn-sm" data-action="del-kpi-row" data-idx="' + i + '" style="padding:3px 8px;font-size:11px">&#215;</button>'
+      + '</div>';
+  }).join('');
+}
+
+document.addEventListener('click', function(e) {
+  var btn = e.target.closest('button[data-action="del-kpi-row"]');
+  if (!btn) return;
+  var modal = document.getElementById('modal-kpi-editor');
+  if (!modal || modal.classList.contains('hidden')) return;
+  var idx = parseInt(btn.dataset.idx);
+  window._editingKPIs.splice(idx, 1);
+  renderKPIEditorRows();
+  updateKPIWeightTotal();
+});
+
+document.addEventListener('input', function(e) {
+  var el = e.target;
+  if (!el.dataset.field || el.dataset.idx === undefined) return;
+  var modal = document.getElementById('modal-kpi-editor');
+  if (!modal || modal.classList.contains('hidden')) return;
+  var idx  = parseInt(el.dataset.idx);
+  var kpis = window._editingKPIs;
+  if (!kpis || !kpis[idx]) return;
+  if (el.dataset.field === 'weight') kpis[idx].weight = parseInt(el.value)||0;
+  else kpis[idx][el.dataset.field] = el.value;
+  if (el.dataset.field === 'weight') updateKPIWeightTotal();
+});
+
+document.addEventListener('change', function(e) {
+  var el = e.target;
+  if (!el.dataset.field || el.dataset.idx === undefined) return;
+  var modal = document.getElementById('modal-kpi-editor');
+  if (!modal || modal.classList.contains('hidden')) return;
+  var idx  = parseInt(el.dataset.idx);
+  var kpis = window._editingKPIs;
+  if (!kpis || !kpis[idx]) return;
+  kpis[idx][el.dataset.field] = el.value;
+});
+
+document.addEventListener('click', function(e) {
+  if (e.target.id !== 'btn-add-kpi-row') return;
+  if (!window._editingKPIs) return;
+  window._editingKPIs.push({ kpi:'New KPI', target:'Define target', weight:0, pillar:'internal' });
+  renderKPIEditorRows();
+  updateKPIWeightTotal();
+  var rows = document.getElementById('kpi-editor-rows');
+  if (rows) { var inputs = rows.querySelectorAll('input[data-field="kpi"]'); var last = inputs[inputs.length-1]; if(last){ last.select(); } }
+});
+
+document.addEventListener('click', function(e) {
+  if (e.target.id === 'btn-save-kpi-role') {
+    var role = window._editingKPIRole;
+    var kpis = window._editingKPIs;
+    if (!role || !kpis) return;
+    var total = kpis.reduce(function(t,k){ return t+(parseInt(k.weight)||0); },0);
+    if (total !== 100) { showToast('Weights must total 100%. Currently: ' + total + '%'); return; }
+    ROLE_KPIS[role] = kpis;
+    document.getElementById('modal-kpi-editor').classList.add('hidden');
+    showToast('KPIs saved for ' + role + '.');
+    renderKPIPage();
+  }
+  if (e.target.id === 'btn-close-kpi-editor' || e.target.id === 'btn-close-kpi-editor-cancel') {
+    closeModal('modal-kpi-editor');
+  }
+});
+
+function updateKPIWeightTotal() {
+  var kpis  = window._editingKPIs || [];
+  var total = kpis.reduce(function(t,k){ return t+(parseInt(k.weight)||0); },0);
+  var el    = document.getElementById('kpi-weight-total');
+  if (!el) return;
+  el.textContent = 'Total weight: ' + total + '%';
+  el.style.color = total === 100 ? '#3B6D11' : '#A32D2D';
+}
+
+function promptNewKPIRole() {
+  var roleName = prompt('Enter the new role name (e.g. IT Support Officer):');
+  if (!roleName || !roleName.trim()) return;
+  roleName = roleName.trim();
+  if (ROLE_KPIS[roleName]) { showToast(roleName + ' already exists. Click Edit to modify.'); return; }
+  ROLE_KPIS[roleName] = [
+    { kpi:'Quality and accuracy of work output', target:'Meets departmental standards',  weight:35, pillar:'internal' },
+    { kpi:'Customer / stakeholder satisfaction', target:'90% and above',                  weight:25, pillar:'customer' },
+    { kpi:'Compliance with policies and SOPs',   target:'100%',                           weight:25, pillar:'internal' },
+    { kpi:'Attendance and punctuality',          target:'Zero unexcused absences',        weight:15, pillar:'learning' }
+  ];
+  renderKPIPage();
+  showToast('Role added: ' + roleName + '. Customise the KPIs now.');
+  setTimeout(function(){ openKPIRoleEditor(roleName); }, 200);
+}
+
+function deleteKPIRole(role) {
+  if (!confirm('Delete KPI template for "' + role + '"? This cannot be undone.')) return;
+  delete ROLE_KPIS[role];
+  renderKPIPage();
+  showToast('KPI template deleted: ' + role);
+}
+
+// ── DELETE STAFF (soft delete) ────────────────────────────
+async function deactivateStaff(id, name) {
+  if (!confirm('Mark ' + name + ' as inactive? They will be hidden from all lists but their data is preserved.')) return;
+  try {
+    var res = await getClient().from('staff').update({ status:'inactive' }).eq('id', id);
+    if (res.error) throw res.error;
+    showToast(name + ' marked as inactive.');
+    loadStaffPage();
+    loadHomeData();
+  } catch(e) { showToast('Error: ' + e.message); }
 }
 
 // ── ANALYTICS PAGE ─────────────────────────────────────────
