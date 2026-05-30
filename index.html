@@ -466,9 +466,7 @@ tr:hover td{background:#fafafa}
         </div>
       </div>
 
-      <div class="page-view" id="page-analytics">
-        <div class="coming-soon"><h3>Analytics</h3><p>Coming in R2</p></div>
-      </div>
+      <div class="page-view" id="page-analytics"></div>
       <div class="page-view" id="page-reports">
         <div class="coming-soon"><h3>Reports</h3><p>Coming in R3</p></div>
       </div>
@@ -792,6 +790,7 @@ function navigate(page) {
   if (page === 'home')       loadHomeData();
   if (page === 'staff')      loadStaffPage();
   if (page === 'appraisals') loadAppraisalsPage();
+  if (page === 'analytics')  loadAnalyticsPage();
 }
 
 function switchOrg(val) {
@@ -802,6 +801,7 @@ function switchOrg(val) {
   if (active.id === 'page-home')       loadHomeData();
   if (active.id === 'page-staff')      loadStaffPage();
   if (active.id === 'page-appraisals') loadAppraisalsPage();
+  if (active.id === 'page-analytics')  loadAnalyticsPage();
 }
 
 function setWelcome() {
@@ -1980,6 +1980,397 @@ async function submitAppraisal() {
     loadAppraisalsPage();
     loadHomeData();
   } catch(e) { showToast('Error saving: ' + e.message); console.error('submitAppraisal:', e); }
+}
+
+// ── ANALYTICS PAGE ─────────────────────────────────────────
+async function loadAnalyticsPage() {
+  var page = document.getElementById('page-analytics');
+  if (!page) return;
+  page.innerHTML = '<div style="text-align:center;padding:40px;color:#888;font-size:12px">Loading performance data...</div>';
+  try {
+    if (_staffCache.length === 0) await loadStaffPage();
+    var cl = getClient();
+    var cr = await cl.from('appraisal_cycles').select('id,label,start_date,end_date,self_weight,hod_weight').eq('is_active',true).single();
+    if (cr.error) throw cr.error;
+    var cycle = cr.data;
+    var ar = await cl.from('appraisals')
+      .select('id,status,final_score,self_kpi_score,appraiser_kpi_score,self_comp_score,appraiser_comp_score,rating_band,staff_id,submitted_at,dev_training,review_comments')
+      .eq('cycle_id', cycle.id);
+    if (ar.error) throw ar.error;
+    var allAppraisals = ar.data || [];
+    var enriched = allAppraisals.map(function(a) {
+      var s = _staffCache.find(function(x){ return x.id === a.staff_id; }) || {};
+      return Object.assign({}, a, {
+        staffName: s.full_name    || '',
+        deptName:  s.department   || 'Unknown',
+        position:  s.position     || '',
+        orgCode:   s.organisation || '',
+        region:    s.region       || ''
+      });
+    });
+    var completed = enriched.filter(function(a){ return ['approved','submitted'].includes(a.status) && a.final_score; });
+    var viewData  = currentOrg !== 'both'
+      ? completed.filter(function(a){ return a.orgCode === currentOrg; })
+      : completed;
+    var totalStaff = currentOrg !== 'both'
+      ? _staffCache.filter(function(s){ return s.organisation === currentOrg; }).length
+      : _staffCache.length;
+    page.innerHTML = buildAnalyticsPage(cycle, enriched, viewData, totalStaff);
+    if (viewData.length > 0) {
+      generateAINarrative(cycle, viewData, totalStaff);
+    } else {
+      var el = document.getElementById('ai-narrative-text');
+      if (el) el.textContent = 'No completed appraisals yet for this cycle. Submit and approve appraisals to generate the performance narrative.';
+    }
+  } catch(e) {
+    var p = document.getElementById('page-analytics');
+    if (p) p.innerHTML = '<div style="padding:20px;color:#A32D2D;font-size:12px">Error: ' + e.message + '</div>';
+    console.error('loadAnalyticsPage:', e);
+  }
+}
+
+function buildAnalyticsPage(cycle, allAppraisals, viewData, totalStaff) {
+  var completed  = viewData;
+  var drafted    = allAppraisals.filter(function(a){ return a.status === 'draft' && (currentOrg === 'both' || a.orgCode === currentOrg); });
+  var submitted  = allAppraisals.filter(function(a){ return a.status === 'submitted' && (currentOrg === 'both' || a.orgCode === currentOrg); });
+  var notStarted = Math.max(0, totalStaff - completed.length - drafted.length - submitted.length);
+  var compRate   = totalStaff ? Math.round(completed.length / totalStaff * 100) : 0;
+  var avgScore   = completed.length ? Math.round(completed.reduce(function(t,a){ return t+(a.final_score||0); },0)/completed.length) : 0;
+  var sd    = new Date(cycle.start_date).toLocaleDateString('en-GB',{day:'numeric',month:'long',year:'numeric'});
+  var ed    = new Date(cycle.end_date).toLocaleDateString('en-GB',{day:'numeric',month:'long',year:'numeric'});
+  var today = new Date().toLocaleDateString('en-GB',{day:'numeric',month:'long',year:'numeric'});
+
+  // Department breakdown
+  var depts = {};
+  completed.forEach(function(a) {
+    if (!depts[a.deptName]) depts[a.deptName] = [];
+    depts[a.deptName].push(a);
+  });
+  var deptAvgs = Object.keys(depts).map(function(dn) {
+    var arr  = depts[dn];
+    var avg  = Math.round(arr.reduce(function(t,a){ return t+(a.final_score||0); },0)/arr.length);
+    var dist = {exc:0,exceeds:0,meets:0,needs:0,unsat:0};
+    arr.forEach(function(a){ var s=a.final_score||0; if(s>=90)dist.exc++; else if(s>=75)dist.exceeds++; else if(s>=60)dist.meets++; else if(s>=40)dist.needs++; else dist.unsat++; });
+    var deptAll = allAppraisals.filter(function(a){ return a.deptName===dn && (currentOrg==='both'||a.orgCode===currentOrg); });
+    return { name:dn, avg:avg, count:arr.length, totalStaff:deptAll.length, dist:dist, items:arr };
+  }).sort(function(a,b){ return b.avg-a.avg; });
+
+  // Organisation breakdown
+  var sgData   = completed.filter(function(a){ return a.orgCode==='sg'; });
+  var stlData  = completed.filter(function(a){ return a.orgCode==='stl'; });
+  var sgAvg    = sgData.length  ? Math.round(sgData.reduce(function(t,a){  return t+(a.final_score||0);},0)/sgData.length)  : 0;
+  var stlAvg   = stlData.length ? Math.round(stlData.reduce(function(t,a){ return t+(a.final_score||0);},0)/stlData.length) : 0;
+  var sgTotal  = _staffCache.filter(function(s){ return s.organisation==='sg'; }).length;
+  var stlTotal = _staffCache.filter(function(s){ return s.organisation==='stl'; }).length;
+
+  // Rating distribution
+  var dist = {exc:0,exceeds:0,meets:0,needs:0,unsat:0};
+  completed.forEach(function(a){ var s=a.final_score||0; if(s>=90)dist.exc++; else if(s>=75)dist.exceeds++; else if(s>=60)dist.meets++; else if(s>=40)dist.needs++; else dist.unsat++; });
+
+  // Rating gap analysis
+  var biasData = completed.filter(function(a){ return a.self_kpi_score && a.appraiser_kpi_score; }).map(function(a) {
+    return { name:a.staffName, dept:a.deptName, self:Math.round(a.self_kpi_score), appr:Math.round(a.appraiser_kpi_score), gap:Math.round(a.appraiser_kpi_score-a.self_kpi_score) };
+  }).sort(function(a,b){ return Math.abs(b.gap)-Math.abs(a.gap); }).slice(0,10);
+
+  // Top and flagged
+  var ranked  = completed.slice().sort(function(a,b){ return (b.final_score||0)-(a.final_score||0); });
+  var topPerf = ranked.slice(0,5);
+  var flagged = ranked.filter(function(a){ return (a.final_score||0) < 60; });
+
+  // Training themes
+  var trainingTexts = completed.filter(function(a){ return a.dev_training && a.dev_training.trim(); }).map(function(a){ return a.dev_training.trim(); });
+  var wordCount = {};
+  var stopWords = new Set(['and','the','to','of','in','for','a','is','with','on','at','by','an','be','this','that','their','from','as','or','have','are','will','also','more','need','needs','should','training','further','improvement','development','staff','skills','ability','work']);
+  trainingTexts.forEach(function(t) {
+    t.toLowerCase().replace(/[^a-z\s]/g,' ').split(/\s+/).forEach(function(w) {
+      if (w.length > 3 && !stopWords.has(w)) wordCount[w] = (wordCount[w]||0)+1;
+    });
+  });
+  var themes = Object.keys(wordCount).sort(function(a,b){ return wordCount[b]-wordCount[a]; }).slice(0,10);
+
+  function bandC(s){ return s>=90?'band-exc':s>=75?'band-exceeds':s>=60?'band-meets':s>=40?'band-needs':'band-unsat'; }
+  function bandL(s){ return s>=90?'Exceptional':s>=75?'Exceeds expectations':s>=60?'Meets expectations':s>=40?'Needs improvement':'Unsatisfactory'; }
+  function orgPill(o){ return o==='sg'?'<span class="pill pill-sg">SG</span>':'<span class="pill pill-stl">STL</span>'; }
+  var sectionNum = currentOrg === 'both' ? [1,2,3,4,5,6,7,8] : [1,2,3,4,5,6,7];
+  var sn = 0;
+
+  return '<div>'
+    // ── TOOLBAR ──
+    + '<div class="section-header no-print" style="margin-bottom:16px">'
+    + '<div class="section-title">Performance Intelligence Report</div>'
+    + '<div class="filter-row">'
+    + '<select class="filter-select" onchange="switchOrg(this.value)">'
+    + '<option value="both"' + (currentOrg==='both'?' selected':'') + '>Both organisations</option>'
+    + '<option value="sg"'  + (currentOrg==='sg'  ?' selected':'') + '>Simba Group HO</option>'
+    + '<option value="stl"' + (currentOrg==='stl' ?' selected':'') + '>Simba Telecom Uganda</option>'
+    + '</select>'
+    + '<button class="btn btn-primary btn-sm" onclick="printAnalytics()">Print / PDF</button>'
+    + '</div></div>'
+
+    // ── PRINTABLE ──
+    + '<div id="analytics-printable">'
+
+    // Cover
+    + '<div style="text-align:center;padding-bottom:16px;border-bottom:2px solid #000;margin-bottom:24px">'
+    + '<div style="font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:#888;margin-bottom:6px">Simba Group \u2014 Confidential</div>'
+    + '<div style="font-family:\'Palatino Linotype\',Palatino,Georgia,serif;font-size:24px;font-weight:700;color:#1B2A6B">Performance Intelligence Report</div>'
+    + '<div style="font-size:13px;color:#555;margin-top:6px">' + cycle.label + ' \u00B7 ' + sd + ' to ' + ed + '</div>'
+    + '<div style="font-size:11px;color:#888;margin-top:3px">Prepared by: Kabugo Kusain, Head of Human Resources \u00B7 Generated ' + today + '</div>'
+    + '</div>'
+
+    // AI Summary
+    + '<div style="background:#f0f1f4;border-left:4px solid #1B2A6B;border-radius:0 6px 6px 0;padding:14px 18px;margin-bottom:24px">'
+    + '<div style="font-family:\'Palatino Linotype\',Palatino,Georgia,serif;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:#1B2A6B;margin-bottom:6px">Executive Summary</div>'
+    + '<div id="ai-narrative-text" style="font-size:13px;color:#333;line-height:1.7;font-family:\'Palatino Linotype\',Palatino,Georgia,serif;font-style:italic">Generating narrative...</div>'
+    + '</div>'
+
+    // ── SECTION 1: KEY METRICS ──
+    + '<div style="font-family:\'Palatino Linotype\',Palatino,Georgia,serif;font-size:14px;font-weight:700;color:#1B2A6B;border-bottom:2px solid #800020;padding-bottom:4px;display:inline-block;margin-bottom:14px">1. Cycle overview</div>'
+    + '<div style="display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin-bottom:24px">'
+    + analyticsMetric('Total staff',       totalStaff,       '')
+    + analyticsMetric('Appraised',         completed.length,  compRate + '% completion')
+    + analyticsMetric('Awaiting approval', submitted.length,  'Submitted')
+    + analyticsMetric('In progress',       drafted.length,    'Draft stage')
+    + analyticsMetric('Not started',       notStarted,        'Action required')
+    + '</div>'
+
+    // ── SECTION 2: OVERALL SCORE ──
+    + '<div style="font-family:\'Palatino Linotype\',Palatino,Georgia,serif;font-size:14px;font-weight:700;color:#1B2A6B;border-bottom:2px solid #800020;padding-bottom:4px;display:inline-block;margin-bottom:14px">2. Overall performance</div>'
+    + '<div style="display:grid;grid-template-columns:1fr 2fr;gap:16px;margin-bottom:24px">'
+    + '<div style="background:#f0f1f4;border-radius:8px;padding:20px;text-align:center;border-bottom:3px solid #1B2A6B">'
+    + '<div style="font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:#888;margin-bottom:8px">Group average score</div>'
+    + '<div style="font-family:\'Palatino Linotype\',Palatino,Georgia,serif;font-size:48px;font-weight:700;color:#1B2A6B;line-height:1">' + (avgScore||'--') + '<span style="font-size:20px">%</span></div>'
+    + '<div style="margin-top:8px"><span class="band ' + bandC(avgScore) + '" style="font-size:12px">' + bandL(avgScore) + '</span></div>'
+    + '</div>'
+    + '<div style="background:#f0f1f4;border-radius:8px;padding:16px">'
+    + '<div style="font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.06em;color:#888;margin-bottom:10px">Rating band distribution (' + completed.length + ' appraised)</div>'
+    + '<div style="display:flex;flex-direction:column;gap:6px">'
+    + distBar('Exceptional',          dist.exc,     completed.length, '#3B6D11', '#eaf3de')
+    + distBar('Exceeds expectations', dist.exceeds, completed.length, '#185FA5', '#e6f1fb')
+    + distBar('Meets expectations',   dist.meets,   completed.length, '#1B2A6B', '#f0f1f4')
+    + distBar('Needs improvement',    dist.needs,   completed.length, '#854F0B', '#faeeda')
+    + distBar('Unsatisfactory',       dist.unsat,   completed.length, '#A32D2D', '#fcebeb')
+    + '</div></div></div>'
+
+    // ── SECTION 3: ORGANISATION COMPARISON (both only) ──
+    + (currentOrg === 'both' ? (
+        '<div style="font-family:\'Palatino Linotype\',Palatino,Georgia,serif;font-size:14px;font-weight:700;color:#1B2A6B;border-bottom:2px solid #800020;padding-bottom:4px;display:inline-block;margin-bottom:14px">3. Organisation comparison</div>'
+        + '<div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:24px">'
+        + orgCard('Simba Group HO',          sgAvg,  sgData.length,  sgTotal,  sgData,  '#1B2A6B')
+        + orgCard('Simba Telecom Uganda',     stlAvg, stlData.length, stlTotal, stlData, '#800020')
+        + '</div>'
+    ) : '')
+
+    // ── SECTION 4: DEPARTMENT BREAKDOWN ──
+    + '<div style="font-family:\'Palatino Linotype\',Palatino,Georgia,serif;font-size:14px;font-weight:700;color:#1B2A6B;border-bottom:2px solid #800020;padding-bottom:4px;display:inline-block;margin-bottom:14px">' + (currentOrg==='both'?'4':'3') + '. Department performance</div>'
+    + '<div style="margin-bottom:24px">'
+    + (deptAvgs.length === 0 ? '<div style="font-size:12px;color:#888;padding:20px">No completed appraisals yet.</div>' :
+      '<table style="width:100%;border-collapse:collapse;font-size:12px">'
+      + '<thead><tr style="background:#f0f1f4">'
+      + '<th style="padding:8px 10px;text-align:left;border-bottom:1.5px solid #000;font-size:10px;text-transform:uppercase">Department</th>'
+      + '<th style="padding:8px 10px;text-align:center;border-bottom:1.5px solid #000;font-size:10px;text-transform:uppercase">Appraised</th>'
+      + '<th style="padding:8px 10px;text-align:center;border-bottom:1.5px solid #000;font-size:10px;text-transform:uppercase">Avg score</th>'
+      + '<th style="padding:8px 10px;text-align:center;border-bottom:1.5px solid #000;font-size:10px;text-transform:uppercase">Rating</th>'
+      + '<th style="padding:8px 10px;text-align:left;border-bottom:1.5px solid #000;font-size:10px;text-transform:uppercase">Score bar</th>'
+      + '<th style="padding:8px 10px;text-align:center;border-bottom:1.5px solid #000;font-size:10px;text-transform:uppercase">Exc</th>'
+      + '<th style="padding:8px 10px;text-align:center;border-bottom:1.5px solid #000;font-size:10px;text-transform:uppercase">Exceeds</th>'
+      + '<th style="padding:8px 10px;text-align:center;border-bottom:1.5px solid #000;font-size:10px;text-transform:uppercase">Meets</th>'
+      + '<th style="padding:8px 10px;text-align:center;border-bottom:1.5px solid #000;font-size:10px;text-transform:uppercase">Needs</th>'
+      + '<th style="padding:8px 10px;text-align:center;border-bottom:1.5px solid #000;font-size:10px;text-transform:uppercase">Unsat</th>'
+      + '</tr></thead><tbody>'
+      + deptAvgs.map(function(d) {
+          var col = d.avg>=90?'#3B6D11':d.avg>=75?'#185FA5':d.avg>=60?'#1B2A6B':d.avg>=40?'#854F0B':'#A32D2D';
+          var compPct = d.totalStaff ? Math.round(d.count/d.totalStaff*100) : 0;
+          return '<tr>'
+            +'<td style="padding:8px 10px;border-bottom:.5px solid #eee;font-weight:600">' + d.name + '<div style="font-size:9px;color:#888;font-weight:400">' + d.count + ' of ' + d.totalStaff + ' appraised (' + compPct + '%)</div></td>'
+            +'<td style="padding:8px 10px;border-bottom:.5px solid #eee;text-align:center">' + d.count + '</td>'
+            +'<td style="padding:8px 10px;border-bottom:.5px solid #eee;text-align:center;font-weight:700;color:' + col + '">' + d.avg + '%</td>'
+            +'<td style="padding:8px 10px;border-bottom:.5px solid #eee;text-align:center"><span class="band ' + bandC(d.avg) + '">' + bandL(d.avg) + '</span></td>'
+            +'<td style="padding:8px 10px;border-bottom:.5px solid #eee"><div style="background:#eee;border-radius:2px;height:8px;width:100%"><div style="width:' + d.avg + '%;background:' + col + ';height:8px;border-radius:2px"></div></div></td>'
+            +'<td style="padding:8px 10px;border-bottom:.5px solid #eee;text-align:center;color:#3B6D11;font-weight:600">' + d.dist.exc + '</td>'
+            +'<td style="padding:8px 10px;border-bottom:.5px solid #eee;text-align:center;color:#185FA5">' + d.dist.exceeds + '</td>'
+            +'<td style="padding:8px 10px;border-bottom:.5px solid #eee;text-align:center;color:#1B2A6B">' + d.dist.meets + '</td>'
+            +'<td style="padding:8px 10px;border-bottom:.5px solid #eee;text-align:center;color:#854F0B">' + d.dist.needs + '</td>'
+            +'<td style="padding:8px 10px;border-bottom:.5px solid #eee;text-align:center;color:#A32D2D">' + d.dist.unsat + '</td>'
+            +'</tr>';
+        }).join('')
+      + '</tbody></table>'
+    )
+    + '</div>'
+
+    // ── SECTION 5: TOP PERFORMERS & FLAGGED ──
+    + '<div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:24px">'
+    + '<div><div style="font-family:\'Palatino Linotype\',Palatino,Georgia,serif;font-size:14px;font-weight:700;color:#1B2A6B;border-bottom:2px solid #800020;padding-bottom:4px;display:inline-block;margin-bottom:12px">' + (currentOrg==='both'?'5':'4') + '. Top performers</div>'
+    + (topPerf.length === 0 ? '<div style="font-size:12px;color:#888">No data yet.</div>' :
+      '<table style="width:100%;border-collapse:collapse;font-size:11px">'
+      + '<thead><tr style="background:#f0f1f4"><th style="padding:7px 10px;text-align:left;border-bottom:1.5px solid #000;font-size:9px;text-transform:uppercase">Name</th><th style="padding:7px 10px;border-bottom:1.5px solid #000;font-size:9px;text-transform:uppercase">Department</th><th style="padding:7px 10px;text-align:center;border-bottom:1.5px solid #000;font-size:9px;text-transform:uppercase">Score</th></tr></thead><tbody>'
+      + topPerf.map(function(a,i){
+          return '<tr><td style="padding:6px 10px;border-bottom:.5px solid #eee"><strong>' + (i+1) + '. ' + a.staffName + '</strong></td>'
+            +'<td style="padding:6px 10px;border-bottom:.5px solid #eee;font-size:10px;color:#555">' + a.deptName + '</td>'
+            +'<td style="padding:6px 10px;border-bottom:.5px solid #eee;text-align:center"><strong>' + Math.round(a.final_score) + '%</strong> <span class="band ' + bandC(a.final_score) + '" style="font-size:9px">' + bandL(a.final_score) + '</span></td></tr>';
+        }).join('')
+      + '</tbody></table>'
+    )
+    + '</div>'
+    + '<div><div style="font-family:\'Palatino Linotype\',Palatino,Georgia,serif;font-size:14px;font-weight:700;color:#A32D2D;border-bottom:2px solid #A32D2D;padding-bottom:4px;display:inline-block;margin-bottom:12px">' + (currentOrg==='both'?'6':'5') + '. Flagged for improvement</div>'
+    + (flagged.length === 0
+        ? '<div style="font-size:12px;color:#3B6D11;padding:16px;background:#eaf3de;border-radius:6px">No staff below 60% this cycle.</div>'
+        : '<table style="width:100%;border-collapse:collapse;font-size:11px">'
+          + '<thead><tr style="background:#fcebeb"><th style="padding:7px 10px;text-align:left;border-bottom:1.5px solid #000;font-size:9px;text-transform:uppercase">Name</th><th style="padding:7px 10px;border-bottom:1.5px solid #000;font-size:9px;text-transform:uppercase">Department</th><th style="padding:7px 10px;text-align:center;border-bottom:1.5px solid #000;font-size:9px;text-transform:uppercase">Score</th></tr></thead><tbody>'
+          + flagged.map(function(a){
+              return '<tr><td style="padding:6px 10px;border-bottom:.5px solid #eee"><strong>' + a.staffName + '</strong></td>'
+                +'<td style="padding:6px 10px;border-bottom:.5px solid #eee;font-size:10px;color:#555">' + a.deptName + '</td>'
+                +'<td style="padding:6px 10px;border-bottom:.5px solid #eee;text-align:center"><strong style="color:#A32D2D">' + Math.round(a.final_score) + '%</strong></td></tr>';
+            }).join('')
+          + '</tbody></table>'
+    )
+    + '</div></div>'
+
+    // ── SECTION 7: RATING GAP ANALYSIS ──
+    + (biasData.length > 0 ? (
+        '<div style="font-family:\'Palatino Linotype\',Palatino,Georgia,serif;font-size:14px;font-weight:700;color:#1B2A6B;border-bottom:2px solid #800020;padding-bottom:4px;display:inline-block;margin-bottom:12px">' + (currentOrg==='both'?'7':'6') + '. Rating gap analysis (Self vs Appraiser)</div>'
+        + '<div style="font-size:11px;color:#555;margin-bottom:8px;line-height:1.5">Largest gaps between staff self-rating and appraiser rating. Positive = appraiser rated higher. Negative = appraiser rated lower than staff self-assessment.</div>'
+        + '<table style="width:100%;border-collapse:collapse;font-size:11px;margin-bottom:24px">'
+        + '<thead><tr style="background:#f0f1f4"><th style="padding:7px 10px;text-align:left;border-bottom:1.5px solid #000;font-size:9px;text-transform:uppercase">Name</th><th style="padding:7px 10px;border-bottom:1.5px solid #000;font-size:9px;text-transform:uppercase">Department</th><th style="padding:7px 10px;text-align:center;border-bottom:1.5px solid #000;font-size:9px;text-transform:uppercase">Self KPI</th><th style="padding:7px 10px;text-align:center;border-bottom:1.5px solid #000;font-size:9px;text-transform:uppercase">Appraiser KPI</th><th style="padding:7px 10px;text-align:center;border-bottom:1.5px solid #000;font-size:9px;text-transform:uppercase">Gap</th></tr></thead><tbody>'
+        + biasData.map(function(b) {
+            var gapCol = b.gap > 15 ? '#185FA5' : b.gap < -15 ? '#A32D2D' : '#854F0B';
+            var gapLbl = b.gap > 0 ? '+' + b.gap + '%' : b.gap + '%';
+            return '<tr><td style="padding:6px 10px;border-bottom:.5px solid #eee"><strong>' + b.name + '</strong></td>'
+              +'<td style="padding:6px 10px;border-bottom:.5px solid #eee;font-size:10px;color:#555">' + b.dept + '</td>'
+              +'<td style="padding:6px 10px;border-bottom:.5px solid #eee;text-align:center">' + b.self + '%</td>'
+              +'<td style="padding:6px 10px;border-bottom:.5px solid #eee;text-align:center">' + b.appr + '%</td>'
+              +'<td style="padding:6px 10px;border-bottom:.5px solid #eee;text-align:center;font-weight:700;color:' + gapCol + '">' + gapLbl + '</td></tr>';
+          }).join('')
+        + '</tbody></table>'
+    ) : '')
+
+    // ── SECTION 8: TRAINING NEEDS ──
+    + '<div style="font-family:\'Palatino Linotype\',Palatino,Georgia,serif;font-size:14px;font-weight:700;color:#1B2A6B;border-bottom:2px solid #800020;padding-bottom:4px;display:inline-block;margin-bottom:12px">' + (currentOrg==='both'?'8':'7') + '. Training needs summary</div>'
+    + '<div style="margin-bottom:24px">'
+    + (themes.length === 0
+        ? '<div style="font-size:12px;color:#888">No training needs recorded yet.</div>'
+        : '<div style="font-size:11px;color:#555;margin-bottom:8px">Most frequently cited across ' + trainingTexts.length + ' development plans:</div>'
+          + '<div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:12px">'
+          + themes.map(function(w){ return '<span style="background:#e6f1fb;color:#185FA5;font-size:11px;font-weight:600;padding:4px 10px;border-radius:3px">' + w.charAt(0).toUpperCase()+w.slice(1) + ' (' + wordCount[w] + ')</span>'; }).join('')
+          + '</div>'
+          + (trainingTexts.length > 0
+            ? '<div style="font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.05em;color:#888;margin-bottom:6px">Sample entries</div>'
+              + trainingTexts.slice(0,3).map(function(t){ return '<div style="font-size:11px;color:#333;padding:7px 10px;background:#f7f7f9;border-left:3px solid #d0d0d8;margin-bottom:5px;border-radius:0 4px 4px 0;line-height:1.5">' + t.substring(0,200) + (t.length>200?'...':'') + '</div>'; }).join('')
+            : '')
+    )
+    + '</div>'
+
+    // Footer
+    + '<div style="border-top:1.5px solid #000;padding-top:10px;display:flex;justify-content:space-between;align-items:center">'
+    + '<div style="font-size:10px;color:#888">Simba Group \u2014 Performance Management System \u00B7 ' + cycle.label + ' \u00B7 Confidential</div>'
+    + '<div style="font-size:10px;color:#888">Generated ' + today + ' by Kabugo Kusain, Head of Human Resources</div>'
+    + '</div>'
+
+    + '</div></div>';
+}
+
+function analyticsMetric(label, value, sub) {
+  return '<div style="background:#f0f1f4;border-radius:6px;padding:12px;text-align:center">'
+    + '<div style="font-size:10px;text-transform:uppercase;letter-spacing:.05em;color:#888;margin-bottom:4px">' + label + '</div>'
+    + '<div style="font-family:\'Palatino Linotype\',Palatino,Georgia,serif;font-size:26px;font-weight:700;color:#1B2A6B">' + value + '</div>'
+    + (sub ? '<div style="font-size:10px;color:#888;margin-top:3px">' + sub + '</div>' : '')
+    + '</div>';
+}
+
+function distBar(label, count, total, color, bg) {
+  var pct = total ? Math.round(count/total*100) : 0;
+  return '<div style="display:flex;align-items:center;gap:8px">'
+    + '<div style="font-size:10px;min-width:130px;color:#555">' + label + '</div>'
+    + '<div style="flex:1;background:#e0e0e0;border-radius:2px;height:10px">'
+    + '<div style="width:' + pct + '%;height:10px;background:' + color + ';border-radius:2px"></div></div>'
+    + '<div style="font-size:11px;font-weight:600;min-width:40px;text-align:right;color:' + color + '">' + count + ' <span style="font-weight:400;color:#888">(' + pct + '%)</span></div>'
+    + '</div>';
+}
+
+function orgCard(name, avg, count, total, data, color) {
+  var compRate = total ? Math.round(count/total*100) : 0;
+  var dist = {exc:0,exceeds:0,meets:0,needs:0,unsat:0};
+  data.forEach(function(a){ var s=a.final_score||0; if(s>=90)dist.exc++; else if(s>=75)dist.exceeds++; else if(s>=60)dist.meets++; else if(s>=40)dist.needs++; else dist.unsat++; });
+  function bandC(s){ return s>=90?'band-exc':s>=75?'band-exceeds':s>=60?'band-meets':s>=40?'band-needs':'band-unsat'; }
+  function bandL(s){ return s>=90?'Exceptional':s>=75?'Exceeds expectations':s>=60?'Meets expectations':s>=40?'Needs improvement':'Unsatisfactory'; }
+  return '<div style="background:#f0f1f4;border-radius:8px;padding:16px;border-bottom:3px solid ' + color + '">'
+    + '<div style="font-family:\'Palatino Linotype\',Palatino,Georgia,serif;font-size:12px;font-weight:700;color:' + color + ';margin-bottom:12px">' + name + '</div>'
+    + '<div style="display:flex;align-items:center;gap:14px;margin-bottom:12px">'
+    + '<div style="text-align:center"><div style="font-family:\'Palatino Linotype\',Palatino,Georgia,serif;font-size:36px;font-weight:700;color:#1B2A6B;line-height:1">' + (avg||'--') + '<span style="font-size:16px">%</span></div><div style="margin-top:4px"><span class="band ' + bandC(avg) + '">' + bandL(avg) + '</span></div></div>'
+    + '<div style="flex:1;font-size:11px;color:#555">'
+    + '<div>' + count + ' of ' + total + ' staff appraised (' + compRate + '%)</div>'
+    + '<div style="margin-top:6px;display:flex;gap:4px;flex-wrap:wrap">'
+    + '<span style="background:#eaf3de;color:#3B6D11;font-size:10px;font-weight:600;padding:2px 7px;border-radius:3px">' + dist.exc + ' Exc</span>'
+    + '<span style="background:#e6f1fb;color:#185FA5;font-size:10px;font-weight:600;padding:2px 7px;border-radius:3px">' + dist.exceeds + ' Exceeds</span>'
+    + '<span style="background:#f0f1f4;color:#1B2A6B;font-size:10px;font-weight:600;padding:2px 7px;border-radius:3px">' + dist.meets + ' Meets</span>'
+    + '<span style="background:#faeeda;color:#854F0B;font-size:10px;font-weight:600;padding:2px 7px;border-radius:3px">' + dist.needs + ' Needs</span>'
+    + '<span style="background:#fcebeb;color:#A32D2D;font-size:10px;font-weight:600;padding:2px 7px;border-radius:3px">' + dist.unsat + ' Unsat</span>'
+    + '</div></div></div></div>';
+}
+
+function printAnalytics() {
+  var body = document.getElementById('analytics-printable');
+  if (!body) return;
+  var w = window.open('', '_blank', 'width=1000,height=700');
+  var css = '<style>'
+    + 'body{font-family:"Palatino Linotype",Palatino,Georgia,serif;padding:20px;color:#1a1a2e;font-size:11px;line-height:1.6}'
+    + 'table{width:100%;border-collapse:collapse}'
+    + 'th{background:#f0f1f4;padding:7px 10px;text-align:left;border-bottom:1.5px solid #000;font-size:9px;text-transform:uppercase;letter-spacing:.04em}'
+    + 'td{padding:6px 10px;border-bottom:.5px solid #ccc}'
+    + '.band{display:inline-block;font-size:9px;font-weight:600;padding:2px 7px;border-radius:3px}'
+    + '.band-exc{background:#eaf3de;color:#3B6D11}.band-exceeds{background:#e6f1fb;color:#185FA5}'
+    + '.band-meets{background:#f0f1f4;color:#1B2A6B}.band-needs{background:#faeeda;color:#854F0B}.band-unsat{background:#fcebeb;color:#A32D2D}'
+    + '.no-print{display:none!important}'
+    + '@media print{@page{margin:10mm}}'
+    + '</style>';
+  w.document.write('<!DOCTYPE html><html><head><title>Performance Intelligence Report</title>' + css + '</head><body>');
+  w.document.write(body.innerHTML);
+  w.document.write('</body></html>');
+  w.document.close();
+  setTimeout(function(){ w.print(); }, 500);
+}
+
+async function generateAINarrative(cycle, viewData, totalStaff) {
+  var el = document.getElementById('ai-narrative-text');
+  if (!el) return;
+  try {
+    var avgScore = Math.round(viewData.reduce(function(t,a){ return t+(a.final_score||0); },0)/viewData.length);
+    var compRate = totalStaff ? Math.round(viewData.length/totalStaff*100) : 0;
+    var depts    = {};
+    viewData.forEach(function(a){ if(!depts[a.deptName])depts[a.deptName]=[];depts[a.deptName].push(a.final_score||0); });
+    var deptAvgs = Object.keys(depts).map(function(d){ var arr=depts[d]; return {name:d,avg:Math.round(arr.reduce(function(t,s){return t+s;},0)/arr.length)}; }).sort(function(a,b){return b.avg-a.avg;});
+    var top    = deptAvgs[0];
+    var bottom = deptAvgs[deptAvgs.length-1];
+    var flagged = viewData.filter(function(a){ return (a.final_score||0)<60; }).length;
+    var sgAvg   = Math.round((viewData.filter(function(a){return a.orgCode==='sg';}).reduce(function(t,a){return t+(a.final_score||0);},0)||0) / (viewData.filter(function(a){return a.orgCode==='sg';}).length||1));
+    var stlAvg  = Math.round((viewData.filter(function(a){return a.orgCode==='stl';}).reduce(function(t,a){return t+(a.final_score||0);},0)||0) / (viewData.filter(function(a){return a.orgCode==='stl';}).length||1));
+    function bandL(s){ return s>=90?'Exceptional':s>=75?'Exceeds Expectations':s>=60?'Meets Expectations':s>=40?'Needs Improvement':'Unsatisfactory'; }
+    var prompt = 'You are Kabugo Kusain, Head of Human Resources at The Simba Group, Kampala, Uganda. '
+      + 'Write a 3-sentence executive summary of the ' + cycle.label + ' appraisal cycle results for distribution to Group leadership. '
+      + 'Tone: experienced HR professional. Direct, factual, no motivational language. No bullet points. No heading.\n\n'
+      + 'Data:\n'
+      + '- Cycle: ' + cycle.label + ' (' + new Date(cycle.start_date).toLocaleDateString('en-GB',{month:'long',year:'numeric'}) + ' to ' + new Date(cycle.end_date).toLocaleDateString('en-GB',{month:'long',year:'numeric'}) + ')\n'
+      + '- Staff appraised: ' + viewData.length + ' of ' + totalStaff + ' (' + compRate + '% completion)\n'
+      + '- Group average score: ' + avgScore + '% (' + bandL(avgScore) + ')\n'
+      + '- Simba Group HO average: ' + sgAvg + '%\n'
+      + '- Simba Telecom Uganda average: ' + stlAvg + '%\n'
+      + '- Best performing department: ' + (top    ? top.name    + ' at ' + top.avg    + '%' : 'N/A') + '\n'
+      + '- Department needing most attention: ' + (bottom ? bottom.name + ' at ' + bottom.avg + '%' : 'N/A') + '\n'
+      + '- Staff scoring below 60% (flagged): ' + flagged + '\n'
+      + '- Write 3 sentences only. No labels. No heading.';
+    var res = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ model:'claude-sonnet-4-20250514', max_tokens:180, messages:[{ role:'user', content:prompt }] })
+    });
+    var data = await res.json();
+    var text = data.content && data.content[0] ? data.content[0].text : null;
+    if (text && el) el.textContent = text.trim();
+    else if (el) el.textContent = 'The ' + cycle.label + ' appraisal cycle has ' + viewData.length + ' of ' + totalStaff + ' staff appraised (' + compRate + '% completion), with a group average of ' + avgScore + '% (' + bandL(avgScore) + '). Full department breakdown is in the sections below.';
+  } catch(e) {
+    if (el) el.textContent = 'Performance data loaded. AI narrative unavailable at this time.';
+    console.warn('generateAINarrative:', e.message);
+  }
 }
 
 // ── NEW CYCLE ──────────────────────────────────────────────
