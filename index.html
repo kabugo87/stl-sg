@@ -443,7 +443,7 @@ tr:hover td{background:#fafafa}
               <button class="btn btn-sm appr-tab" id="tab-pending" data-tab="pending" style="background:transparent;color:var(--text-mid);border:none;padding:4px 10px;border-radius:3px;font-size:11px">Pending</button>
               <button class="btn btn-sm appr-tab" id="tab-done"    data-tab="done"    style="background:transparent;color:var(--text-mid);border:none;padding:4px 10px;border-radius:3px;font-size:11px">Submitted</button>
             </div>
-            <select class="filter-select" id="filter-appr-org">
+            <select class="filter-select" id="filter-appr-org" onchange="currentOrg=this.value;loadAppraisalsPage()">
               <option value="">Both organisations</option>
               <option value="sg">Simba Group HO</option>
               <option value="stl">Simba Telecom Uganda</option>
@@ -470,8 +470,15 @@ tr:hover td{background:#fafafa}
       <div class="page-view" id="page-reports">
         <div class="section-header">
           <div class="section-title">Reports</div>
-          <div id="report-back" style="display:none">
-            <button class="btn btn-secondary btn-sm" onclick="showReportMenu()">&#8592; Back to reports</button>
+          <div style="display:flex;align-items:center;gap:8px">
+            <select class="filter-select" id="filter-report-org" onchange="switchReportOrg(this.value)">
+              <option value="both">Both organisations</option>
+              <option value="sg">Simba Group HO</option>
+              <option value="stl">Simba Telecom Uganda</option>
+            </select>
+            <div id="report-back" style="display:none">
+              <button class="btn btn-secondary btn-sm" onclick="showReportMenu()">&#8592; Back to reports</button>
+            </div>
           </div>
         </div>
         <div id="report-menu" style="display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:20px">
@@ -513,7 +520,7 @@ tr:hover td{background:#fafafa}
           </div>
           <div class="filter-row">
             <input type="text" id="filter-staff-search" class="filter-select" placeholder="Search name..." style="width:160px" oninput="renderStaffTable()" />
-            <select class="filter-select" id="filter-staff-org" onchange="renderStaffTable()">
+            <select class="filter-select" id="filter-staff-org" onchange="currentOrg=this.value;loadStaffPage()">
               <option value="">Both organisations</option>
               <option value="sg">Simba Group HO</option>
               <option value="stl">Simba Telecom Uganda</option>
@@ -886,6 +893,13 @@ function navigate(page) {
 
 function switchOrg(val) {
   currentOrg = val;
+  // Keep page-level selectors in sync with sidebar
+  var apprSel   = document.getElementById('filter-appr-org');
+  var staffSel  = document.getElementById('filter-staff-org');
+  var reportSel = document.getElementById('filter-report-org');
+  if (apprSel)   apprSel.value   = val;
+  if (staffSel)  staffSel.value  = val;
+  if (reportSel) reportSel.value = val;
   document.getElementById('tb-sub').textContent = orgLabel(val) + ' \u2014 ' + dateStr();
   var active = document.querySelector('.page-view.active');
   if (!active) return;
@@ -2107,6 +2121,22 @@ async function submitAppraisal() {
 // ── REPORTS PAGE ───────────────────────────────────────────
 async function loadReportsPage() {
   showReportMenu();
+}
+
+
+function switchReportOrg(val) {
+  currentOrg = val;
+  // Update sidebar switcher to stay in sync
+  var sw = document.getElementById('org-switcher');
+  if (sw) sw.value = val;
+  // If a report is currently open, reload it
+  var menu = document.getElementById('report-menu');
+  var isMenuShowing = menu && menu.style.display !== 'none';
+  if (!isMenuShowing) {
+    // A report is open — show menu so user re-selects with new org
+    showReportMenu();
+    showToast('Organisation changed to ' + orgLabel(val) + '. Select a report to reload.');
+  }
 }
 
 function showReportMenu() {
