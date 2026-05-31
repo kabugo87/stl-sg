@@ -1973,11 +1973,30 @@ function updateAppraisalScore() {
   if (totalW === 0) return;
   var selfPct  = Math.round(selfScore / totalW * 100);
   var apprPct  = Math.round(apprScore / totalW * 100);
-  var finalPct = Math.round(selfPct * 0.4 + apprPct * 0.6);
+  var kpiBlend = Math.round(selfPct * 0.4 + apprPct * 0.6);
+
+  // Competency appraiser score from rating buttons
+  var compApprVals = [];
+  document.querySelectorAll('.r-btn[data-type="appraiser"][class*="sel-"]').forEach(function(b) {
+    compApprVals.push(parseInt(b.dataset.val)||0);
+  });
+  var compApprPct = compApprVals.length ? Math.round(compApprVals.reduce(function(a,b){return a+b;},0)/compApprVals.length/5*100) : 0;
+
+  // Final = KPI 60% + Competency (appraiser) 40%
+  var finalPct = compApprPct > 0
+    ? Math.round(kpiBlend * 0.6 + compApprPct * 0.4)
+    : kpiBlend;
+
   var display  = document.getElementById('appr-score-display');
   if (display) {
-    if (finalPct > 0) {
-      display.innerHTML = 'KPI score: Self <strong>' + selfPct + '%</strong> &middot; Appraiser <strong>' + apprPct + '%</strong> &middot; Final <strong style="color:var(--red)">' + finalPct + '%</strong> (' + bandLabel(finalPct) + ')';
+    if (kpiBlend > 0) {
+      var scoreText = 'KPI: <strong>' + kpiBlend + '%</strong>';
+      if (compApprPct > 0) {
+        scoreText += ' &middot; Competency: <strong>' + compApprPct + '%</strong> &middot; Final: <strong style="color:var(--red)">' + finalPct + '%</strong> (' + bandLabel(finalPct) + ')';
+      } else {
+        scoreText += ' &middot; Final (KPI only so far): <strong style="color:var(--red)">' + finalPct + '%</strong> &mdash; complete Section 2 for full score';
+      }
+      display.innerHTML = scoreText;
     } else {
       display.textContent = 'Score: pending \u2014 fill in KPI ratings above';
     }
@@ -2078,7 +2097,11 @@ async function submitAppraisal() {
   var selfComp = compSelfVals.length ? Math.round(compSelfVals.reduce(function(a,b){return a+b;},0)/compSelfVals.length/5*100) : 0;
   var apprComp = compApprVals.length ? Math.round(compApprVals.reduce(function(a,b){return a+b;},0)/compApprVals.length/5*100) : 0;
 
-  var finalScore = Math.round(selfKPI * 0.4 + apprKPI * 0.6);
+  // Final score: KPIs 60% + Appraiser competency 40%
+  // KPI component: self 40% + appraiser 60% of the KPI portion
+  var kpiComponent  = Math.round(selfKPI * 0.4 + apprKPI * 0.6);
+  // Competency component: appraiser ratings only
+  var finalScore = Math.round(kpiComponent * 0.6 + apprComp * 0.4);
   var rBand = bandLabel(finalScore);
 
   try {
@@ -2265,7 +2288,7 @@ async function showIndividualReport(appraisalId) {
       + '<th style="padding:8px 10px;text-align:center;border-bottom:1.5px solid #000;font-size:10px;text-transform:uppercase">Weighted score</th>'
       + '</tr></thead><tbody>' + kpiRows + '</tbody>'
       + '<tfoot><tr style="background:#f0f1f4">'
-      + '<td colspan="4" style="padding:8px 10px;font-weight:600;font-size:11px;border-top:1.5px solid #000">KPI score — Self 40% + Appraiser 60%</td>'
+      + '<td colspan="4" style="padding:8px 10px;font-weight:600;font-size:11px;border-top:1.5px solid #000">KPI score — Self 40% + Appraiser 60% (60% of final)</td>'
       + '<td style="padding:8px 10px;text-align:center;font-weight:700;border-top:1.5px solid #000">' + final + '%</td>'
       + '</tr></tfoot></table>'
 
