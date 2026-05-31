@@ -443,7 +443,7 @@ tr:hover td{background:#fafafa}
               <button class="btn btn-sm appr-tab" id="tab-pending" data-tab="pending" style="background:transparent;color:var(--text-mid);border:none;padding:4px 10px;border-radius:3px;font-size:11px">Pending</button>
               <button class="btn btn-sm appr-tab" id="tab-done"    data-tab="done"    style="background:transparent;color:var(--text-mid);border:none;padding:4px 10px;border-radius:3px;font-size:11px">Submitted</button>
             </div>
-            <select class="filter-select" id="filter-appr-org" onchange="currentOrg=this.value;loadAppraisalsPage()">
+            <select class="filter-select" id="filter-appr-org" onchange="currentOrg=this.value||'both';syncOrgSelectors();loadAppraisalsPage()">
               <option value="">Both organisations</option>
               <option value="sg">Simba Group HO</option>
               <option value="stl">Simba Telecom Uganda</option>
@@ -471,7 +471,7 @@ tr:hover td{background:#fafafa}
         <div class="section-header">
           <div class="section-title">Reports</div>
           <div style="display:flex;align-items:center;gap:8px">
-            <select class="filter-select" id="filter-report-org" onchange="switchReportOrg(this.value)">
+            <select class="filter-select" id="filter-report-org" onchange="currentOrg=this.value||'both';syncOrgSelectors();showReportMenu();showToast('Organisation changed. Select a report to reload.')">
               <option value="both">Both organisations</option>
               <option value="sg">Simba Group HO</option>
               <option value="stl">Simba Telecom Uganda</option>
@@ -520,7 +520,7 @@ tr:hover td{background:#fafafa}
           </div>
           <div class="filter-row">
             <input type="text" id="filter-staff-search" class="filter-select" placeholder="Search name..." style="width:160px" oninput="renderStaffTable()" />
-            <select class="filter-select" id="filter-staff-org" onchange="currentOrg=this.value;loadStaffPage()">
+            <select class="filter-select" id="filter-staff-org" onchange="currentOrg=this.value||'both';syncOrgSelectors();loadStaffPage()">
               <option value="">Both organisations</option>
               <option value="sg">Simba Group HO</option>
               <option value="stl">Simba Telecom Uganda</option>
@@ -711,7 +711,7 @@ tr:hover td{background:#fafafa}
       <button class="modal-close" onclick="closeModal('modal-new-cycle')">&times;</button>
     </div>
     <div class="modal-body">
-      <div style="background:#faeeda;border-left:3px solid #854F0B;border-radius:0 5px 5px 0;padding:10px 14px;margin-bottom:14px;font-size:11px;color:#854F0B;line-height:1.5" id="nc-modal-warning">
+      <div id="nc-modal-warning" style="background:#faeeda;border-left:3px solid #854F0B;border-radius:0 5px 5px 0;padding:10px 14px;margin-bottom:14px;font-size:11px;color:#854F0B;line-height:1.5">
         Starting a new cycle closes the current one. All existing appraisals are preserved and remain accessible in reports.
       </div>
       <div class="form-row" style="margin-bottom:12px">
@@ -892,15 +892,9 @@ function navigate(page) {
 }
 
 function switchOrg(val) {
-  currentOrg = val;
-  // Keep page-level selectors in sync with sidebar
-  var apprSel   = document.getElementById('filter-appr-org');
-  var staffSel  = document.getElementById('filter-staff-org');
-  var reportSel = document.getElementById('filter-report-org');
-  if (apprSel)   apprSel.value   = val;
-  if (staffSel)  staffSel.value  = val;
-  if (reportSel) reportSel.value = val;
-  document.getElementById('tb-sub').textContent = orgLabel(val) + ' \u2014 ' + dateStr();
+  currentOrg = val || 'both';
+  syncOrgSelectors();
+  document.getElementById('tb-sub').textContent = orgLabel(currentOrg) + ' \u2014 ' + dateStr();
   var active = document.querySelector('.page-view.active');
   if (!active) return;
   if (active.id === 'page-home')       loadHomeData();
@@ -2121,22 +2115,6 @@ async function submitAppraisal() {
 // ── REPORTS PAGE ───────────────────────────────────────────
 async function loadReportsPage() {
   showReportMenu();
-}
-
-
-function switchReportOrg(val) {
-  currentOrg = val;
-  // Update sidebar switcher to stay in sync
-  var sw = document.getElementById('org-switcher');
-  if (sw) sw.value = val;
-  // If a report is currently open, reload it
-  var menu = document.getElementById('report-menu');
-  var isMenuShowing = menu && menu.style.display !== 'none';
-  if (!isMenuShowing) {
-    // A report is open — show menu so user re-selects with new org
-    showReportMenu();
-    showToast('Organisation changed to ' + orgLabel(val) + '. Select a report to reload.');
-  }
 }
 
 function showReportMenu() {
@@ -3419,11 +3397,23 @@ async function createNewCycle() {
 
 // ── INIT ──────────────────────────────────────────────────
 
+// ── SYNC ORG SELECTORS ─────────────────────────────────────
+function syncOrgSelectors() {
+  var val = currentOrg || 'both';
+  var sb  = document.getElementById('org-switcher');
+  var sa  = document.getElementById('filter-appr-org');
+  var ss  = document.getElementById('filter-staff-org');
+  var sr  = document.getElementById('filter-report-org');
+  if (sb && !sb.disabled) sb.value = val;
+  if (sa) sa.value = val === 'both' ? '' : val;
+  if (ss) ss.value = val === 'both' ? '' : val;
+  if (sr) sr.value = val === 'both' ? 'both' : val;
+}
+
 // ── SETTINGS PAGE ──────────────────────────────────────────
 async function loadSettingsPage() {
   var page = document.getElementById('page-settings');
   if (!page) return;
-
   page.innerHTML = '<div class="section-header"><div class="section-title">Settings</div></div>'
     + '<div style="font-size:11px;color:var(--text-light);margin-bottom:20px">Manage appraisal cycles, scoring weights, rating bands and user access.</div>'
     + '<div class="grid-2">'
@@ -3474,7 +3464,6 @@ async function loadSettingsPage() {
     + '<tr><td style="padding:6px 0;border-bottom:.5px solid #eee;color:var(--text-light);font-size:10px;text-transform:uppercase">HR Lead</td><td style="padding:6px 0;border-bottom:.5px solid #eee">Kabugo Kusain &mdash; Head of Human Resources</td></tr>'
     + '<tr><td style="padding:6px 0;color:var(--text-light);font-size:10px;text-transform:uppercase">Version</td><td style="padding:6px 0"><span class="band band-meets">R4</span> &nbsp; Built May 2026</td></tr>'
     + '</tbody></table></div>'
-
     + '</div>';
 
   loadSettingsCycle();
@@ -3493,10 +3482,7 @@ async function loadSettingsCycle() {
     var sd = new Date(c.start_date).toLocaleDateString('en-GB', { day:'numeric', month:'long', year:'numeric' });
     var ed = new Date(c.end_date).toLocaleDateString('en-GB',   { day:'numeric', month:'long', year:'numeric' });
     var ar = await cl.from('appraisals').select('id,status').eq('cycle_id', c.id);
-    var apprData  = ar.data || [];
-    var approved  = apprData.filter(function(a){ return a.status === 'approved';  }).length;
-    var submitted = apprData.filter(function(a){ return a.status === 'submitted'; }).length;
-    var drafted   = apprData.filter(function(a){ return a.status === 'draft';     }).length;
+    var ap = ar.data || [];
     window._activeCycleData = c;
     el.innerHTML = '<table style="width:100%;border-collapse:collapse;font-size:12px"><tbody>'
       + '<tr><td style="padding:6px 0;border-bottom:.5px solid #eee;color:var(--text-light);font-size:10px;text-transform:uppercase;width:100px">Cycle name</td><td style="padding:6px 0;border-bottom:.5px solid #eee;font-weight:600">' + c.label + '</td></tr>'
@@ -3505,12 +3491,11 @@ async function loadSettingsCycle() {
       + '<tr><td style="padding:6px 0;border-bottom:.5px solid #eee;color:var(--text-light);font-size:10px;text-transform:uppercase">Self weight</td><td style="padding:6px 0;border-bottom:.5px solid #eee">' + (c.self_weight||40) + '%</td></tr>'
       + '<tr><td style="padding:6px 0;border-bottom:.5px solid #eee;color:var(--text-light);font-size:10px;text-transform:uppercase">Status</td><td style="padding:6px 0;border-bottom:.5px solid #eee"><span class="band band-exc">Active</span></td></tr>'
       + '<tr><td style="padding:6px 0;color:var(--text-light);font-size:10px;text-transform:uppercase">Appraisals</td><td style="padding:6px 0">'
-      + '<span style="margin-right:8px"><strong>' + approved  + '</strong> approved</span>'
-      + '<span style="margin-right:8px"><strong>' + submitted + '</strong> submitted</span>'
-      + '<span style="margin-right:8px"><strong>' + drafted   + '</strong> draft</span>'
-      + '<span style="color:var(--text-light)">' + apprData.length + ' total</span>'
-      + '</td></tr>'
-      + '</tbody></table>';
+      + '<span style="margin-right:8px"><strong>' + ap.filter(function(a){return a.status==='approved';}).length  + '</strong> approved</span>'
+      + '<span style="margin-right:8px"><strong>' + ap.filter(function(a){return a.status==='submitted';}).length + '</strong> submitted</span>'
+      + '<span style="margin-right:8px"><strong>' + ap.filter(function(a){return a.status==='draft';}).length    + '</strong> draft</span>'
+      + '<span style="color:var(--text-light)">' + ap.length + ' total</span>'
+      + '</td></tr></tbody></table>';
   } catch(e) {
     if (el) el.innerHTML = '<div style="font-size:11px;color:#A32D2D">Could not load cycle: ' + e.message + '</div>';
   }
@@ -3549,8 +3534,7 @@ async function loadSettingsUsers() {
                 + '<td style="padding:7px 10px;border-bottom:.5px solid #eee">' + orgHtml + '</td>'
                 + '</tr>';
             }).join('')
-      )
-      + '</tbody></table>';
+      ) + '</tbody></table>';
   } catch(e) {
     if (el) el.innerHTML = '<div style="font-size:11px;color:#A32D2D">Could not load users: ' + e.message + '</div>';
   }
@@ -3621,14 +3605,12 @@ async function createNewCycle() {
   var start = (document.getElementById('nc-start')||{value:''}).value;
   var end   = (document.getElementById('nc-end')  ||{value:''}).value;
   var self  = parseInt((document.getElementById('nc-self')||{value:'40'}).value)||40;
-  if (!label||!start||!end) { showToast('Label, start date and end date are required.'); return; }
-  if (!confirm('This will close the current active cycle and start ' + label + '. Existing appraisals are preserved. Continue?')) return;
+  if (!label||!start||!end) { showToast('Label, start and end date are required.'); return; }
+  if (!confirm('This will close ' + ((window._activeCycleData||{}).label||'the current cycle') + ' and start ' + label + '. Existing appraisals are preserved. Continue?')) return;
   try {
     var cl = getClient();
     await cl.from('appraisal_cycles').update({ is_active:false }).eq('is_active',true);
-    var res = await cl.from('appraisal_cycles').insert({
-      label:label, start_date:start, end_date:end, self_weight:self, hod_weight:100-self, is_active:true
-    });
+    var res = await cl.from('appraisal_cycles').insert({ label:label, start_date:start, end_date:end, self_weight:self, hod_weight:100-self, is_active:true });
     if (res.error) throw res.error;
     closeModal('modal-new-cycle');
     showToast('New cycle started: ' + label);
@@ -3636,7 +3618,6 @@ async function createNewCycle() {
     loadSettingsCycle();
   } catch(e) { showToast('Error: ' + e.message); }
 }
-
 
 document.addEventListener('DOMContentLoaded', function() {
   document.getElementById('login-password').addEventListener('keydown', function(e) { if (e.key === 'Enter') doLogin(); });
