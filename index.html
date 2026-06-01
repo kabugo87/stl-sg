@@ -443,7 +443,7 @@ tr:hover td{background:#fafafa}
               <button class="btn btn-sm appr-tab" id="tab-pending" data-tab="pending" style="background:transparent;color:var(--text-mid);border:none;padding:4px 10px;border-radius:3px;font-size:11px">Pending</button>
               <button class="btn btn-sm appr-tab" id="tab-done"    data-tab="done"    style="background:transparent;color:var(--text-mid);border:none;padding:4px 10px;border-radius:3px;font-size:11px">Submitted</button>
             </div>
-            <select class="filter-select" id="filter-appr-org" onchange="currentOrg=this.value||'both';syncOrgSelectors();loadAppraisalsPage()">
+            <select class="filter-select" id="filter-appr-org" onchange="if(!window._orgLocked){currentOrg=this.value||'both';syncOrgSelectors();loadAppraisalsPage();}">
               <option value="">Both organisations</option>
               <option value="sg">Simba Group HO</option>
               <option value="stl">Simba Telecom Uganda</option>
@@ -471,7 +471,7 @@ tr:hover td{background:#fafafa}
         <div class="section-header">
           <div class="section-title">Reports</div>
           <div style="display:flex;align-items:center;gap:8px">
-            <select class="filter-select" id="filter-report-org" onchange="currentOrg=this.value||'both';syncOrgSelectors();showReportMenu();showToast('Organisation changed. Select a report to reload.')">
+            <select class="filter-select" id="filter-report-org" onchange="if(!window._orgLocked){currentOrg=this.value||'both';syncOrgSelectors();showReportMenu();showToast('Organisation changed. Select a report to reload.');}">
               <option value="both">Both organisations</option>
               <option value="sg">Simba Group HO</option>
               <option value="stl">Simba Telecom Uganda</option>
@@ -520,7 +520,7 @@ tr:hover td{background:#fafafa}
           </div>
           <div class="filter-row">
             <input type="text" id="filter-staff-search" class="filter-select" placeholder="Search name..." style="width:160px" oninput="renderStaffTable()" />
-            <select class="filter-select" id="filter-staff-org" onchange="currentOrg=this.value||'both';syncOrgSelectors();loadStaffPage()">
+            <select class="filter-select" id="filter-staff-org" onchange="if(!window._orgLocked){currentOrg=this.value||'both';syncOrgSelectors();loadStaffPage();}">
               <option value="">Both organisations</option>
               <option value="sg">Simba Group HO</option>
               <option value="stl">Simba Telecom Uganda</option>
@@ -848,7 +848,12 @@ async function doLogin() {
       var sw = document.getElementById('org-switcher');
       sw.value = p.organisation;
       sw.disabled = true;
+    } else {
+      currentOrg = 'both';
     }
+    syncOrgSelectors();
+    window._orgLocked = (p.role !== 'admin' && p.organisation && p.organisation !== 'both');
+    window._userOrg   = p.organisation || 'both';
     setWelcome();
     loadHomeData();
   } catch(e) {
@@ -918,6 +923,8 @@ function navigate(page) {
 }
 
 function switchOrg(val) {
+  // Respect org lock for non-admin org-specific users
+  if (window._orgLocked) { val = window._userOrg; }
   currentOrg = val || 'both';
   syncOrgSelectors();
   document.getElementById('tb-sub').textContent = orgLabel(currentOrg) + ' \u2014 ' + dateStr();
@@ -1079,7 +1086,7 @@ async function loadStaffPage() {
     var res = await q;
     if (res.error) throw res.error;
     _staffCache = res.data || [];
-    var uRes = await cl.from('user_profiles').select('id,name,title');
+    var uRes = await cl.from('user_profiles').select('id,name,title,organisation');
     _userProfiles = uRes.data || [];
     if (counter) counter.textContent = _staffCache.length + ' staff';
     renderStaffTable();
@@ -3034,11 +3041,9 @@ async function openChangeAppraiser(staffId, staffName) {
   var s = _staffCache.find(function(x){ return x.id === staffId; });
   if (!s) return;
 
-  // Load user profiles if not yet loaded
-  if (_userProfiles.length === 0) {
-    var ur = await getClient().from('user_profiles').select('id,name,title,organisation');
-    _userProfiles = ur.data || [];
-  }
+  // Always reload user profiles with organisation field for appraiser dropdown
+  var ur = await getClient().from('user_profiles').select('id,name,title,organisation');
+  if (ur.data && ur.data.length > 0) _userProfiles = ur.data;
 
   document.getElementById('ca-modal-title').textContent = 'Change appraiser — ' + staffName;
 
