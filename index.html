@@ -248,7 +248,7 @@ tr:hover td{background:#fafafa}
       <input type="password" id="login-password" placeholder="&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;" />
     </div>
     <button class="btn btn-primary" id="login-btn" onclick="doLogin()">Sign in &rarr;</button>
-    <p style="font-size:10px;color:var(--text-light);margin-top:16px">Simba Group &copy; 2026 &nbsp;&middot;&nbsp; <strong>R4.7</strong> &nbsp;&middot;&nbsp; 1 Jun 2026</p>
+    <p style="font-size:10px;color:var(--text-light);margin-top:16px">Simba Group &copy; 2026 &nbsp;&middot;&nbsp; <strong>R4.8</strong> &nbsp;&middot;&nbsp; 1 Jun 2026</p>
   </div>
 </div>
 
@@ -333,7 +333,7 @@ tr:hover td{background:#fafafa}
         <p id="tb-sub">Simba Group</p>
       </div>
       <div class="tb-right">
-        <div style="font-size:10px;color:var(--text-light);font-weight:600;background:#f0f1f4;padding:4px 8px;border-radius:4px;border:1px solid var(--grey-border)">R4.7</div>
+        <div style="font-size:10px;color:var(--text-light);font-weight:600;background:#f0f1f4;padding:4px 8px;border-radius:4px;border:1px solid var(--grey-border)">R4.8</div>
         <div class="cycle-badge" id="tb-cycle">&#128197;&nbsp; H1 2026 &nbsp;&middot;&nbsp; Jan &ndash; Jun 2026</div>
       </div>
     </div>
@@ -1086,6 +1086,7 @@ function renderRecentActivity(items) {
 // ── STAFF PAGE ──────────────────────────────────────────────
 async function loadStaffPage() {
   enforceOrgLock();
+  syncOrgSelectors();
   var tbody   = document.getElementById('staff-tbody');
   var counter = document.getElementById('staff-count');
   if (!tbody) return;
@@ -1246,6 +1247,7 @@ async function saveStaff() {
 // ── APPRAISALS PAGE ────────────────────────────────────────
 async function loadAppraisalsPage() {
   enforceOrgLock();
+  syncOrgSelectors();
   var tbody   = document.getElementById('appr-tbody');
   var counter = document.getElementById('appr-count');
   if (!tbody) return;
@@ -3548,9 +3550,16 @@ function syncOrgSelectors() {
   var ss  = document.getElementById('filter-staff-org');
   var sr  = document.getElementById('filter-report-org');
   if (sb && !sb.disabled) sb.value = val;
-  if (sa) sa.value = val === 'both' ? '' : val;
-  if (ss) ss.value = val === 'both' ? '' : val;
-  if (sr) sr.value = val === 'both' ? 'both' : val;
+  if (sa) { sa.value = val === 'both' ? '' : val; }
+  if (ss) { ss.value = val === 'both' ? '' : val; }
+  if (sr) { sr.value = val === 'both' ? 'both' : val; }
+  // Disable page-level selectors for locked users
+  if (window._orgLocked) {
+    var locked = window._userOrg;
+    if (sa) { sa.value = locked; sa.disabled = true; }
+    if (ss) { ss.value = locked; ss.disabled = true; }
+    if (sr) { sr.value = locked; sr.disabled = true; }
+  }
 }
 
 // ── SETTINGS PAGE ──────────────────────────────────────────
