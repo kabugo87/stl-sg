@@ -248,7 +248,7 @@ tr:hover td{background:#fafafa}
       <input type="password" id="login-password" placeholder="&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;" />
     </div>
     <button class="btn btn-primary" id="login-btn" onclick="doLogin()">Sign in &rarr;</button>
-    <p style="font-size:10px;color:var(--text-light);margin-top:16px">Simba Group &copy; 2026 &nbsp;&middot;&nbsp; <strong>R4.8</strong> &nbsp;&middot;&nbsp; 1 Jun 2026</p>
+    <p style="font-size:10px;color:var(--text-light);margin-top:16px">Simba Group &copy; 2026 &nbsp;&middot;&nbsp; <strong>R5.0</strong> &nbsp;&middot;&nbsp; 1 Jun 2026</p>
   </div>
 </div>
 
@@ -283,15 +283,15 @@ tr:hover td{background:#fafafa}
         <svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
         Home
       </div>
-      <div class="sb-item" data-page="appraisals" onclick="navigate('appraisals')">
+      <div class="sb-item" id="nav-appraisals" data-page="appraisals" onclick="navigate('appraisals')">
         <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
         Appraisals
       </div>
-      <div class="sb-item" data-page="analytics" onclick="navigate('analytics')">
+      <div class="sb-item" id="nav-analytics" data-page="analytics" onclick="navigate('analytics')">
         <svg viewBox="0 0 24 24"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
         Analytics
       </div>
-      <div class="sb-item" data-page="reports" onclick="navigate('reports')">
+      <div class="sb-item" id="nav-reports" data-page="reports" onclick="navigate('reports')">
         <svg viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
         Reports
       </div>
@@ -299,11 +299,11 @@ tr:hover td{background:#fafafa}
 
     <div class="sb-section">
       <div class="sb-section-label">Setup</div>
-      <div class="sb-item" data-page="staff" onclick="navigate('staff')">
+      <div class="sb-item" id="nav-staff" data-page="staff" onclick="navigate('staff')">
         <svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
         Staff
       </div>
-      <div class="sb-item" data-page="kpis" onclick="navigate('kpis')">
+      <div class="sb-item" id="nav-kpis" data-page="kpis" onclick="navigate('kpis')">
         <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>
         KPI Templates
       </div>
@@ -333,7 +333,7 @@ tr:hover td{background:#fafafa}
         <p id="tb-sub">Simba Group</p>
       </div>
       <div class="tb-right">
-        <div style="font-size:10px;color:var(--text-light);font-weight:600;background:#f0f1f4;padding:4px 8px;border-radius:4px;border:1px solid var(--grey-border)">R4.8</div>
+        <div style="font-size:10px;color:var(--text-light);font-weight:600;background:#f0f1f4;padding:4px 8px;border-radius:4px;border:1px solid var(--grey-border)">R5.0</div>
         <div class="cycle-badge" id="tb-cycle">&#128197;&nbsp; H1 2026 &nbsp;&middot;&nbsp; Jan &ndash; Jun 2026</div>
       </div>
     </div>
@@ -910,6 +910,11 @@ async function restoreSession() {
 
 // ── NAVIGATION ──────────────────────────────────────────────
 function navigate(page) {
+  // Staff-role users can only access staff page
+  if (window._staffOnlyMode && page !== 'staff') {
+    showToast('You only have access to the Staff page.');
+    page = 'staff';
+  }
   document.querySelectorAll('.page-view').forEach(function(v) { v.classList.remove('active'); });
   document.querySelectorAll('.sb-item').forEach(function(i) { i.classList.remove('active'); });
   var el  = document.getElementById('page-' + page);
@@ -947,9 +952,19 @@ function setWelcome() {
   var g = h < 12 ? 'Good morning' : h < 17 ? 'Good afternoon' : 'Good evening';
   document.getElementById('welcome-msg').textContent = g + ', ' + currentUser.name.split(' ')[0];
   document.getElementById('tb-sub').textContent = orgLabel(currentOrg) + ' \u2014 ' + dateStr();
-  // Show Settings only for admin
+  var isAdmin = currentUser.role === 'admin';
+  var isStaff = currentUser.role === 'staff';
+  // Settings: admin only
   var ns = document.getElementById('nav-settings');
-  if (ns) ns.style.display = currentUser.role === 'admin' ? '' : 'none';
+  if (ns) ns.style.display = isAdmin ? '' : 'none';
+  // Staff role: hide Appraisals, Analytics, Reports, KPI Templates
+  ['nav-appraisals','nav-analytics','nav-reports','nav-kpis'].forEach(function(id) {
+    var el = document.getElementById(id);
+    if (el) el.style.display = isStaff ? 'none' : '';
+  });
+  // Staff role: go straight to staff page, lock to their direct reports only
+  window._staffOnlyMode = isStaff;
+  if (isStaff) navigate('staff');
 }
 
 // ── HOME DATA ───────────────────────────────────────────────
@@ -1097,6 +1112,8 @@ async function loadStaffPage() {
     var orgFilter = window._orgLocked ? window._userOrg : currentOrg;
     var q = cl.from('staff').select('*').eq('status','active').order('full_name');
     if (orgFilter && orgFilter !== 'both') q = q.eq('organisation', orgFilter);
+    // Staff-role users only see their direct reports
+    if (currentUser.role === 'staff') q = q.eq('appraiser_id', currentUser.id);
     var res = await q;
     if (res.error) throw res.error;
     _staffCache = res.data || [];
@@ -3124,6 +3141,7 @@ async function deactivateStaff(id, name) {
 // ── ANALYTICS PAGE ─────────────────────────────────────────
 async function loadAnalyticsPage() {
   enforceOrgLock();
+  syncOrgSelectors();
   var page = document.getElementById('page-analytics');
   if (!page) return;
   page.innerHTML = '<div style="text-align:center;padding:40px;color:#888;font-size:12px">Loading performance data...</div>';
@@ -3239,7 +3257,7 @@ function buildAnalyticsPage(cycle, allAppraisals, viewData, totalStaff) {
     + '<div class="section-header no-print" style="margin-bottom:16px">'
     + '<div class="section-title">Performance Intelligence Report</div>'
     + '<div class="filter-row">'
-    + '<select class="filter-select" onchange="switchOrg(this.value)">'
+    + '<select class="filter-select" onchange="if(!window._orgLocked){switchOrg(this.value);}"' + (window._orgLocked ? ' disabled' : '') + '>'
     + '<option value="both"' + (currentOrg==='both'?' selected':'') + '>Both organisations</option>'
     + '<option value="sg"'  + (currentOrg==='sg'  ?' selected':'') + '>Simba Group HO</option>'
     + '<option value="stl"' + (currentOrg==='stl' ?' selected':'') + '>Simba Telecom Uganda</option>'
