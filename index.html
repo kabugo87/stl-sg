@@ -1081,14 +1081,17 @@ function renderRecentActivity(items) {
 
 // ── STAFF PAGE ──────────────────────────────────────────────
 async function loadStaffPage() {
+  enforceOrgLock();
   var tbody   = document.getElementById('staff-tbody');
   var counter = document.getElementById('staff-count');
   if (!tbody) return;
   tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;padding:24px;color:var(--text-light);font-size:12px">Loading staff...</td></tr>';
   try {
     var cl = getClient();
+    // Always enforce org filter from currentOrg (enforced by lock above)
+    var orgFilter = window._orgLocked ? window._userOrg : currentOrg;
     var q = cl.from('staff').select('*').eq('status','active').order('full_name');
-    if (currentOrg !== 'both') q = q.eq('organisation', currentOrg);
+    if (orgFilter && orgFilter !== 'both') q = q.eq('organisation', orgFilter);
     var res = await q;
     if (res.error) throw res.error;
     _staffCache = res.data || [];
@@ -1105,12 +1108,12 @@ async function loadStaffPage() {
 function renderStaffTable() {
   var tbody  = document.getElementById('staff-tbody');
   var search = (document.getElementById('filter-staff-search')||{value:''}).value.toLowerCase().trim();
-  var org    = (document.getElementById('filter-staff-org')   ||{value:''}).value;
+  var org    = window._orgLocked ? window._userOrg : (document.getElementById('filter-staff-org')||{value:''}).value;
   var dept   = (document.getElementById('filter-staff-dept')  ||{value:''}).value;
   if (!tbody) return;
   var list = _staffCache.filter(function(s) {
     if (search && !s.full_name.toLowerCase().includes(search)) return false;
-    if (org    && s.organisation !== org)  return false;
+    if (org && org !== 'both' && s.organisation !== org)  return false;
     if (dept   && s.department !== dept)   return false;
     return true;
   });
