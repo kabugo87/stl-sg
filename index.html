@@ -896,7 +896,12 @@ async function restoreSession() {
       var sw = document.getElementById('org-switcher');
       sw.value = p.organisation;
       sw.disabled = true;
+    } else {
+      currentOrg = 'both';
     }
+    syncOrgSelectors();
+    window._orgLocked = (p.role !== 'admin' && p.organisation && p.organisation !== 'both');
+    window._userOrg   = p.organisation || 'both';
     setWelcome();
     loadHomeData();
   } catch(e) { console.warn('restoreSession:', e.message); }
@@ -945,6 +950,7 @@ function setWelcome() {
 
 // ── HOME DATA ───────────────────────────────────────────────
 async function loadHomeData() {
+  enforceOrgLock();
   try {
     var client = getClient();
 
@@ -1232,6 +1238,7 @@ async function saveStaff() {
 
 // ── APPRAISALS PAGE ────────────────────────────────────────
 async function loadAppraisalsPage() {
+  enforceOrgLock();
   var tbody   = document.getElementById('appr-tbody');
   var counter = document.getElementById('appr-count');
   if (!tbody) return;
@@ -2172,6 +2179,7 @@ async function submitAppraisal() {
 
 // ── REPORTS PAGE ───────────────────────────────────────────
 async function loadReportsPage() {
+  enforceOrgLock();
   showReportMenu();
 }
 
@@ -2812,7 +2820,7 @@ async function showOutstandingList() {
 // ── KPI TEMPLATES PAGE ─────────────────────────────────────
 var _kpiFilter = '';
 
-function loadKPIPage() { renderKPIPage(); }
+function loadKPIPage() { enforceOrgLock(); renderKPIPage(); }
 
 function renderKPIPage() {
   var page = document.getElementById('page-kpis');
@@ -3106,6 +3114,7 @@ async function deactivateStaff(id, name) {
 
 // ── ANALYTICS PAGE ─────────────────────────────────────────
 async function loadAnalyticsPage() {
+  enforceOrgLock();
   var page = document.getElementById('page-analytics');
   if (!page) return;
   page.innerHTML = '<div style="text-align:center;padding:40px;color:#888;font-size:12px">Loading performance data...</div>';
@@ -3515,6 +3524,15 @@ async function createNewCycle() {
 
 // ── INIT ──────────────────────────────────────────────────
 
+
+// ── ORG LOCK ENFORCEMENT ───────────────────────────────────
+function enforceOrgLock() {
+  if (window._orgLocked && window._userOrg) {
+    currentOrg = window._userOrg;
+    syncOrgSelectors();
+  }
+}
+
 // ── SYNC ORG SELECTORS ─────────────────────────────────────
 function syncOrgSelectors() {
   var val = currentOrg || 'both';
@@ -3629,14 +3647,19 @@ async function loadSettingsUsers() {
     var users = ur.data || [];
     var roleBands = { admin:'band-exc', approver:'band-exceeds', staff:'band-meets' };
     var roleNames = { admin:'Admin', approver:'Approver', staff:'Staff' };
+    // Filter users by org for non-admin locked users
+    var visibleUsers = users.filter(function(u) {
+      if (!window._orgLocked) return true;
+      return u.organisation === window._userOrg || u.organisation === 'both';
+    });
     el.innerHTML = '<table style="width:100%;border-collapse:collapse;font-size:12px"><thead><tr>'
       + '<th style="padding:7px 10px;text-align:left;border-bottom:1.5px solid #000;font-size:10px;text-transform:uppercase">Name</th>'
       + '<th style="padding:7px 10px;border-bottom:1.5px solid #000;font-size:10px;text-transform:uppercase">Role</th>'
       + '<th style="padding:7px 10px;border-bottom:1.5px solid #000;font-size:10px;text-transform:uppercase">Access</th>'
       + '</tr></thead><tbody>'
-      + (users.length === 0
+      + (visibleUsers.length === 0
           ? '<tr><td colspan="3" style="padding:16px;text-align:center;color:var(--text-light)">No user profiles found.</td></tr>'
-          : users.map(function(u) {
+          : visibleUsers.map(function(u) {
               var isSelf  = currentUser && u.id === currentUser.id;
               var orgHtml = u.organisation === 'sg'
                 ? '<span class="pill pill-sg">SG</span>'
