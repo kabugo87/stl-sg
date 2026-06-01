@@ -248,7 +248,7 @@ tr:hover td{background:#fafafa}
       <input type="password" id="login-password" placeholder="&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;" />
     </div>
     <button class="btn btn-primary" id="login-btn" onclick="doLogin()">Sign in &rarr;</button>
-    <p style="font-size:10px;color:var(--text-light);margin-top:16px">Simba Group &copy; 2026 &nbsp;&middot;&nbsp; <strong>R4</strong></p>
+    <p style="font-size:10px;color:var(--text-light);margin-top:16px">Simba Group &copy; 2026 &nbsp;&middot;&nbsp; <strong>R4.7</strong> &nbsp;&middot;&nbsp; 1 Jun 2026</p>
   </div>
 </div>
 
@@ -307,7 +307,7 @@ tr:hover td{background:#fafafa}
         <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>
         KPI Templates
       </div>
-      <div class="sb-item" data-page="settings" onclick="navigate('settings')">
+      <div class="sb-item" data-page="settings" onclick="navigate('settings')" id="nav-settings">
         <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
         Settings
       </div>
@@ -333,6 +333,7 @@ tr:hover td{background:#fafafa}
         <p id="tb-sub">Simba Group</p>
       </div>
       <div class="tb-right">
+        <div style="font-size:10px;color:var(--text-light);font-weight:600;background:#f0f1f4;padding:4px 8px;border-radius:4px;border:1px solid var(--grey-border)">R4.7</div>
         <div class="cycle-badge" id="tb-cycle">&#128197;&nbsp; H1 2026 &nbsp;&middot;&nbsp; Jan &ndash; Jun 2026</div>
       </div>
     </div>
@@ -946,6 +947,9 @@ function setWelcome() {
   var g = h < 12 ? 'Good morning' : h < 17 ? 'Good afternoon' : 'Good evening';
   document.getElementById('welcome-msg').textContent = g + ', ' + currentUser.name.split(' ')[0];
   document.getElementById('tb-sub').textContent = orgLabel(currentOrg) + ' \u2014 ' + dateStr();
+  // Show Settings only for admin
+  var ns = document.getElementById('nav-settings');
+  if (ns) ns.style.display = currentUser.role === 'admin' ? '' : 'none';
 }
 
 // ── HOME DATA ───────────────────────────────────────────────
@@ -3559,10 +3563,11 @@ async function loadSettingsPage() {
 
     + '<div class="card"><div class="card-title">Active appraisal cycle</div>'
     + '<div id="settings-cycle-content"><div style="font-size:11px;color:var(--text-light)">Loading...</div></div>'
-    + '<div style="margin-top:14px;display:flex;gap:8px">'
+    + (currentUser && currentUser.role === 'admin' ? '<div style="margin-top:14px;display:flex;gap:8px">'
     + '<button class="btn btn-secondary btn-sm" onclick="openEditCycleModal()">Edit cycle</button>'
     + '<button class="btn btn-primary btn-sm" onclick="openNewCycleModal()">+ Start new cycle</button>'
-    + '</div></div>'
+    + '</div>' : '')
+    + '</div>'
 
     + '<div class="card"><div class="card-title">Scoring weights</div>'
     + '<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px">'
