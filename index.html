@@ -3034,6 +3034,12 @@ async function openChangeAppraiser(staffId, staffName) {
   var s = _staffCache.find(function(x){ return x.id === staffId; });
   if (!s) return;
 
+  // Load user profiles if not yet loaded
+  if (_userProfiles.length === 0) {
+    var ur = await getClient().from('user_profiles').select('id,name,title,organisation');
+    _userProfiles = ur.data || [];
+  }
+
   document.getElementById('ca-modal-title').textContent = 'Change appraiser — ' + staffName;
 
   // Show current appraiser
