@@ -730,6 +730,32 @@ tr:hover td{background:#fafafa}
   </div>
 </div>
 
+
+<!-- MODAL: Change Appraiser -->
+<div class="modal-overlay hidden" id="modal-change-appraiser">
+  <div class="modal" style="width:460px">
+    <div class="modal-header" style="background:#f0f1f4;border-bottom:3px solid var(--red)">
+      <h3 id="ca-modal-title">Change appraiser</h3>
+      <button class="modal-close" onclick="closeModal('modal-change-appraiser')">&times;</button>
+    </div>
+    <div class="modal-body">
+      <div style="background:#e6f1fb;border-left:3px solid #185FA5;border-radius:0 5px 5px 0;padding:10px 14px;margin-bottom:14px;font-size:11px;color:#185FA5;line-height:1.5" id="ca-current-appraiser">
+        Current appraiser: loading...
+      </div>
+      <div class="form-group-m">
+        <label>Assign new appraiser</label>
+        <select id="ca-appraiser-select" style="width:100%;padding:8px 10px;border:1px solid var(--grey-border);border-radius:5px;font-size:12px">
+          <option value="">-- Select appraiser --</option>
+        </select>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" onclick="closeModal('modal-change-appraiser')">Cancel</button>
+      <button class="btn btn-primary" onclick="saveNewAppraiser()">Save</button>
+    </div>
+  </div>
+</div>
+
 <div id="toast"></div>
 
 <script>
@@ -1099,6 +1125,7 @@ function renderStaffTable() {
       + '<td class="no-print"><div class="table-actions">'
       + '<button class="btn btn-secondary btn-sm" data-action="edit-staff" data-id="' + s.id + '">Edit</button>'
       + '<button class="btn btn-primary btn-sm" data-action="appraise-staff" data-id="' + s.id + '">Appraise</button>'
+      + (canApprove() ? '<button class="btn btn-secondary btn-sm" data-action="change-appraiser" data-id="' + s.id + '" data-name="' + s.full_name.replace(/"/g,'&quot;') + '">Appraiser</button>' : '')
       + '<button class="btn btn-danger btn-sm" data-action="deactivate-staff" data-id="' + s.id + '" data-name="' + s.full_name.replace(/"/g,'&quot;') + '">Remove</button>'
       + '</div></td></tr>';
   }).join('');
@@ -1110,6 +1137,7 @@ document.addEventListener('click', function(e) {
   if (!btn) return;
   var action = btn.dataset.action;
   if (action === 'edit-staff')       openEditStaff(btn.dataset.id);
+  if (action === 'change-appraiser') openChangeAppraiser(btn.dataset.id, btn.dataset.name);
   if (action === 'deactivate-staff') deactivateStaff(btn.dataset.id, btn.dataset.name);
   if (action === 'appraise-staff') {
     var s = _staffCache.find(function(x){ return x.id === btn.dataset.id; });
@@ -2995,6 +3023,62 @@ function deleteKPIRole(role) {
   delete ROLE_KPIS[role];
   renderKPIPage();
   showToast('KPI template deleted: ' + role);
+}
+
+
+// ── CHANGE APPRAISER ───────────────────────────────────────
+var _changingAppraiserId = null;
+
+async function openChangeAppraiser(staffId, staffName) {
+  _changingAppraiserId = staffId;
+  var s = _staffCache.find(function(x){ return x.id === staffId; });
+  if (!s) return;
+
+  document.getElementById('ca-modal-title').textContent = 'Change appraiser — ' + staffName;
+
+  // Show current appraiser
+  var currentAppr = _userProfiles.find(function(u){ return u.id === s.appraiser_id; });
+  var currentEl = document.getElementById('ca-current-appraiser');
+  if (currentEl) {
+    currentEl.textContent = currentAppr
+      ? 'Current appraiser: ' + currentAppr.name + (currentAppr.title ? ' — ' + currentAppr.title : '')
+      : 'Current appraiser: Not assigned';
+  }
+
+  // Populate appraiser dropdown — filter by org
+  var sel = document.getElementById('ca-appraiser-select');
+  sel.innerHTML = '<option value="">-- Select appraiser --</option>'
+    + _userProfiles
+        .filter(function(u) {
+          // Show users from same org or both
+          return u.organisation === s.organisation || u.organisation === 'both';
+        })
+        .sort(function(a,b){ return a.name.localeCompare(b.name); })
+        .map(function(u) {
+          var selected = s.appraiser_id === u.id ? ' selected' : '';
+          return '<option value="' + u.id + '"' + selected + '>' + u.name + (u.title ? ' — ' + u.title : '') + '</option>';
+        }).join('');
+
+  document.getElementById('modal-change-appraiser').classList.remove('hidden');
+}
+
+async function saveNewAppraiser() {
+  var staffId    = _changingAppraiserId;
+  var appraiserId = document.getElementById('ca-appraiser-select').value;
+  if (!staffId)    { showToast('No staff selected.'); return; }
+  if (!appraiserId){ showToast('Please select an appraiser.'); return; }
+
+  var s    = _staffCache.find(function(x){ return x.id === staffId; });
+  var appr = _userProfiles.find(function(u){ return u.id === appraiserId; });
+  if (!s || !appr) return;
+
+  try {
+    var res = await getClient().from('staff').update({ appraiser_id: appraiserId }).eq('id', staffId);
+    if (res.error) throw res.error;
+    closeModal('modal-change-appraiser');
+    showToast(s.full_name + ' — appraiser changed to ' + appr.name + '.');
+    loadStaffPage();
+  } catch(e) { showToast('Error: ' + e.message); }
 }
 
 // ── DELETE STAFF (soft delete) ────────────────────────────
